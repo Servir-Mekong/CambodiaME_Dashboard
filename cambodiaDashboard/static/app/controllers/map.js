@@ -335,14 +335,14 @@
 			map.addControl(new customControl());
 
 			//init polygon first load
-			var coords = [[105.21353627825181,12.449495126305504],[106.76810170793931,12.449495126305504],[106.76810170793931,13.776244901333273],[105.21353627825181,13.776244901333273],[105.21353627825181,12.449495126305504]];
+			var coords = cambodia_polygon.features[0].geometry.coordinates[0][0];
 			polygon_id = getCoordinates(coords);
 			//var a = JSON.parse(coords);
-			var coordLatlng = [[12.449495126305504, 105.21353627825181],[12.449495126305504, 106.76810170793931],[13.776244901333273,106.76810170793931],[13.776244901333273, 105.21353627825181],[12.449495126305504, 105.21353627825181]];
-			var initpolygon = L.polygon(coordLatlng, {color: '#FF412C', strokeWeight: 1, fillOpacity: 0});
-			initpolygon.addTo(map);
-			editableLayers.addLayer(initpolygon);
-			map.fitBounds(initpolygon.getBounds());
+			// var coordLatlng = [[12.449495126305504, 105.21353627825181],[12.449495126305504, 106.76810170793931],[13.776244901333273,106.76810170793931],[13.776244901333273, 105.21353627825181],[12.449495126305504, 105.21353627825181]];
+			// var initpolygon = L.polygon(coordLatlng, {color: '#FF412C', strokeWeight: 1, fillOpacity: 0});
+			// initpolygon.addTo(map);
+			// editableLayers.addLayer(initpolygon);
+			// map.fitBounds(initpolygon.getBounds());
 
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -767,6 +767,10 @@
 
 						});
 
+						$scope.showLoader = false;
+						$("#biophysical-tab").click();
+						
+
 					}, function (error) {
 						$scope.showLoader = false;
 						console.log(error);
@@ -881,10 +885,6 @@
 								color: '#CCCCCC'
 							}];
 							showHightChart('forest_noneforest_chart', 'bar', data.year, seriesNoneForest, true);
-
-
-						$scope.showLoader = false;
-						$("#biophysical-tab").click();
 
 					}, function (error) {
 						console.log(error);
