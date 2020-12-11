@@ -1,0 +1,41 @@
+# python compile files
+# ===========
+*.pyc
+
+# private
+# ===========
+
+# Exception to the rule
+!media/README.md
+static/*
+# Exception to the rule
+!static/README.md
+
+cambodiaDashboard/settings.py
+debug.log
+
+# Eclipse project files
+# ======================
+.project
+.pydevproject
+*.pyproj
+
+# Visual Studio project files
+# ======================
+.settings/
+.vs/
+*.sln
+.vscode/
+
+# Vendor files
+# ======================
+cambodiaDashboard/static/vendor/*
+cambodiaDashboard/static/dist/*
+
+# Exception to the rule
+!cambodiaDashboard/static/dist/README.md
+
+# Node and related environment
+# ======================
+.npmignore
+node_modules/

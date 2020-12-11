@@ -1,0 +1,254 @@
+<div class="c-map-menu map-menu">
+  <div class="menu-tiles map-tour-data-layers">
+    <div class="c-menu-desktop menu-desktop">
+      <ul class="datasets-menu">
+        <!-- <li class="c-map-menu-tile datasets-tile" id="app-logo">
+          <button class="item-button" type="button" name="button">
+            <div class="button-wrapper">
+              <svg class="c-icon tile-icon-logo" viewBox="0 0 35 35">
+                <image xlink:href="/static/images/tree.svg" />
+              </svg>
+            </div>
+          </button>
+        </li> -->
+        <li class="c-map-menu-tile datasets-tile" id="biophysical-tab">
+          <button class="item-button" type="button" name="button">
+            <div class="button-wrapper">
+              <!-- <svg class="c-icon tile-icon" viewBox="0 0 32 32">
+                <image xlink:href="/static/images/tree.svg" />
+              </svg> -->
+              <img id="biophysical-icon" src="/static/images/icons/menu/biophysical-monitoring-green.png" alt="Biophysical Monitoring" width="30px;" style="margin-bottom: 10px">
+              <span>[[ 'BIOPHYSICAL MONITORING' | translate]]</span>
+            </div>
+          </button>
+        </li>
+        <li class="c-map-menu-tile datasets-tile" id="forest-monitoring-tab">
+          <button class="item-button" type="button" name="button">
+            <div class="button-wrapper">
+              <img id="forest-monitoring-icon" src="/static/images/icons/menu/forest-monitoring-green.png" alt="foresty Monitoring" width="30px;" style="margin-bottom: 10px">
+              <span>[[ 'FOREST MONITORING' | translate]]</span>
+            </div>
+          </button>
+        </li>
+        <li class="c-map-menu-tile datasets-tile" id="forest-alert-tab">
+          <button class="item-button" type="button" name="button">
+            <div class="button-wrapper">
+              <img id="forest-alert-icon" src="/static/images/icons/menu/forest-alert-green.png" alt="Biophysical Monitoring" width="30px;" style="margin-bottom: 10px">
+              <span>[[ 'FOREST ALERT' | translate]] </span>
+            </div>
+          </button>
+        </li>
+        <li class="c-map-menu-tile datasets-tile" id="fire-tab">
+          <button class="item-button" type="button" name="button">
+            <div class="button-wrapper">
+              <img id="fire-icon" src="/static/images/icons/menu/fire-burned-green.png" alt="Biophysical Monitoring" width="30px;" style="margin-bottom: 10px">
+              <span>[[ 'FIRE BURNED AREA' | translate]] </span>
+            </div>
+          </button>
+        </li>
+        <li class="c-map-menu-tile datasets-tile" id="layers-tab">
+          <button class="item-button" type="button" name="button">
+            <div class="button-wrapper">
+              <img id="layers-icon" src="/static/images/icons/menu/map-layers-green.png" alt="Map Layers" width="30px;" style="margin-bottom: 10px">
+              <span>[[ 'MAP LAYERS' | translate]]</span>
+            </div>
+          </button>
+        </li>
+      </ul>
+      <!-- <ul class="datasets-menu align-bottom">
+        <li class="c-map-menu-tile datasets-tile" id="layers-tab">
+          <button class="item-button" type="button" name="button">
+            <div class="button-wrapper">
+              <img id="layers-icon" src="/static/images/icons/menu/map-layers-green.png" alt="Map Layers" width="30px;" style="margin-bottom: 10px">
+              <span>[[ 'MAP LAYERS' | translate]]</span>
+            </div>
+          </button>
+        </li>
+      </ul> -->
+    </div>
+  </div>
+  <div class="c-menu-panel map-tour-menu-panel menu-panel" id="panel-biophysical" style="opacity: 0; transform: translateX(-25rem) translateZ(0rem); ">
+    <button class="close-menu">
+      <svg class="c-icon icon-close-panel" viewBox="0 0 32 32">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <path d="M3.692 0l-3.692 3.692 12.308 12.308-12.308 12.308 3.692 3.692 12.308-12.308 12.308 12.308 3.692-3.692-12.308-12.308 12.308-12.308-3.692-3.692-12.308 12.308z"></path>
+        </svg>
+      </svg>
+    </button>
+    <div class="panel-body">
+      <div class="col-lg-12">
+
+        <h4>MAP LAYERS</h4>
+        <ul class="toggles-list" id="toggle-list-evi"></ul>
+
+        <h4>BIOPHYSICAL HEALTH</h4>
+        <a id="evi_pie_png" class="chart-btn-sm">PNG</a>
+        <a id="evi_pie_csv" href="#" class="chart-btn-sm">CSV</a>
+        <div id="chart"  width="1000" height="1000" style="border: 1px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      </div>
+      <div class="col-lg-12">
+
+        <a id="evi_line_png" class="chart-btn-sm">PNG</a>
+        <a id="evi_line_csv" href="#" class="chart-btn-sm">CSV</a>
+        <div id="chart_div"  width="1000" height="1000" style="border: 1px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="c-menu-panel map-tour-menu-panel menu-panel" id="panel-forest-monitoring" style="opacity: 0; transform: translateX(-25rem) translateZ(0rem);">
+    <button class="close-menu">
+      <svg class="c-icon icon-close-panel" viewBox="0 0 32 32">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <path d="M3.692 0l-3.692 3.692 12.308 12.308-12.308 12.308 3.692 3.692 12.308-12.308 12.308 12.308 3.692-3.692-12.308-12.308 12.308-12.308-3.692-3.692-12.308 12.308z"></path>
+        </svg>
+      </svg>
+    </button>
+    <div class="panel-body">
+      <h4>FOREST MAP LAYERS</h4>
+      <ul class="toggles-list ul-columns" id="toggle-list-forest"></ul>
+
+      <h4>FOREST COVER AREA</h4>
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <a id="forest_column_png" class="chart-btn-sm">PNG</a>
+      <a id="forest_column_csv" href="#" class="chart-btn-sm">CSV</a>
+      <div id="forest_cover_chart"  width="1000" height="1000" style="border: 1px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <br>
+      <h4>FOREST AND NONE FOREST AREA</h4>
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <a id="forest_bar_png" class="chart-btn-sm">PNG</a>
+      <a id="forest_bar_csv" href="#" class="chart-btn-sm">CSV</a>
+      <div id="forest_noneforest_chart"  width="1000" height="1000" style="border: 1px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <br>
+      <h4>FOREST GIAN AND LOSS</h4>
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <a id="forest_gainloss_png" class="chart-btn-sm">PNG</a>
+      <a id="forest_gainloss_csv" href="#" class="chart-btn-sm">CSV</a>
+      <div id="forest_gainloss_chart"  width="1000" height="1000" style="border: 1px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+
+    </div>
+  </div>
+
+  <div class="c-menu-panel map-tour-menu-panel menu-panel" id="panel-forest-alert" style="opacity: 0; transform: translateX(-25rem) translateZ(0rem);">
+    <button class="close-menu">
+      <svg class="c-icon icon-close-panel" viewBox="0 0 32 32">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <path d="M3.692 0l-3.692 3.692 12.308 12.308-12.308 12.308 3.692 3.692 12.308-12.308 12.308 12.308 3.692-3.692-12.308-12.308 12.308-12.308-3.692-3.692-12.308 12.308z"></path>
+        </svg>
+      </svg>
+    </button>
+    <div class="panel-body">
+      <h4>FOREST ALERT MAP LAYERS</h4>
+      <ul class="toggles-list ul-columns" id="toggle-list-forest-alert"></ul>
+
+      <h4>TOTAL NUMBER OF FOREST ALERT</h4>
+      <p>From 2019 to  2020 </p> <br>
+      <p id="total_number_forest_alert" style="font-size:46px; color:#d95252; font-weight: 700; margin-left: 25%;"></p>
+
+
+    <h4>NUMBER OF FOREST ALERT</h4>
+      <p>From 2019 to  2020 </p>
+    <a id="forest_alert_number_png" class="chart-btn-sm">PNG</a>
+    <a id="forest_alert_number_csv" href="#" class="chart-btn-sm">CSV</a>
+    <div id="forest_alert_number"  width="1000" height="1000" style="border: 1px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+
+    <h4>TOTAL AREA OF FOREST ALERT</h4>
+    <p>From 2019 to  2020 </p>
+    <a id="forest_alert_area_png" class="chart-btn-sm">PNG</a>
+    <a id="forest_alert_area_csv" href="#" class="chart-btn-sm">CSV</a>
+    <div id="forest_alert_area"  width="1000" height="1000" style="border: 1px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+    <br>
+
+    </div>
+  </div>
+
+  <div class="c-menu-panel map-tour-menu-panel menu-panel" id="panel-fire" style="opacity: 0; transform: translateX(-25rem) translateZ(0rem);">
+    <button class="close-menu">
+      <svg class="c-icon icon-close-panel" viewBox="0 0 32 32">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <path d="M3.692 0l-3.692 3.692 12.308 12.308-12.308 12.308 3.692 3.692 12.308-12.308 12.308 12.308 3.692-3.692-12.308-12.308 12.308-12.308-3.692-3.692-12.308 12.308z"></path>
+        </svg>
+      </svg>
+    </button>
+    <div class="panel-body">
+      <h4>MAP LAYERS OF BURNED AREA</h4>
+      <ul class="toggles-list ul-columns" id="toggle-list-burned-area"></ul>
+
+      <h4>BURNED AREA</h4>
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <a id="burned_area_png" class="chart-btn-sm">PNG</a>
+      <a id="burned_area_csv" href="#" class="chart-btn-sm">CSV</a>
+      <div id="burned_area_chart"  width="1000" height="1000" style="border: 1px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <br>
+    </div>
+  </div>
+
+
+  <div class="c-menu-panel map-tour-menu-panel menu-panel" id="panel3" style="opacity: 0; transform: translateX(-25rem) translateZ(0rem);">
+    <button class="close-menu">
+      <svg class="c-icon icon-close-panel" viewBox="0 0 32 32">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <path d="M3.692 0l-3.692 3.692 12.308 12.308-12.308 12.308 3.692 3.692 12.308-12.308 12.308 12.308 3.692-3.692-12.308-12.308 12.308-12.308-3.692-3.692-12.308 12.308z"></path>
+        </svg>
+      </svg>
+    </button>
+    <div class="panel-body">
+
+    </div>
+  </div>
+
+
+  <div class="c-menu-panel map-tour-menu-panel menu-panel" id="panel-layers" style="opacity: 0; transform: translateX(-25rem) translateZ(0rem);">
+    <button class="close-menu">
+      <svg class="c-icon icon-close-panel" viewBox="0 0 32 32">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <path d="M3.692 0l-3.692 3.692 12.308 12.308-12.308 12.308 3.692 3.692 12.308-12.308 12.308 12.308 3.692-3.692-12.308-12.308 12.308-12.308-3.692-3.692-12.308 12.308z"></path>
+        </svg>
+      </svg>
+    </button>
+    <div class="panel-body">
+      <label><b>Basemap</b></label>
+      <div class="circle-selector">
+        <table>
+          <tr>
+            <td width="30%">
+              <input id="street" type="radio" checked="checked" name="basemap_selection" value="street" />
+              <label class="radiocard-cc street" for="street"></label>
+            </td>
+            <td width="70%">
+              <label for="street">STREETS</label>
+            </td>
+          </tr>
+          <tr>
+            <td width="30%">
+              <input id="satellite" type="radio" name="basemap_selection" value="satellite" />
+              <label class="radiocard-cc satellite" for="satellite"></label><br>
+            </td>
+            <td width="70%">
+              <label for="satellite">SATELLITE</label>
+            </td>
+          </tr>
+          <!-- <tr>
+            <td width="30%">
+              <input id="terrain" type="radio" checked="checked" name="basemap_selection" value="terrain" />
+              <label class="radiocard-cc terrain" for="terrain"></label><br>
+            </td>
+            <td width="70%">
+              <label for="terrain">TERRAIN</label>
+            </td>
+          </tr> -->
+        </table>
+      </div>
+      <hr>
+      <label><b>Administrative Boundaries</b></label>
+      <ul class="toggles-list">
+        <li class="toggle"><label class="switch_layer"><input name="cambodia_toggle" id="cambodia_toggle" type="checkbox" ><span class="slider_toggle round"></span></label><label>Country</label></li>
+        <li class="toggle"><label class="switch_layer"><input name="district_toggle" id="district_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>District/City</label></li>
+        <li class="toggle"><label class="switch_layer"><input name="protected_area_toggle" id="protected_area_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Protected Area</label></li>
+      </ul>
+
+    </div>
+  </div>
+
+
+</div>
