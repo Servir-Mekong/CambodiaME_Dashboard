@@ -26,7 +26,7 @@
 		var overlayLayers = [EVILayer, Forest2000, Forest2001, Forest2002, Forest2003,Forest2004, Forest2005, Forest2006, Forest2007, Forest2008, Forest2009, Forest2010, Forest2011, Forest2012, Forest2013, Forest2014,
 			Forest2015, Forest2016, Forest2017, Forest2018, Forest2019,Forest2020, Forest2021, ForestAlert2000, ForestAlert2001, ForestAlert2002, ForestAlert2003,ForestAlert2004, ForestAlert2005, ForestAlert2006, ForestAlert2007, ForestAlert2008, ForestAlert2009, ForestAlert2010, ForestAlert2011, ForestAlert2012, ForestAlert2013, ForestAlert2014,
 			ForestAlert2015, ForestAlert2016, ForestAlert2017, ForestAlert2018, ForestAlert2019,ForestAlert2020, ForestAlert2021, BurnedArea2000, BurnedArea2001, BurnedArea2002, BurnedArea2003,BurnedArea2004, BurnedArea2005, BurnedArea2006, BurnedArea2007, BurnedArea2008, BurnedArea2009, BurnedArea2010, BurnedArea2011, BurnedArea2012, BurnedArea2013, BurnedArea2014,
-			BurnedArea2015, BurnedArea2016, BurnedArea2017, BurnedArea2018, BurnedArea2019,BurnedArea2020, BurnedArea2021, ForestGainLayer, ForestLossLayer, ForestAlertLayer]
+			BurnedArea2015, BurnedArea2016, BurnedArea2017, BurnedArea2018, BurnedArea2019,BurnedArea2020, BurnedArea2021, ForestGainLayer, ForestLossLayer, ForestAlertLayer];
 
 			var MapLayerArr = {
 				'2000': {
@@ -148,9 +148,9 @@
 				var polygon_coords = "";
 				for(var i=0; i<coords.length; i++){
 					if(i!==coords.length-1){
-						polygon_coords += "("+coords[i][1]+","+coords[i][0]+"),"
+						polygon_coords += "("+coords[i][1]+","+coords[i][0]+"),";
 					}else{
-						polygon_coords += "("+coords[i][1]+","+coords[i][0]+")"
+						polygon_coords += "("+coords[i][1]+","+coords[i][0]+")";
 					}
 				}
 				return polygon_coords;
@@ -167,7 +167,7 @@
 				opacity: 1,
 				clickable: true,
 				weight: 0.8,
-			}
+			};
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			function yearInt (year) {
@@ -188,8 +188,8 @@
 				to: yearInt(2019),
 				prettify: yearToInt,
 				onChange: function (data) {
-					studyHigh = data['to']
-					studyLow = data['from']
+					studyHigh = data.to;
+					studyLow = data.from;
 					$scope.STUDYHIGH = studyHigh;
 					$scope.STUDYLOW = studyLow;
 					$scope.$apply();
@@ -212,8 +212,8 @@
 				to: yearInt(2008),
 				prettify: yearToInt,
 				onChange: function (data) {
-					refHigh = data['to']
-					refLow = data['from']
+					refHigh = data.to;
+					refLow = data.from;
 					$scope.REFHIGH = refHigh;
 					$scope.REFLOW = refLow;
 				},
@@ -472,7 +472,7 @@
 					getForestAlert();
 					getBurnedArea();
 
-				};
+				}
 
 
 
@@ -571,16 +571,11 @@
 						legend: false,
 					});
 
-				};
+				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				function createToggleList(parentUL, inputID, label, yid, checked) {
 					$("#"+parentUL).append(
-						'<li class="toggle">'
-						+'<label class="switch_layer">'
-						+'<input name="'+inputID+'" id="'+inputID+'" data-yid="'+yid+'" type="checkbox" '+checked+'>'
-						+'<span class="slider_toggle round"></span>'
-						+'</label><label>'+label+'</label>'
-						+'</li>'
+						'<li class="toggle"><label class="switch_layer"><input name="'+inputID+'" id="'+inputID+'" data-yid="'+yid+'" type="checkbox" '+checked+'><span class="slider_toggle round"></span></label><label>'+label+'</label></li>'
 					);
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -693,7 +688,7 @@
 
 						EVILayer = addMapLayer(EVILayer, result.eeMapURL, 'EVILayer');
 
-						createToggleList('toggle-list-evi', 'EVILayer', 'Enhanced vegetation index', '', '')
+						createToggleList('toggle-list-evi', 'EVILayer', 'Enhanced vegetation index', '', '');
 
 						$("#EVILayer").click(function() {
 							if(this.checked) {
@@ -704,11 +699,7 @@
 								}
 							}
 						});
-
-					}), function (error){
-						console.log(error);
-					};
-
+					});
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -725,7 +716,7 @@
 					MapService.getLineEvi(params)
 					.then(function (data) {
 						var serieses = [{
-							data: data['timeSeries'],
+							data: data.timeSeries,
 							name: 'Biophysical Health',
 							color: "#2b5154",
 							marker: {
@@ -782,7 +773,7 @@
 					});
 				}
 
-				var getForestGainLossStats = function(){
+				function getForestGainLossStats(){
 					var params = {
 						year: 2018,
 						polygon_id: polygon_id,
@@ -837,12 +828,12 @@
 							series: [
 								{
 									name: 'Forest Loss',
-									data: [data["forestloss"] * -1],
+									data: [data.forestloss * -1],
 									color: '#73C6B6'
 								},
 								{
 									name: 'Forest Gain',
-									data: [data["forestgain"]],
+									data: [data.forestgain],
 									color: '#0B5345'
 								}],
 								exporting: {
@@ -858,7 +849,7 @@
 
 
 
-					var getForestCoverStats = function(){
+					function getForestCoverStats(){
 						var parameters = {
 							year: 2018,
 							polygon_id: polygon_id,
@@ -873,34 +864,34 @@
 						.then(function (data) {
 							var series = [{
 								name: 'Area in Hectare',
-								data: data['forest'],
+								data: data.forest,
 								color: '#BED65C'
 							}];
-							showHightChart('forest_cover_chart', 'column', data['year'], series, true);
+							showHightChart('forest_cover_chart', 'column', data.year, series, true);
 
 
 							var seriesNoneForest = [{
 								name: 'Forest',
-								data: data['forest'],
+								data: data.forest,
 								color: '#138D75'
 							},
 							{
 								name: 'None Forest',
-								data: data['noneForest'],
+								data: data.noneForest,
 								color: '#CCCCCC'
 							}];
-							showHightChart('forest_noneforest_chart', 'bar', data['year'], seriesNoneForest, true)
+							showHightChart('forest_noneforest_chart', 'bar', data.year, seriesNoneForest, true);
 
 
 						$scope.showLoader = false;
-						$("#biophysical-tab").click()
+						$("#biophysical-tab").click();
 
 					}, function (error) {
 						console.log(error);
 					});
 				}
 
-				var getForestMapID = function(){
+				function getForestMapID(){
 					var parameters = {
 						polygon_id: polygon_id,
 						treeCanopyDefinition: 10,
@@ -911,8 +902,8 @@
 					};
 
 					MapService.getForestMapID(parameters)
-					.then(function (data) {
-						var data = data["data"]
+					.then(function (res) {
+						var data = res.data;
 						for(var i=0; i<data.length; i++){
 							//create map layer index
 							var paneIndex = 'forest_'+data[i][0];
@@ -924,11 +915,12 @@
 							//set map style with opacity = 0.5
 							MapLayerArr[data[i][0]].forest.setOpacity(1);
 
+							/*jshint loopfunc: true */
 							createToggleList('toggle-list-forest', 'forest_'+data[i][0], data[i][0], data[i][0], '');
 
 							//toggle each of forest map layer
 							$("#forest_"+data[i][0]).click(function() {
-								var layerID= $(this).attr('data-yid')
+								var layerID= $(this).attr('data-yid');
 								if(this.checked) {
 									MapLayerArr[layerID].forest.addTo(map);
 								} else {
@@ -944,7 +936,7 @@
 					});
 				}
 
-				var getForestGainMapID = function(){
+				function getForestGainMapID(){
 					var parameters = {
 						polygon_id: polygon_id,
 						treeCanopyDefinition: 10,
@@ -962,6 +954,7 @@
 						ForestGainLayer = addMapLayer(ForestGainLayer, data.eeMapURL, 'ForestGainLayer');
 						ForestGainLayer.addTo(map);
 
+						/*jshint loopfunc: true */
 						createToggleList('toggle-list-forest', 'ForestGainLayer', 'Forest Gain', '', 'checked');
 
 						$("#ForestGainLayer").click(function() {
@@ -979,7 +972,7 @@
 					});
 				}
 
-				var getForestLossMapID = function(){
+				function getForestLossMapID(){
 					var parameters = {
 						polygon_id: polygon_id,
 						treeCanopyDefinition: 10,
@@ -997,6 +990,7 @@
 						ForestLossLayer.addTo(map);
 						//Forest Loss Layer.setStyle({opacity: 1});
 
+						/*jshint loopfunc: true */
 						createToggleList('toggle-list-forest', 'ForestLossLayer', 'Forest Loss', '', 'checked');
 
 						$("#ForestLossLayer").click(function() {
@@ -1014,7 +1008,7 @@
 					});
 				}
 
-				var getForestAlert = function(){
+				function getForestAlert(){
 					var parameters = {
 						polygon_id: polygon_id,
 						get_image: false,
@@ -1027,12 +1021,12 @@
 						var area_data = [];
 						var number_data = [];
 						var total_number = 0;
-						var _yearArr = []
+						var _yearArr = [];
 
 						for(var i=2019; i<=2020; i++){
 
 							var _yearData = data[i.toString()];
-							var _year = i.toString()
+							var _year = i.toString();
 
 							area_data.push([i, _yearData.total_area]);
 							number_data.push([i, _yearData.total_number]);
@@ -1050,11 +1044,12 @@
 							//set map style with opacity = 0.5
 							MapLayerArr[_year].forestAlert.setOpacity(1);
 
+							/*jshint loopfunc: true */
 							createToggleList('toggle-list-forest-alert', 'forestAlert_'+_year, _year, _year, '');
 
 							//toggle each of forest map layer
 							$("#forestAlert_"+_year).click(function() {
-								var layerID= $(this).attr('data-yid')
+								var layerID= $(this).attr('data-yid');
 								if(this.checked) {
 									MapLayerArr[layerID].forestAlert.addTo(map);
 								} else {
@@ -1074,12 +1069,12 @@
 						}];
 						showHightChart('forest_alert_number', 'column', _yearArr, series, false);
 
-						var series = [{
+						var seriesArea = [{
 							name: 'Area in Hectare',
 							data: area_data,
 							color: '#d95252'
 						}];
-						showHightChart('forest_alert_area', 'column', _yearArr, series, true);
+						showHightChart('forest_alert_area', 'column', _yearArr, seriesArea, true);
 
 
 					}, function (error) {
@@ -1088,7 +1083,7 @@
 				}
 
 
-				var getBurnedArea = function(){
+				function getBurnedArea(){
 					var parameters = {
 						polygon_id: polygon_id,
 						startYear: studyLow,
@@ -1103,7 +1098,7 @@
 						for(var i=studyLow; i<=studyHigh; i++){
 
 							var _yearData = data[i.toString()];
-							var _year = i.toString()
+							var _year = i.toString();
 
 							area_data.push([i, _yearData.total_area]);
 							_yearArr.push(i);
@@ -1116,11 +1111,12 @@
 							//set map style with opacity = 0.5
 							MapLayerArr[_year].burnedArea.setOpacity(1);
 
+							/*jshint loopfunc: true */
 							createToggleList('toggle-list-burned-area', 'burnedArea_'+_year, _year, _year, '');
 
 							//toggle each of forest map layer
 							$("#burnedArea_"+_year).click(function() {
-								var layerID= $(this).attr('data-yid')
+								var layerID= $(this).attr('data-yid');
 								if(this.checked) {
 									MapLayerArr[layerID].burnedArea.addTo(map);
 								} else {
@@ -1200,7 +1196,7 @@
 						$("#collapse-button").addClass("up");
 						$("#controls").css("display", "block");
 					}
-				};
+				}
 
 				$("#collapse-button").click(function() {
 					collapseMenu();
@@ -1287,7 +1283,7 @@
 
 				$('input[type=checkbox][name=district_toggle]').click(function(){
 					if(this.checked) {
-						mapLayer_cam_adm2.addTo(map)
+						mapLayer_cam_adm2.addTo(map);
 					} else {
 						if(map.hasLayer(mapLayer_cam_adm2)){
 							map.removeLayer(mapLayer_cam_adm2);
@@ -1305,7 +1301,7 @@
 				});
 				$('input[type=checkbox][name=cambodia_toggle]').click(function(){
 					if(this.checked) {
-						mapLayer_cambodia.addTo(map)
+						mapLayer_cambodia.addTo(map);
 					} else {
 						if(map.hasLayer(mapLayer_cambodia)){
 							map.removeLayer(mapLayer_cambodia);
@@ -1632,8 +1628,7 @@
 									drawing_polygon = [];
 									var userPolygon = layer.toGeoJSON();
 									drawing_polygon.push('ee.Geometry.Polygon(['+ JSON.stringify(userPolygon.geometry.coordinates[0])+'])');
-									updateFloodMapLayer();
-									updatePermanentWater();
+
 									layer.addTo(map);
 									map.fitBounds(layer.getBounds());
 									editableLayers.addLayer(layer);

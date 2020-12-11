@@ -23,7 +23,7 @@ h1, h2, h3, h4, h5, h6 {
     -webkit-columns: 2;
     -moz-columns: 2;
     columns: 2;
-    list-style-position: inside;//this is important addition
+    list-style-position: inside;
 }
 
 [hidden] { display: none !important; }

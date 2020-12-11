@@ -1071,7 +1071,7 @@ svg image{
   top: 95px;
   width: 250px;
   height: auto;
-  padding: 0px;
+  padding: 0;
   float: right;
   left: 80px;
   z-index: 5;
@@ -1147,7 +1147,7 @@ svg image{
   font-size: 10px;
   font-weight: 600;
   color: #000;
-  margin: 5px 0px;
+  margin: 5px 0;
 }
 
 .map-controller header #disclaimer-button {
@@ -1156,37 +1156,37 @@ svg image{
     margin: 2px 10px 5px 10px;
     width: 15px;
     height: 15px;
-    padding: 0px 3px;
+    padding: 0 3px;
     background-image: linear-gradient(rgb(255,255,255) 0px, rgb(224,224,224) 100%);
-    background-position: 0% 0%;
+    background-position: 0 0;
     background-repeat: repeat-x;
     border: 1.25px solid rgb(204,204,204);
     border-radius: 50%;
-    box-shadow: rgba(255,255,255,0.15) 0px 1px 0px 0px inset, rgba(0,0,0,0.075) 0px 1px 1px 0px;
+    box-shadow: rgba(255,255,255,0.15) 0 1px 0 0 inset, rgba(0,0,0,0.075) 0 1px 1px 0;
     font-size: 12px;
     color: rgb(51,51,51);
     font-weight: 600;
     line-height: 16px;
-    text-shadow: rgb(255,255,255) 0px 1px 0px;
+    text-shadow: rgb(255,255,255) 0 1px 0;
     cursor: pointer;
 }
 
 .map-controller .step {
     display: inline;
     float: right;
-    margin: 2px 10px 0px 0px;
-    padding: 0px 3px;
-    background-image: linear-gradient(rgb(255,255,255) 0px, rgb(224,224,224) 100%);
-    background-position: 0% 0%;
+    margin: 2px 10px 0 0;
+    padding: 0 3px;
+    background-image: linear-gradient(rgb(255,255,255) 0, rgb(224,224,224) 100%);
+    background-position: 0 0;
     background-repeat: repeat-x;
     border: 1.25px solid rgb(204,204,204);
     border-radius: 3px;
-    box-shadow: rgba(255,255,255,0.15) 0px 1px 0px 0px inset, rgba(0,0,0,0.075) 0px 1px 1px 0px;
+    box-shadow: rgba(255,255,255,0.15) 0 1px 0 0 inset, rgba(0,0,0,0.075) 0 1px 1px 0;
     font-size: 12px;
     color: rgb(51,51,51);
     font-weight: 400;
     line-height: 16px;
-    text-shadow: rgb(255,255,255) 0px 1px 0px;
+    text-shadow: rgb(255,255,255) 0 1px 0;
     cursor: pointer;
 }
 
