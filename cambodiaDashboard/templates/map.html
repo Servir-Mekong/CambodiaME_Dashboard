@@ -1,10 +1,6 @@
 {% extends "layout.html" %}
 {% load cms_tags staticfiles %}
-{% block extra_script %}
-<script src="{% static 'data/cambodia.js' %}"></script>
-<script src="{% static 'data/cam_adm2.js' %}"></script>
-<script src="{% static 'data/protected_area.js' %}"></script>
-{% endblock %}
+
 {% block main_container %}
 
 <!-- Main Container -->
@@ -101,6 +97,8 @@
 		            </div>
 		          </div>
 		        </button>
+            <br>
+
 						<!-- <button class="upload-files" >
 		          <div class="button-wrapper">
 		            <svg class="c-icon icon-square-point" viewBox="0 0 45 45">
@@ -112,7 +110,13 @@
 		          </div>
 		        </button> -->
 		      </div>
+          <p>Selected Area: <span id="selected_area_name" style="color: #023b10;">Cambodia</span></p>
 					<input id="files" type="file" multiple="" name="files1[]" hidden><output id="file_list"></output>
+          <div class="text-center">
+              <button type="button" name="update-map" id="update-map" class="update-btn">UPDATE MAP</button>
+              <button type="button" name="clear-map" id="clear-map" class="clear-btn">CLEAR MAP</button>
+          </div>
+
 
 					<!-- <button id="downloadkml" > Download Polygon </button>
 
@@ -123,36 +127,22 @@
 
   <!-- Map Container -->
   <!-- <div class="map" id="map" ng-init="getAvailabelDate();"> -->
-  <div class="map" id="map" ng-init="getpermanentwater('2010', '2015', '01', '12', 'discrete', '#00008b'); getAvailabelDate(); getAdmin3List();">
+  <div class="map" id="map" >
     <div class="control-panel map-component">
       <div class="scalebar-container"></div>
       <!-- Map Munu -->
       {% include "panels/map-menu.html" %}
     </div>
   </div>
+  <div class="highlight_area_textbox"></div>
 
-  <div id="layers" name="layers" data-historical-url="{{historical_layer}}" data-admin-url="{{admin_layer}}" data-flood-url="{{flood_layer}}" style="display:none;"></div>
-
-  <div class="infobox" id="legend-info-box">
-    <span>
-      You can change a water color by clicking on a color box.
-    </span>
-  </div>
-
-  <div class="usecase-infobox" id="usecase-info-box">
-    <button type="button" class="close-btn-usecase" ng-click="closeUsecaseInfo()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h3 id="usecase-title"></h3>
-    <p id="usecase-info"></p>
-    <p id="usecase-info-2"></p>
-  </div>
 
 
   {% include "panels/draw-tool-panel.html" %}
   {% include "panels/disclaimer.html" %}
 
-  {% include "panels/legendbox.html" %}
 
 </div>
 
-</div>
+
 {% endblock main_container %}

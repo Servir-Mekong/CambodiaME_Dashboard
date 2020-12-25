@@ -1205,12 +1205,22 @@ svg image{
     width: 100%;
 }
 
-.map-controller .body-controls button {
+.map-controller .update-btn {
   margin: 0;
-  padding: 5px;
-  font-size: 14px;
-  background-color: #006cfa;
-  border-radius: 5px;
+  padding: 5px 15px;
+  font-size: 10px;
+  background-color: #2a4b2a;
+  border-radius: 15px;
+  border: none;
+  color: #FFF;
+}
+
+.map-controller .clear-btn {
+  margin: 0;
+  padding: 5px 15px;
+  font-size: 10px;
+  background-color: #2a4b2a;
+  border-radius: 15px;
   border: none;
   color: #FFF;
 }
@@ -1336,4 +1346,16 @@ svg image{
   padding: 3px;
   color: #2a4b2a;
   background: #d4dbd4;
+}
+
+.highlight_area_textbox {
+  position: absolute;
+  top: 95px;
+  right: 5px;
+  font-size: 12px;
+  background: rgba(0,0,0,.55);
+  color: #FFF;
+  padding: 5px;
+  z-index: 999;
+  display: none;
 }

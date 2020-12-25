@@ -22,9 +22,10 @@
 		ForestAlert2015, ForestAlert2016, ForestAlert2017, ForestAlert2018, ForestAlert2019,ForestAlert2020, ForestAlert2021;
 		var BurnedArea2000, BurnedArea2001, BurnedArea2002, BurnedArea2003,BurnedArea2004, BurnedArea2005, BurnedArea2006, BurnedArea2007, BurnedArea2008, BurnedArea2009, BurnedArea2010, BurnedArea2011, BurnedArea2012, BurnedArea2013, BurnedArea2014,
 		BurnedArea2015, BurnedArea2016, BurnedArea2017, BurnedArea2018, BurnedArea2019,BurnedArea2020, BurnedArea2021;
+
 		var ForestGainLayer, ForestLossLayer, ForestAlertLayer;
 		var overlayLayers = [EVILayer, Forest2000, Forest2001, Forest2002, Forest2003,Forest2004, Forest2005, Forest2006, Forest2007, Forest2008, Forest2009, Forest2010, Forest2011, Forest2012, Forest2013, Forest2014,
-			Forest2015, Forest2016, Forest2017, Forest2018, Forest2019,Forest2020, Forest2021, ForestAlert2000, ForestAlert2001, ForestAlert2002, ForestAlert2003,ForestAlert2004, ForestAlert2005, ForestAlert2006, ForestAlert2007, ForestAlert2008, ForestAlert2009, ForestAlert2010, ForestAlert2011, ForestAlert2012, ForestAlert2013, ForestAlert2014,
+			Forest2015, Forest2016, Forest2017, Forest2018, Forest2019, Forest2020, Forest2021, ForestAlert2000, ForestAlert2001, ForestAlert2002, ForestAlert2003,ForestAlert2004, ForestAlert2005, ForestAlert2006, ForestAlert2007, ForestAlert2008, ForestAlert2009, ForestAlert2010, ForestAlert2011, ForestAlert2012, ForestAlert2013, ForestAlert2014,
 			ForestAlert2015, ForestAlert2016, ForestAlert2017, ForestAlert2018, ForestAlert2019,ForestAlert2020, ForestAlert2021, BurnedArea2000, BurnedArea2001, BurnedArea2002, BurnedArea2003,BurnedArea2004, BurnedArea2005, BurnedArea2006, BurnedArea2007, BurnedArea2008, BurnedArea2009, BurnedArea2010, BurnedArea2011, BurnedArea2012, BurnedArea2013, BurnedArea2014,
 			BurnedArea2015, BurnedArea2016, BurnedArea2017, BurnedArea2018, BurnedArea2019,BurnedArea2020, BurnedArea2021, ForestGainLayer, ForestLossLayer, ForestAlertLayer];
 
@@ -240,8 +241,14 @@
 				]
 			});
 
+			map.createPane('basemap');
+			map.getPane('basemap').style.zIndex = 0;
+			map.getPane('basemap').style.pointerEvents = 'none';
+
+
 			basemap_layer = L.tileLayer('https://api.mapbox.com/styles/v1/servirmekong/ckduef35613el19qlsoug6u2h/tiles/256/{z}/{x}/{y}@2x?access_token='+MAPBOXAPI, {
-				attribution: ''
+				attribution: '',
+				pane:'basemap'
 			}).addTo(map);
 
 
@@ -285,35 +292,6 @@
 
 			var polygonVertex = 0;
 
-			// Initialise the draw control and pass it the FeatureGroup of editable layers
-			var drawControl = new L.Control.Draw(drawPluginOptions);
-			map.addControl(drawControl);
-
-			map.on('draw:created', function(e) {
-				editableLayers.clearLayers();
-				var type = e.layerType,
-				layer = e.layer;
-
-				map.fitBounds(layer.getBounds());
-				editableLayers.addLayer(layer);
-
-				var userPolygon = layer.toGeoJSON();
-				var coords = userPolygon.geometry.coordinates;
-				polygon_id = getCoordinates(coords[0]);
-				polygonVertex = coords.length;
-				cal();
-			});
-			map.on('draw:edited', function(e) {
-				var editedlayers = e.layers;
-				editedlayers.eachLayer(function(layer) {
-					var userPolygon = layer.toGeoJSON();
-				});
-			});
-			map.on('draw:deleted', function(e) {
-				var userPolygon = '';
-				drawing_polygon = '';
-
-			});
 
 			/**
 			* Add file upload button on map
@@ -337,12 +315,6 @@
 			//init polygon first load
 			var coords = cambodia_polygon.features[0].geometry.coordinates[0][0];
 			polygon_id = getCoordinates(coords);
-			//var a = JSON.parse(coords);
-			// var coordLatlng = [[12.449495126305504, 105.21353627825181],[12.449495126305504, 106.76810170793931],[13.776244901333273,106.76810170793931],[13.776244901333273, 105.21353627825181],[12.449495126305504, 105.21353627825181]];
-			// var initpolygon = L.polygon(coordLatlng, {color: '#FF412C', strokeWeight: 1, fillOpacity: 0});
-			// initpolygon.addTo(map);
-			// editableLayers.addLayer(initpolygon);
-			// map.fitBounds(initpolygon.getBounds());
 
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -362,7 +334,14 @@
 			map.getPane('ForestAlertLayer').style.zIndex = 403;
 
 			map.createPane('admin');
-			map.getPane('admin').style.zIndex = 500;
+			map.getPane('admin').style.zIndex = 999;
+			//	map.getPane('admin').style.pointerEvents = 'none';
+			map.createPane('maplayer_cam');
+			map.getPane('maplayer_cam').style.zIndex = 450;
+		  map.getPane('maplayer_cam').style.pointerEvents = 'none';
+			map.createPane('maplayer_protect');
+			map.getPane('maplayer_protect').style.zIndex = 451;
+		  map.getPane('maplayer_protect').style.pointerEvents = 'none';
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -376,7 +355,7 @@
 						weight: 0.5,
 					};
 				},
-				pane:'admin'
+				pane:'maplayer_protect'
 			});
 
 			var mapLayer_cam_adm2 =L.geoJson(cam_adm2, {
@@ -389,7 +368,7 @@
 						weight: 0.5,
 					};
 				},
-				pane:'admin'
+				pane:'maplayer_cam'
 			});
 
 
@@ -403,35 +382,104 @@
 						weight: 2,
 					};
 				},
-				pane:'admin'
+				pane:'maplayer_cam'
 			});
 
-			var protected_area_layer =L.geoJson(protected_area, {
+			var protected_area_layer = L.geoJson(protected_area, {
 				style: function (feature) {
-					return {
-						color: "#FF412C",
-						fill: false,
-						opacity: 1,
-						clickable: true,
-						weight: 0.8,
-					};
-				},
-				onEachFeature: onEachPolygon,
+	  			return {
+	  				weight: 2,
+	  				opacity: 1,
+	  				color: '#333',
+						fillOpacity: 0.1,
+	  				dashArray: 3,
+	  			};
+	  		},
+				onEachFeature: function (feature, layer) {
+			    layer.on({
+	  		    'mouseover': function (e) {
+	  		      highlight(e.target);
+							$(".highlight_area_textbox").css("display", "block");
+							$(".highlight_area_textbox").text(e.target.feature.properties.name);
+	  		    },
+	  		    'mouseout': function (e) {
+	  		      dehighlight(e.target, protected_area_layer);
+							$(".highlight_area_textbox").css("display", "none");
+	  		    },
+	  				'click': function (e) {
+							var selected_name = e.target.feature.properties.name;
+							select(e.target, protected_area_layer, selected_name);
+	  				}
+	  			});
+	  		},
 				pane:'admin'
 			});
 
 			var cam_adm2_layer =L.geoJson(cam_adm2, {
 				style: function (feature) {
-					return {
-						color: "#FF412C",
-						fill: false,
-						opacity: 1,
-						clickable: true,
-						weight: 0.8,
-					};
-				},
-				onEachFeature: onEachPolygon,
-				pane:'admin'
+	  			return {
+	  				weight: 2,
+	  				opacity: 1,
+						fillOpacity: 0.1,
+	  				color: '#333',
+	  				dashArray: 3,
+	  			};
+	  		},
+				onEachFeature: function (feature, layer) {
+			    layer.on({
+	  		    'mouseover': function (e) {
+	  		      highlight(e.target);
+							$(".highlight_area_textbox").css("display", "block");
+							$(".highlight_area_textbox").text( e.target.feature.properties.ADM1_NAME + '/' + e.target.feature.properties.ADM2_NAME);
+	  		    },
+	  		    'mouseout': function (e) {
+	  		      dehighlight(e.target, cam_adm2_layer);
+							$(".highlight_area_textbox").css("display", "none");
+	  		    },
+	  				'click': function (e) {
+							var selected_name = e.target.feature.properties.ADM1_NAME + '/' + e.target.feature.properties.ADM2_NAME;
+							select(e.target, cam_adm2_layer, selected_name);
+	  				}
+	  			});
+	  		},
+				pane:'admin',
+				interactive: true
+			});
+
+			// Initialise the draw control and pass it the FeatureGroup of editable layers
+			var drawControl = new L.Control.Draw(drawPluginOptions);
+			map.addControl(drawControl);
+
+			map.on('draw:created', function(e) {
+				if(map.hasLayer(protected_area_layer)){
+					map.removeLayer(protected_area_layer);
+				}
+				if(map.hasLayer(cam_adm2_layer)){
+					map.removeLayer(cam_adm2_layer);
+				}
+				editableLayers.clearLayers();
+				var type = e.layerType,
+				layer = e.layer;
+
+				map.fitBounds(layer.getBounds());
+				editableLayers.addLayer(layer);
+
+				var userPolygon = layer.toGeoJSON();
+				var coords = userPolygon.geometry.coordinates;
+				polygon_id = getCoordinates(coords[0]);
+				polygonVertex = coords.length;
+				//cal();
+			});
+			map.on('draw:edited', function(e) {
+				var editedlayers = e.layers;
+				editedlayers.eachLayer(function(layer) {
+					var userPolygon = layer.toGeoJSON();
+				});
+			});
+			map.on('draw:deleted', function(e) {
+				var userPolygon = '';
+				drawing_polygon = '';
+
 			});
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -446,12 +494,31 @@
 				}
 
 			function cal(){
+
 					//clear all map layers
-					overlayLayers.forEach(function (item) {
-						if(map.hasLayer(item)){
-							map.removeLayer(item);
+					if(map.hasLayer(EVILayer)){
+						map.removeLayer(EVILayer);
+					}
+					if(map.hasLayer(ForestGainLayer)){
+						map.removeLayer(ForestGainLayer);
+					}
+					if(map.hasLayer(ForestLossLayer)){
+						map.removeLayer(ForestLossLayer);
+					}
+
+					for(var i=studyLow; i<=studyHigh; i++){
+						var _year  = i.toString();
+						if(map.hasLayer(MapLayerArr[_year].forest)){
+							map.removeLayer(MapLayerArr[_year].forest);
 						}
-					});
+						if(map.hasLayer(MapLayerArr[_year].forestAlert)){
+							map.removeLayer(MapLayerArr[_year].forestAlert);
+						}
+						if(map.hasLayer(MapLayerArr[_year].burnedArea)){
+							map.removeLayer(MapLayerArr[_year].burnedArea);
+						}
+					}
+
 					// clear all toggle layer list
 					$("#toggle-list-forest").html('');
 					$("#toggle-list-evi").html('');
@@ -471,42 +538,49 @@
 					getForestCoverStats();
 					getForestAlert();
 					getBurnedArea();
+					getChangeForestGainLossStats();
+
+				}
+				var selected = null;
+				var previous = null;
+				function highlight (layer) {
+					layer.setStyle({
+						weight: 5,
+						dashArray: '',
+						fillOpacity: 0,
+						color: 'yellow'
+					});
+					if (!L.Browser.ie && !L.Browser.opera) {
+						layer.bringToFront();
+					}
 
 				}
 
+				function dehighlight (layer, geojson) {
+				  if (selected === null || selected._leaflet_id !== layer._leaflet_id) {
+					  geojson.resetStyle(layer);
+				  }
+				}
 
-
-				function whenClicked(e) {
-					var layer = e.target;
+				function select(layer, geojson, selectedArea) {
+				  if (selected !== null) {
+				    previous = selected;
+				  }
 					map.fitBounds(layer.getBounds());
-					var coords = e.sourceTarget.feature.geometry.coordinates;
+					selected = layer;
+					var coords = layer.feature.geometry.coordinates;
 					polygon_id = getCoordinates(coords[0][0]);
 					polygonVertex = coords.length;
-					cal();
+
+					if (previous) {
+					  dehighlight(previous, geojson);
+					}
+
+					$('#selected_area_name').text(selectedArea);
 
 				}
 
-				function onEachPolygon(feature, layer) {
-					layer.on({
-						click: whenClicked
-					});
-					layer.on('mouseover', function () {
-						this.setStyle({
-							'fillColor': '#FF412C',
-							'opacity': 0.5,
-							'fill': true,
-						});
-					});
-					layer.on('mouseout', function () {
-						this.setStyle({
-							'color': "#FF412C",
-							'fill': false,
-							'opacity': 1,
-							'clickable': true,
-							'weight': 0.8,
-						});
-					});
-				}
+
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 				function showHightChart(chartContainer, chartType, categories, chartSeries, labelArea){
@@ -573,9 +647,9 @@
 
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				function createToggleList(parentUL, inputID, label, yid, checked) {
+				function createToggleList(parentUL, inputID, label, yid, checked, bgcolor) {
 					$("#"+parentUL).append(
-						'<li class="toggle"><label class="switch_layer"><input name="'+inputID+'" id="'+inputID+'" data-yid="'+yid+'" type="checkbox" '+checked+'><span class="slider_toggle round"></span></label><label>'+label+'</label></li>'
+						'<li class="toggle"><label class="switch_layer"><input name="'+inputID+'" id="'+inputID+'" data-yid="'+yid+'" type="checkbox" '+checked+'><span class="slider_toggle round" style="background:#'+bgcolor+'"></span></label><label>'+label+'</label></li>'
 					);
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -688,7 +762,7 @@
 
 						EVILayer = addMapLayer(EVILayer, result.eeMapURL, 'EVILayer');
 
-						createToggleList('toggle-list-evi', 'EVILayer', 'Enhanced vegetation index', '', '');
+						createToggleList('toggle-list-evi', 'EVILayer', 'Enhanced vegetation index', '', '', '36461F');
 
 						$("#EVILayer").click(function() {
 							if(this.checked) {
@@ -767,9 +841,9 @@
 
 						});
 
-						$scope.showLoader = false;
-						$("#biophysical-tab").click();
-						
+						// $scope.showLoader = false;
+						// $("#biophysical-tab").click();
+
 
 					}, function (error) {
 						$scope.showLoader = false;
@@ -851,6 +925,112 @@
 						});
 					}
 
+					function getChangeForestGainLossStats(){
+						var params = {
+							year: 2018,
+							polygon_id: polygon_id,
+							treeCanopyDefinition: 10,
+							treeHeightDefinition: 5,
+							studyLow: studyLow,
+							studyHigh: studyHigh,
+							refLow: refLow,
+							refHigh: refHigh,
+							type: 'forestGainLoss'
+						};
+
+						MapService.getChangeForestGainLoss(params)
+						.then(function (data) {
+
+								var gain = (data.statsStudyGain - data.statsRefGain).toFixed(2);
+								var loss = (data.statsStudyLoss - data.statsRefLoss).toFixed(2);
+
+								if(gain < 0){
+									//gain = "-" + gain
+									$('#gain_compared').css("color", "red");
+									$('#gain_compared').text(gain);
+								}else{
+									//gain = "+" + gain
+									$('#gain_compared').css("color", "green");
+									$('#gain_compared').text(gain);
+								}
+
+								if(loss < 0 ){
+									//loss = "-" + loss
+									$('#loss_compared').css("color", "green");
+									$('#loss_compared').text(loss);
+								}else{
+									//loss = "+" + loss
+									$('#loss_compared').css("color", "red");
+									$('#loss_compared').text(loss);
+								}
+
+
+								$('#loss_compared').text(loss);
+
+								Highcharts.setOptions({
+								  lang: {
+								    thousandsSep: ' '
+								  },
+								  colors: [ '#A04000','#117A65']
+								});
+								Highcharts.chart('forest_change_gainloss_chart', {
+								    chart: {
+								        type: 'column',
+												style: {
+													fontFamily: 'Poppins'
+												},
+												width: 300,
+												height: 200,
+								    },
+										title: false,
+ 			 							subtitle: false,
+								    xAxis: {
+								        categories: [
+								            'BASELINE PERIOD',
+								            'MEASURING PERIOD'
+								        ],
+								        crosshair: true
+								    },
+								    yAxis: {
+								        min: 0,
+								        title: {
+								            text: null
+								        }
+								    },
+								    tooltip: {
+											formatter: function () {
+												return this.series.name + " (" + (this.point.y).toFixed(2) + ")";
+											}
+								    },
+								    plotOptions: {
+								        column: {
+														pointPadding: 0,
+														pointWidth: 25,
+								            borderWidth: 0
+								        }
+								    },
+								    series: [{
+								        name: 'LOSS',
+								        data: [data.statsRefLoss, data.statsStudyLoss],
+												color: ''
+
+								    }, {
+								        name: 'GAIN',
+								        data: [data.statsRefGain, data.statsStudyGain],
+												color: ''
+
+								    }],
+										exporting: {
+											enabled: false
+										},
+										credits: {
+											enabled: false
+										},
+								});
+
+
+							});
+						}
 
 
 					function getForestCoverStats(){
@@ -910,13 +1090,16 @@
 							map.createPane(paneIndex);
 							map.getPane(paneIndex).style.zIndex = 300+i;
 
+							if(map.hasLayer(MapLayerArr[data[i][0]].forest)){
+								map.removeLayer(MapLayerArr[data[i][0]].forest);
+							}
 							//add map layer
 							MapLayerArr[data[i][0]].forest = addMapLayer(MapLayerArr[data[i][0]].forest, data[i][1], paneIndex);
 							//set map style with opacity = 0.5
 							MapLayerArr[data[i][0]].forest.setOpacity(1);
 
 							/*jshint loopfunc: true */
-							createToggleList('toggle-list-forest', 'forest_'+data[i][0], data[i][0], data[i][0], '');
+							createToggleList('toggle-list-forest', 'forest_'+data[i][0], data[i][0], data[i][0], '', data[i][2]);
 
 							//toggle each of forest map layer
 							$("#forest_"+data[i][0]).click(function() {
@@ -952,10 +1135,10 @@
 							map.removeLayer(ForestGainLayer);
 						}
 						ForestGainLayer = addMapLayer(ForestGainLayer, data.eeMapURL, 'ForestGainLayer');
-						ForestGainLayer.addTo(map);
+						//ForestGainLayer.addTo(map);
 
 						/*jshint loopfunc: true */
-						createToggleList('toggle-list-forest', 'ForestGainLayer', 'Forest Gain', '', 'checked');
+						createToggleList('toggle-list-forest', 'ForestGainLayer', 'Forest Gain', '', '', data.color);
 
 						$("#ForestGainLayer").click(function() {
 							if(this.checked) {
@@ -987,11 +1170,11 @@
 							map.removeLayer(ForestLossLayer);
 						}
 						ForestLossLayer = addMapLayer(ForestLossLayer, data.eeMapURL, 'ForestLossLayer');
-						ForestLossLayer.addTo(map);
+						//ForestLossLayer.addTo(map);
 						//Forest Loss Layer.setStyle({opacity: 1});
 
 						/*jshint loopfunc: true */
-						createToggleList('toggle-list-forest', 'ForestLossLayer', 'Forest Loss', '', 'checked');
+						createToggleList('toggle-list-forest', 'ForestLossLayer', 'Forest Loss', '', '', data.color);
 
 						$("#ForestLossLayer").click(function() {
 							if(this.checked) {
@@ -1039,13 +1222,17 @@
 							map.createPane(paneIndex);
 							map.getPane(paneIndex).style.zIndex = 350+i;
 
+							if(map.hasLayer(MapLayerArr[_year].forestAlert)){
+								map.removeLayer(MapLayerArr[_year].forestAlert);
+							}
+
 							//add map layer
 							MapLayerArr[_year].forestAlert = addMapLayer(MapLayerArr[_year].forestAlert, _yearData.eeMapURL, paneIndex);
 							//set map style with opacity = 0.5
 							MapLayerArr[_year].forestAlert.setOpacity(1);
 
 							/*jshint loopfunc: true */
-							createToggleList('toggle-list-forest-alert', 'forestAlert_'+_year, _year, _year, '');
+							createToggleList('toggle-list-forest-alert', 'forestAlert_'+_year, _year, _year, '',_yearData.color);
 
 							//toggle each of forest map layer
 							$("#forestAlert_"+_year).click(function() {
@@ -1106,13 +1293,18 @@
 							var paneIndex = 'burnedArea_'+_year;
 							map.createPane(paneIndex);
 							map.getPane(paneIndex).style.zIndex = 380+i;
+
+							if(map.hasLayer(MapLayerArr[_year].burnedArea)){
+								map.removeLayer(MapLayerArr[_year].burnedArea);
+							}
+
 							//add map layer
 							MapLayerArr[_year].burnedArea = addMapLayer(MapLayerArr[_year].burnedArea, _yearData.eeMapURL, paneIndex);
 							//set map style with opacity = 0.5
 							MapLayerArr[_year].burnedArea.setOpacity(1);
 
 							/*jshint loopfunc: true */
-							createToggleList('toggle-list-burned-area', 'burnedArea_'+_year, _year, _year, '');
+							createToggleList('toggle-list-burned-area', 'burnedArea_'+_year, _year, _year, '', _yearData.color);
 
 							//toggle each of forest map layer
 							$("#burnedArea_"+_year).click(function() {
@@ -1133,6 +1325,8 @@
 							color: '#d95252'
 						}];
 						showHightChart('burned_area_chart', 'column', _yearArr, series, true);
+
+						$scope.showLoader = false;
 
 					}, function (error) {
 						console.log(error);
@@ -1226,7 +1420,6 @@
 					if(map.hasLayer(cam_adm2_layer)){
 						map.removeLayer(cam_adm2_layer);
 					}
-
 					if(map.hasLayer(protected_area_layer)){
 						map.removeLayer(protected_area_layer);
 					}
@@ -1311,6 +1504,7 @@
 
 				$('.protected_area_button').click(function(){
 					protected_area_layer.addTo(map);
+					editableLayers.clearLayers();
 					if(map.hasLayer(cam_adm2_layer)){
 						map.removeLayer(cam_adm2_layer);
 					}
@@ -1318,6 +1512,7 @@
 
 				$('.district_button').click(function(){
 					cam_adm2_layer.addTo(map);
+					editableLayers.clearLayers();
 					if(map.hasLayer(protected_area_layer)){
 						map.removeLayer(protected_area_layer);
 					}
@@ -1349,6 +1544,7 @@
 						$(".c-menu-panel").css("top", "0");
 						$(".map").css("height", "100vh");
 						$('.map-controller').css("top", "5px");
+						$('.highlight_area_textbox').css("top", "5px");
 					}else{
 						$("nav").show();
 						$(".container-wrapper").css("margin-top", "90px");
@@ -1356,6 +1552,7 @@
 						$(".c-menu-panel").css("top", "90px");
 						$(".map").css("height", "calc(100vh - 90px)");
 						$('.map-controller').css("top", "95px");
+						$('.highlight_area_textbox').css("top", "95px");
 					}
 				});
 
@@ -1486,6 +1683,49 @@
 
 				});
 
+				$("#update-map").click(function() {
+					cal();
+				});
+
+				$("#clear-map").click(function() {
+					editableLayers.clearLayers();
+					//clear all map layers
+					if(map.hasLayer(protected_area_layer)){
+						map.removeLayer(protected_area_layer);
+					}
+					if(map.hasLayer(cam_adm2_layer)){
+						map.removeLayer(cam_adm2_layer);
+					}
+					if(map.hasLayer(EVILayer)){
+						map.removeLayer(EVILayer);
+					}
+					if(map.hasLayer(ForestGainLayer)){
+						map.removeLayer(ForestGainLayer);
+					}
+					if(map.hasLayer(ForestLossLayer)){
+						map.removeLayer(ForestLossLayer);
+					}
+
+					for(var i=studyLow; i<=studyHigh; i++){
+						var _year  = i.toString();
+						if(map.hasLayer(MapLayerArr[_year].forest)){
+							map.removeLayer(MapLayerArr[_year].forest);
+						}
+						if(map.hasLayer(MapLayerArr[_year].forestAlert)){
+							map.removeLayer(MapLayerArr[_year].forestAlert);
+						}
+						if(map.hasLayer(MapLayerArr[_year].burnedArea)){
+							map.removeLayer(MapLayerArr[_year].burnedArea);
+						}
+					}
+
+					// clear all toggle layer list
+					$("#toggle-list-forest").html('');
+					$("#toggle-list-evi").html('');
+					$("#toggle-list-forest-alert").html('');
+					$("#toggle-list-burned-area").html('');
+				});
+
 				$("#evi_pie_png").click(function() {
 					var chart = $('#chart').highcharts();
 					chart.exportChart();
@@ -1522,6 +1762,10 @@
 					chart.exportChart();
 				});
 
+				$("#forest_changegainloss_png").click(function() {
+					var chart = $('#forest_change_gainloss_chart').highcharts();
+					chart.exportChart();
+				});
 
 				$("#evi_pie_csv").click(function() {
 					var chart = $('#chart').highcharts();
@@ -1556,6 +1800,11 @@
 
 				$("#burned_area_csv").click(function() {
 					var chart = $('#burned_area_chart').highcharts();
+					chart.downloadCSV();
+				});
+
+				$("#forest_changegainloss_csv").click(function() {
+					var chart = $('#forest_change_gainloss_chart').highcharts();
 					chart.downloadCSV();
 				});
 

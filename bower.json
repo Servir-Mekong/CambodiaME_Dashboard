@@ -29,6 +29,7 @@
     "angular-spinner": "^1.0.1",
     "eonasdan-bootstrap-datetimepicker": "*",
     "leaflet.markercluster": "^1.4.1",
-    "highcharts": "^8.2.2"
+    "highcharts": "^8.2.2",
+    "leaflet-draw": "^1.0.4"
   }
 }

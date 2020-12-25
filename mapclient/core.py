@@ -30,7 +30,7 @@ class GEEApi():
 
     WEST, SOUTH, EAST, NORTH = 92.0, 9.5, 101.5, 29
     BOUNDING_BOX = (WEST,SOUTH,EAST,NORTH)
-    COLOR = ['445A67','57838D','B4C9C7','F3BFB3','CCADB2','FFEFFF','F6F7FB','E0F8F5','BEEDE5','A7D9C9','50B4D8','9EDDEF','F7E5B7','D7E2EA','96B3C2','FFDAD1','FFEDDA','CAB3C1','6E7B8F','2E3332','C29BA3','E3BFB7','FFE4C9','B7EAF7','8A9BA7']
+    COLOR = ['A8D9C6','B0DAB2','BFE1C9','AAD7A0','C3DE98','D5E59E','93D2BF','95CF9C','A4D7B8','9BD291','B1D78A','C9E08E','5CC199','77C78C','37B54A','126039','146232','0F8040','279445','449644','59A044','0E361E','236832','335024', '36461F']
 
 
     def __init__(self, area_path, area_name, shape, geom):
@@ -531,7 +531,8 @@ class GEEApi():
 
         return {
             'eeMapId': str(map_id['mapid']),
-            'eeMapURL': str(map_id['tile_fetcher'].url_format)
+            'eeMapURL': str(map_id['tile_fetcher'].url_format),
+            'color': '173F5F'
         }
 
     # -------------------------------------------------------------------------
@@ -579,7 +580,8 @@ class GEEApi():
 
         return {
             'eeMapId': str(map_id['mapid']),
-            'eeMapURL': str(map_id['tile_fetcher'].url_format)
+            'eeMapURL': str(map_id['tile_fetcher'].url_format),
+            'color': 'fdb827'
         }
 
 
@@ -588,7 +590,8 @@ class GEEApi():
                       get_image = False,
                       year = None,
                       tree_canopy_definition = 10,
-                      tree_height_definition = 5):
+                      tree_height_definition = 5,
+                      start_year = 2000):
 
         if not year:
             return {
@@ -616,12 +619,13 @@ class GEEApi():
         map_id = image.getMapId({
             'min': str(tree_canopy_definition),
             'max': '100',
-            'palette': GEEApi.COLOR[year - 2000]
+            'palette': GEEApi.COLOR[year - start_year]
         })
 
         return {
             'eeMapId': str(map_id['mapid']),
-            'eeMapURL': str(map_id['tile_fetcher'].url_format)
+            'eeMapURL': str(map_id['tile_fetcher'].url_format),
+            'color': GEEApi.COLOR[year - start_year]
         }
 
     # -------------------------------------------------------------------------
@@ -667,6 +671,7 @@ class GEEApi():
                                            year = _year,
                                            tree_canopy_definition = tree_canopy_definition,
                                            tree_height_definition = tree_height_definition,
+                                           start_year = start_year
                                            )
 
             reducer = image.gt(0).multiply(self.scale).multiply(self.scale).reduceRegion(
@@ -739,9 +744,10 @@ class GEEApi():
                                            year = _year,
                                            tree_canopy_definition = tree_canopy_definition,
                                            tree_height_definition = tree_height_definition,
+                                           start_year = start_year
                                            )
 
-            mapid.append([str(_year),image["eeMapURL"]])
+            mapid.append([str(_year),image["eeMapURL"],  GEEApi.COLOR[_year - start_year]])
 
         #chart_data = years.map(getArea)
         res = {}
@@ -858,7 +864,8 @@ class GEEApi():
         'total_area': float('%.2f' % stats),
         'total_number': total_number_conf,
         'eeMapId': str(map_id['mapid']),
-        'eeMapURL': str(map_id['tile_fetcher'].url_format)
+        'eeMapURL': str(map_id['tile_fetcher'].url_format),
+        'color': 'd95252'
         }
 
     # -------------------------------------------------------------------------
@@ -882,9 +889,12 @@ class GEEApi():
         IC= GEEApi.BURNED_AREA.filterBounds(self.geometry).sort('system:time_start', False).filterDate(series_start, series_end)
 
         yearlyBurned = IC.sum().clip(self.geometry).select("BurnDate")
-        imgScale = yearlyBurned.projection().nominalScale()
+        imgScale =500
+        image = yearlyBurned.unitScale(-2000, 10000).reproject(crs='EPSG:4326', scale=imgScale)
+
+        #yearlyBurned = yearlyBurned.reproject(crs='EPSG:4326', scale=imgScale)
         #calculate Area in Hectare unit
-        reducer = yearlyBurned.multiply(ee.Image.pixelArea()).reduceRegion(
+        reducer = image.multiply(ee.Image.pixelArea()).reduceRegion(
           reducer= ee.Reducer.sum(),
           geometry= self.geometry,
           scale= imgScale,
@@ -896,8 +906,7 @@ class GEEApi():
         #convert to hactare divide by 10000
         stats = stats / 10000
 
-        image = yearlyBurned.reproject(crs='EPSG:4326', scale=imgScale)
-        map_id = yearlyBurned.getMapId({
+        map_id = image.getMapId({
             'min': '-2',
             'max': '1',
             'palette': 'ff0000'
@@ -906,7 +915,8 @@ class GEEApi():
         return {
         'total_area': float('%.2f' % stats),
         'eeMapId': str(map_id['mapid']),
-        'eeMapURL': str(map_id['tile_fetcher'].url_format)
+        'eeMapURL': str(map_id['tile_fetcher'].url_format),
+        'color': 'ff0000'
         }
 
     # -------------------------------------------------------------------------
@@ -917,3 +927,86 @@ class GEEApi():
             series_end = str(_year) + '-12-31'
             res[str(_year)] = self.calBurnedArea(series_start, series_end)
         return res
+
+    # -------------------------------------------------------------------------
+    def get_changeForestGainLoss(self, type, studyLow, studyHigh, refLow, refHigh, tree_canopy_definition, tree_height_definition):
+        res = {}
+        name = 'forest_cover'
+        refLoss = self.forest_loss(get_image = True,
+                                 start_year = refLow,
+                                 end_year = refHigh,
+                                 tree_canopy_definition = tree_canopy_definition,
+                                 tree_height_definition = tree_canopy_definition,
+                                 )
+        studyLoss = self.forest_loss(get_image = True,
+                                 start_year = studyLow,
+                                 end_year = studyHigh,
+                                 tree_canopy_definition = tree_canopy_definition,
+                                 tree_height_definition = tree_canopy_definition,
+                                 )
+
+        refGain = self.forest_gain(get_image = True,
+                                 start_year = refLow,
+                                 end_year = refHigh,
+                                 tree_canopy_definition = tree_canopy_definition,
+                                 tree_height_definition = tree_height_definition
+                                 )
+
+        studyGain = self.forest_gain(get_image = True,
+                                 start_year = studyLow,
+                                 end_year = studyHigh,
+                                 tree_canopy_definition = tree_canopy_definition,
+                                 tree_height_definition = tree_height_definition
+                                 )
+
+        reducerRefLoss = refLoss.gt(0).multiply(self.scale).multiply(self.scale).reduceRegion(
+            reducer = ee.Reducer.sum(),
+            geometry = self.geometry,
+            crs = 'EPSG:32647', # WGS Zone N 47
+            scale = self.scale,
+            maxPixels = 10**15
+        )
+        reducerStudyLoss = studyLoss.gt(0).multiply(self.scale).multiply(self.scale).reduceRegion(
+            reducer = ee.Reducer.sum(),
+            geometry = self.geometry,
+            crs = 'EPSG:32647', # WGS Zone N 47
+            scale = self.scale,
+            maxPixels = 10**15
+        )
+        reducerRefGain = refGain.gt(0).multiply(self.scale).multiply(self.scale).reduceRegion(
+            reducer = ee.Reducer.sum(),
+            geometry = self.geometry,
+            crs = 'EPSG:32647', # WGS Zone N 47
+            scale = self.scale,
+            maxPixels = 10**15
+        )
+        reducerStudyGain = studyGain.gt(0).multiply(self.scale).multiply(self.scale).reduceRegion(
+            reducer = ee.Reducer.sum(),
+            geometry = self.geometry,
+            crs = 'EPSG:32647', # WGS Zone N 47
+            scale = self.scale,
+            maxPixels = 10**15
+        )
+
+        statsRefLoss = reducerRefLoss.getInfo()[name]
+        statsStudyLoss = reducerStudyLoss.getInfo()[name]
+        statsRefGain = reducerRefGain.getInfo()[name]
+        statsStudyGain = reducerStudyGain.getInfo()[name]
+
+        # in hectare
+        statsRefLoss = statsRefLoss * 0.0001
+        statsStydyLoss = statsStudyLoss * 0.0001
+        statsRefGain = statsRefGain * 0.0001
+        statsStudyGain = statsStudyGain * 0.0001
+
+        res['statsRefLoss'] = float('%.2f' % statsRefLoss)
+        res['statsStudyLoss'] = float('%.2f' % statsStydyLoss)
+        res['statsRefGain'] = float('%.2f' % statsRefGain)
+        res['statsStudyGain'] = float('%.2f' % statsStudyGain)
+
+        try:
+            return res
+        except Exception as e:
+            return {
+                'reportError': e.message
+            }

@@ -18,7 +18,7 @@ def api(request):
     action = get('action', '')
 
     if action:
-        public_methods = ['get-line-evi', 'get-pie-evi', 'get-evi-map', 'get-stats', 'get-forestgainloss', 'get-forest-extent-map', 'get-forest-gain-map', 'get-forest-loss-map', 'get-forest-alert','get-burned-area']
+        public_methods = ['get-line-evi', 'get-pie-evi', 'get-evi-map', 'get-stats', 'get-forestgainloss', 'get-forest-extent-map', 'get-forest-gain-map', 'get-forest-loss-map', 'get-forest-alert','get-burned-area', 'get-changeforestgainloss']
         if action in public_methods:
             shape = post('shape', '')
             geom = post('polygon_id', '')
@@ -60,4 +60,6 @@ def api(request):
                 data = core.getForestAlert(get_image, start_year, end_year)
             elif action == 'get-burned-area':
                 data = core.getBurnedArea(start_year, end_year)
+            elif action == 'get-changeforestgainloss':
+                data = core.get_changeForestGainLoss(type, studyLow, studyHigh, refLow, refHigh, tree_canopy_definition, tree_height_definition)
             return JsonResponse(data, safe=False)

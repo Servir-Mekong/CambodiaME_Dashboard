@@ -30,10 +30,9 @@
 	<link href="{% static 'vendor/components-font-awesome/css/all.css' %}" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/css/bootstrap-slider.min.css" rel="stylesheet"/>
 	<!-- lEAFLET -->
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
-	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-	crossorigin=""/>
-	<link rel="stylesheet" href="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.control.min.css" />
+	<link href="{% static 'vendor/leaflet/dist/leaflet.css' %}" rel="stylesheet">
+	<!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css"  data-require="leaflet@0.7.3" data-semver="0.7.3" /> -->
+	<link href="{% static 'vendor/leaflet-draw/dist/leaflet.draw.css' %}" rel="stylesheet">
 	<!--Plugin CSS file with desired skin-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css"/>
 	<!-- Google Font Style -->
@@ -86,7 +85,6 @@
 	<script src="{% static 'vendor/bootstrap/dist/js/bootstrap.min.js'  %}"></script>
 	<!-- Bootstrap Plugins -->
 	<script src="{% static 'vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCaqvIckPRhmI3hwyG_XR3Fi-y_6mWexM&v=3.exp&libraries=drawing,geometry"></script>
 	<!--  Load Angular  -->
 	<script src="{% static 'vendor/angular/angular.min.js' %}"></script>
 	<!-- Angular Dependent Library -->
@@ -102,7 +100,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.js"></script>
 	<script src="{% static 'vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js'  %}"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
-	<script> var cb_url = "{% static 'images/precip_colorbar.png' %}" </script>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/bootstrap-slider.min.js" type="text/javascript"></script>
 
 	<!-- Graphs DASHBOARD-->
@@ -110,34 +108,28 @@
 	<script src="{% static 'vendor/highcharts/modules/exporting.js' %}"></script>
 	<script src="{% static 'vendor/highcharts/modules/export-data.js' %}"></script>
 
-	<script src="https://cdn.zingchart.com/zingchart.min.js"></script>
 	<!-- lEAFLET -->
 
-
-	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
-	integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-	crossorigin=""></script>
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.2/dist/leaflet.draw.css" />
-	<script src="https://cdn.rawgit.com/mejackreed/Leaflet-IIIF/v2.0.1/leaflet-iiif.js"></script>
-	<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-	<script src="https://unpkg.com/togeojson@0.16.0"></script>
-	<script src="https://unpkg.com/leaflet-filelayer@1.2.0"></script>
-	<link rel="stylesheet" href="{% static 'vendor/leaflet.markercluster/dist/MarkerCluster.css' %}"/>
-	<link rel="stylesheet" href="{% static 'vendor/leaflet.markercluster/dist/MarkerCluster.Default.css' %}" />
-	<script src="{% static 'vendor/leaflet.markercluster/dist/leaflet.markercluster-src.js' %}"></script>
-	<script type="text/javascript" src="https://cdn.rawgit.com/nezasa/iso8601-js-period/master/iso8601.min.js"></script>
-	<script type="text/javascript" src="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.js"></script>
 	<!-- Angular Translation -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-translate/2.18.1/angular-translate.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-translate/2.18.1/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
+
+
+		<!-- Leaflet -->
+		<script src="{% static 'vendor/leaflet/dist/leaflet.js' %}"></script>
+
+		<script src="{% static 'vendor/leaflet-draw/dist/leaflet.draw.js' %}"></script>
+
 	{% if debug %}
 	<!-- Bootstrap Application -->
 	<script src="{% static 'app/init.js' %}"></script>
 	<!-- Load Settings -->
 	<script src="{% static 'app/config/settings.js' %}"></script>
 	<!-- Services -->
+	<script src="{% static 'data/cambodia.js' %}"></script>
+	<script src="{% static 'data/cam_adm2.js' %}"></script>
+	<script src="{% static 'data/protected_area.js' %}"></script>
 	<script src="{% static 'app/services/map.js' %}"></script>
 	<!-- Controllers -->
 	<script src="{% static 'app/controllers/settings.js' %}"></script>

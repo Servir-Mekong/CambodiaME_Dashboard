@@ -270,6 +270,49 @@
 			return promise;
 		};
 
+		service.getChangeForestGainLoss = function (options) {
+			var year = options.year;
+			var studyLow = options.studyLow;
+			var studyHigh = options.studyHigh;
+			var refLow =  options.refLow;
+			var refHigh =  options.refHigh;
+			var polygon_id = options.polygon_id;
+			var treeCanopyDefinition = options.treeCanopyDefinition;
+			var treeHeightDefinition = options.treeHeightDefinition;
+			var type = options.type; // can be treeCanopy, forestGain, forestLoss or forestExtend
+
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id: polygon_id,
+					year: year,
+					type: type,
+					studyLow: studyLow,
+					studyHigh: studyHigh,
+					refLow: refLow,
+					refHigh: refHigh,
+					treeCanopyDefinition: treeCanopyDefinition,
+					treeHeightDefinition: treeHeightDefinition
+				},
+				params: {
+					action: 'get-changeforestgainloss',
+					type: type
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
+			})
+			.catch(function (e) {
+				console.log('Error: ', e);
+				throw e.data;
+			});
+			return promise;
+		};
+
+
 		service.getForestAlert = function (options) {
 			var startYear = options.startYear;
 			var endYear = options.endYear;
