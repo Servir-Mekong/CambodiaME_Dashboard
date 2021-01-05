@@ -628,7 +628,7 @@
 
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-				function showHightChart(chartContainer, chartType, categories, chartSeries, labelArea){
+				function showHightChart(chartContainer, chartType, categories, chartSeries, labelArea, pointWidth){
 
 					Highcharts.chart(chartContainer, {
 						chart: {
@@ -677,7 +677,7 @@
 						plotOptions: {
 							column: {
 								pointPadding: 0.2,
-								pointWidth: 10,
+								pointWidth: pointWidth,
 								borderWidth: 0
 							},
 							series: {
@@ -1106,7 +1106,7 @@
 								data: data.forest,
 								color: '#138D75'
 							}];
-							showHightChart('forest_cover_chart', 'column', data.year, series, true);
+							showHightChart('forest_cover_chart', 'column', data.year, series, true, 10);
 
 
 							var seriesNoneForest = [{
@@ -1119,7 +1119,7 @@
 								data: data.noneForest,
 								color: '#919F94'
 							}];
-							showHightChart('forest_noneforest_chart', 'bar', data.year, seriesNoneForest, true);
+							showHightChart('forest_noneforest_chart', 'bar', data.year, seriesNoneForest, true, 10);
 
 					}, function (error) {
 						console.log(error);
@@ -1309,14 +1309,14 @@
 							data: number_data,
 							color: '#F5B7B1'
 						}];
-						showHightChart('forest_alert_number', 'column', _yearArr, series, false);
+						showHightChart('forest_alert_number', 'column', _yearArr, series, false, 30);
 
 						var seriesArea = [{
 							name: 'Area in Hectare',
 							data: area_data,
 							color: '#d95252'
 						}];
-						showHightChart('forest_alert_area', 'column', _yearArr, seriesArea, true);
+						showHightChart('forest_alert_area', 'column', _yearArr, seriesArea, true, 30);
 
 
 					}, function (error) {
@@ -1379,7 +1379,7 @@
 							data: area_data,
 							color: '#d95252'
 						}];
-						showHightChart('burned_area_chart', 'column', _yearArr, series, true);
+						showHightChart('burned_area_chart', 'column', _yearArr, series, true, 10);
 
 						$scope.showLoader = false;
 
