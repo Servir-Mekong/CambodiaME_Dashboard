@@ -79,6 +79,7 @@
       <div class="col-lg-12">
 
         <h4>MAP LAYERS</h4>
+        <p>Selected Area: <span class="selected_area_name" style="color: #023b10;">Cambodia</span></p>
         <ul class="toggles-list" id="toggle-list-evi"></ul>
 
         <h4>BIOPHYSICAL HEALTH</h4>
@@ -106,15 +107,16 @@
     </button>
     <div class="panel-body">
       <h4>FOREST MAP LAYERS</h4>
+      <p>Selected Area: <span class="selected_area_name" style="color: #023b10;">Cambodia</span></p>
       <ul class="toggles-list ul-columns" id="toggle-list-forest"></ul>
 
-      <h4>FOREST COVER AREA</h4>
+      <h4>AREA OF FOREST COVER</h4>
       <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
       <a id="forest_column_png" class="chart-btn-sm">PNG</a>
       <a id="forest_column_csv" href="#" class="chart-btn-sm">CSV</a>
       <div id="forest_cover_chart"  width="1000" height="1000" style="border: 1px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
       <br>
-      <h4>FOREST AND NONE FOREST AREA</h4>
+      <h4>AREA OF FOREST AND NONE FOREST</h4>
       <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
       <a id="forest_bar_png" class="chart-btn-sm">PNG</a>
       <a id="forest_bar_csv" href="#" class="chart-btn-sm">CSV</a>
@@ -129,7 +131,7 @@
       </div>
 
       <h4>THE CHANGE OF FOREST GAIN AND LOSS </h4>
-      <p>Compare between the baseline period ([[REFLOW]] -[[REFHIGH]]) and the measuring period ([[STUDYLOW]] - [[STUDYHIGH]]) </p>
+      <p>Compare the area of forest change between the baseline period ([[REFLOW]] -[[REFHIGH]]) and the measuring period ([[STUDYLOW]] - [[STUDYHIGH]]) </p>
       <p>Gain compared to the baseline <span id="gain_compared"> </span></p>
       <p>Loss compared to the baseline <span id="loss_compared"> </span></p>
       <br>
@@ -151,6 +153,7 @@
     </button>
     <div class="panel-body">
       <h4>FOREST ALERT MAP LAYERS</h4>
+      <p>Selected Area: <span class="selected_area_name" style="color: #023b10;">Cambodia</span></p>
       <ul class="toggles-list ul-columns" id="toggle-list-forest-alert"></ul>
 
       <h4>TOTAL NUMBER OF FOREST ALERT</h4>
@@ -183,6 +186,7 @@
       </svg>
     </button>
     <div class="panel-body">
+      <p>Selected Area: <span class="selected_area_name" style="color: #023b10;">Cambodia</span></p>
       <h4>MAP LAYERS OF BURNED AREA</h4>
       <ul class="toggles-list ul-columns" id="toggle-list-burned-area"></ul>
 
@@ -223,23 +227,20 @@
       <div class="circle-selector">
         <table>
           <tr>
-            <td width="30%">
+            <td width="70px">
               <input id="street" type="radio" checked="checked" name="basemap_selection" value="street" />
-              <label class="radiocard-cc street" for="street"></label>
-            </td>
-            <td width="70%">
+              <label class="radiocard-cc street" for="street"></label><br>
               <label for="street">STREETS</label>
             </td>
-          </tr>
-          <tr>
-            <td width="30%">
+
+            <td width="70px">
               <input id="satellite" type="radio" name="basemap_selection" value="satellite" />
               <label class="radiocard-cc satellite" for="satellite"></label><br>
+              <label for="street">SATELLITE</label>
             </td>
-            <td width="70%">
-              <label for="satellite">SATELLITE</label>
-            </td>
+
           </tr>
+
           <!-- <tr>
             <td width="30%">
               <input id="terrain" type="radio" checked="checked" name="basemap_selection" value="terrain" />
@@ -255,6 +256,7 @@
       <label><b>Administrative Boundaries</b></label>
       <ul class="toggles-list">
         <li class="toggle"><label class="switch_layer"><input name="cambodia_toggle" id="cambodia_toggle" type="checkbox" ><span class="slider_toggle round"></span></label><label>Country</label></li>
+        <li class="toggle"><label class="switch_layer"><input name="province_toggle" id="province_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Province</label></li>
         <li class="toggle"><label class="switch_layer"><input name="district_toggle" id="district_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>District/City</label></li>
         <li class="toggle"><label class="switch_layer"><input name="protected_area_toggle" id="protected_area_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Protected Area</label></li>
       </ul>

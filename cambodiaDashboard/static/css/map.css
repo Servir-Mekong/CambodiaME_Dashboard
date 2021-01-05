@@ -288,7 +288,7 @@ input:checked + .slider_toggle:before, input:checked + .slider_toggle_jrc:before
 
 .c-map-menu .menu-tiles {
   z-index: 9;
-  background-color: #f2f2f2;
+  background-color: #e8ece9;
   border-top: solid 1px #e5e5df;
   position: absolute;
   left: 0;
@@ -412,7 +412,7 @@ input:checked + .slider_toggle:before, input:checked + .slider_toggle_jrc:before
 }
 
 .c-map-menu-tile.active {
-    background-color: #2a4b2a;
+    background-color: #FFF;
     z-index: 1;
     color: #FFF;
 }
@@ -425,10 +425,11 @@ input:checked + .slider_toggle:before, input:checked + .slider_toggle_jrc:before
 
 .c-map-menu-tile .item-button span {
     font-size: 10px;
+    color: #2a4b2a;
 }
 
 .c-map-menu-tile.active span{
-    color: #FFF;
+    color: #2a4b2a;
 }
 
 .c-menu-panel {
@@ -493,6 +494,10 @@ input:checked + .slider_toggle:before, input:checked + .slider_toggle_jrc:before
     margin-top: 0;
 }
 
+.c-menu-panel .panel-body h4{
+    font-size: 14px;
+}
+
 .c-menu-panel .panel-body label{
     font-weight: 500;
     font-size: 12px;
@@ -555,8 +560,9 @@ ul {
 }
 
 .control-panel li {
-    background: rgba(0,0,0,.65);
-    border-radius: 25px;
+    background: rgb(212 219 212);;
+    border-radius: 0;
+    border: 1px solid #999;
     box-sizing: border-box;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -567,7 +573,7 @@ ul {
 }
 
 .control-panel li:hover {
-    background: rgba(0,0,0,.75);
+    background: rgb(212 219 212 0.5);
 }
 
 
@@ -664,7 +670,7 @@ ul {
     display:inline-block;
     width:50px;
     height:50px;
-    border-radius: 25px;
+    border-radius: 0;
     -webkit-transition: all 100ms ease-in;
        -moz-transition: all 100ms ease-in;
             transition: all 100ms ease-in;
@@ -1127,7 +1133,7 @@ svg image{
 }
 
 .map-controller .body-controls p{
-  font-size: 10px;
+  font-size: 12px;
   color: #666;
   font-weight: 400;
   letter-spacing: .5px;
@@ -1144,7 +1150,7 @@ svg image{
   float: left;
 }
 .map-controller .body-controls h3{
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: #000;
   margin: 5px 0;

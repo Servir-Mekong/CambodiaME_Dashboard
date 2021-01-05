@@ -358,6 +358,19 @@
 				pane:'maplayer_protect'
 			});
 
+			var mapLayer_cam_adm1 =L.geoJson(cam_adm1, {
+				style: function (feature) {
+					return {
+						color: "#222831",
+						fill: false,
+						opacity: 1,
+						clickable: true,
+						weight: 0.5,
+					};
+				},
+				pane:'maplayer_cam'
+			});
+
 			var mapLayer_cam_adm2 =L.geoJson(cam_adm2, {
 				style: function (feature) {
 					return {
@@ -414,6 +427,38 @@
 	  		},
 				pane:'admin'
 			});
+
+			var cam_adm1_layer =L.geoJson(cam_adm1, {
+				style: function (feature) {
+	  			return {
+	  				weight: 2,
+	  				opacity: 1,
+						fillOpacity: 0.1,
+	  				color: '#333',
+	  				dashArray: 3,
+	  			};
+	  		},
+				onEachFeature: function (feature, layer) {
+			    layer.on({
+	  		    'mouseover': function (e) {
+	  		      highlight(e.target);
+							$(".highlight_area_textbox").css("display", "block");
+							$(".highlight_area_textbox").text( e.target.feature.properties.country + '/' + e.target.feature.properties.name);
+	  		    },
+	  		    'mouseout': function (e) {
+	  		      dehighlight(e.target, cam_adm1_layer);
+							$(".highlight_area_textbox").css("display", "none");
+	  		    },
+	  				'click': function (e) {
+							var selected_name = e.target.feature.properties.country + '/' + e.target.feature.properties.name;
+							select(e.target, cam_adm1_layer, selected_name);
+	  				}
+	  			});
+	  		},
+				pane:'admin',
+				interactive: true
+			});
+
 
 			var cam_adm2_layer =L.geoJson(cam_adm2, {
 				style: function (feature) {
@@ -576,7 +621,7 @@
 					  dehighlight(previous, geojson);
 					}
 
-					$('#selected_area_name').text(selectedArea);
+					$('.selected_area_name').text(selectedArea);
 
 				}
 
@@ -589,7 +634,7 @@
 						chart: {
 							type: chartType,
 							style: {
-								fontFamily: 'Poppins'
+								fontFamily: 'Roboto Condensed'
 							},
 							width: 300,
 							height: 200,
@@ -621,12 +666,13 @@
 							enabled: false
 						},
 						tooltip: {
-							headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-							pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-							'<td style="padding:0"><b>{point.y:.1f} hectare</b></td></tr>',
-							footerFormat: '</table>',
-							shared: true,
-							useHTML: true
+							formatter: function () {
+								if(labelArea){
+									return this.series.name + " (" + this.point.y + " hectare)";
+								}else{
+									return this.series.name + " (" + this.point.y + " evidence)";
+								}
+							}
 						},
 						plotOptions: {
 							column: {
@@ -682,13 +728,14 @@
 								width: 300,
 								height: 300,
 								style: {
-									fontFamily: "sans-serif"
+									fontFamily: "Roboto Condensed"
 								}
 							},
 							tooltip: {
 								formatter: function () {
-									return this.point.name + " (" + (this.point.y).toFixed(2) + ")";
+									return this.point.name + " (" + this.point.percentage.toFixed(2) + "%)";
 								}
+								// pointFormat: '{series.name}: <br>{point.percentage:.1f} %<br>: {point.total}'
 							},
 
 							credits: {
@@ -703,7 +750,7 @@
 									dataLabels: {
 										enabled: false,
 										format: '',
-										style: { fontFamily: 'sans-serif'}
+										style: { fontFamily: 'Roboto Condensed'}
 									},
 									showInLegend: true,
 								}
@@ -721,7 +768,7 @@
 									fontSize: '9px'
 								},
 								labelFormatter: function() {
-									return this.name + " (" + (this.y).toFixed(2) + ")";
+									return this.name + " (" + this.percentage.toFixed(2) + "%)";
 								}
 							},
 
@@ -761,8 +808,9 @@
 					.then(function (result){
 
 						EVILayer = addMapLayer(EVILayer, result.eeMapURL, 'EVILayer');
+						map.addLayer(EVILayer);
 
-						createToggleList('toggle-list-evi', 'EVILayer', 'Enhanced vegetation index', '', '', '36461F');
+						createToggleList('toggle-list-evi', 'EVILayer', 'Enhanced vegetation index', '', 'checked', '36461F');
 
 						$("#EVILayer").click(function() {
 							if(this.checked) {
@@ -802,17 +850,24 @@
 						$('#chart_div').highcharts({
 							chart: {
 								style: {
-									fontFamily: 'Poppins'
+									fontFamily: 'Roboto Condensed'
 								},
 								type: 'spline',
-								width: 280,
-								height: 300,
+								width: 250,
+								height: 280,
 
 							},
 							title: false,
-							tooltip: {},
+							tooltip: {
+								formatter: function () {
+								return '<b>' + this.series.name + '</b><br/>' +
+								'Cumulative anomaly EVI: ' +  this.point.y.toFixed(2) ;
+							}
+						},
 							yAxis: {
-								title: false
+								title: {
+									text: 'Cumulative anomaly EVI'
+								}
 							},
 							xAxis: {
 								type: 'datetime',
@@ -869,7 +924,7 @@
 							chart: {
 								type: 'bar',
 								style: {
-									fontFamily: 'Poppins'
+									fontFamily: 'Roboto Condensed'
 								},
 								width: 300,
 								height: 200,
@@ -977,7 +1032,7 @@
 								    chart: {
 								        type: 'column',
 												style: {
-													fontFamily: 'Poppins'
+													fontFamily: 'Roboto Condensed'
 												},
 												width: 300,
 												height: 200,
@@ -1049,7 +1104,7 @@
 							var series = [{
 								name: 'Area in Hectare',
 								data: data.forest,
-								color: '#BED65C'
+								color: '#138D75'
 							}];
 							showHightChart('forest_cover_chart', 'column', data.year, series, true);
 
@@ -1062,7 +1117,7 @@
 							{
 								name: 'None Forest',
 								data: data.noneForest,
-								color: '#CCCCCC'
+								color: '#919F94'
 							}];
 							showHightChart('forest_noneforest_chart', 'bar', data.year, seriesNoneForest, true);
 
@@ -1420,6 +1475,9 @@
 					if(map.hasLayer(cam_adm2_layer)){
 						map.removeLayer(cam_adm2_layer);
 					}
+					if(map.hasLayer(cam_adm1_layer)){
+						map.removeLayer(cam_adm1_layer);
+					}
 					if(map.hasLayer(protected_area_layer)){
 						map.removeLayer(protected_area_layer);
 					}
@@ -1473,7 +1531,15 @@
 				/**
 				* Toggle layer visualizing
 				*/
-
+				$('input[type=checkbox][name=province_toggle]').click(function(){
+					if(this.checked) {
+						mapLayer_cam_adm1.addTo(map);
+					} else {
+						if(map.hasLayer(mapLayer_cam_adm1)){
+							map.removeLayer(mapLayer_cam_adm1);
+						}
+					}
+				});
 				$('input[type=checkbox][name=district_toggle]').click(function(){
 					if(this.checked) {
 						mapLayer_cam_adm2.addTo(map);
@@ -1508,7 +1574,11 @@
 					if(map.hasLayer(cam_adm2_layer)){
 						map.removeLayer(cam_adm2_layer);
 					}
+					if(map.hasLayer(cam_adm1_layer)){
+						map.removeLayer(cam_adm1_layer);
+					}
 				});
+
 
 				$('.district_button').click(function(){
 					cam_adm2_layer.addTo(map);
@@ -1516,7 +1586,22 @@
 					if(map.hasLayer(protected_area_layer)){
 						map.removeLayer(protected_area_layer);
 					}
+					if(map.hasLayer(cam_adm1_layer)){
+						map.removeLayer(cam_adm1_layer);
+					}
 				});
+
+				$('.province_button').click(function(){
+					cam_adm1_layer.addTo(map);
+					editableLayers.clearLayers();
+					if(map.hasLayer(protected_area_layer)){
+						map.removeLayer(protected_area_layer);
+					}
+					if(map.hasLayer(cam_adm2_layer)){
+						map.removeLayer(cam_adm2_layer);
+					}
+				});
+				$('.province_button').click();
 
 
 				$("#zoom-in").click(function() {
@@ -1567,12 +1652,6 @@
 					$("#layers-tab").removeClass("active");
 					$("#usecase-tab").removeClass("active");
 
-					$("#biophysical-icon").attr("src","/static/images/icons/menu/biophysical-monitoring-green.png");
-					$("#forest-monitoring-icon").attr("src","/static/images/icons/menu/forest-monitoring-green.png");
-					$("#forest-alert-icon").attr("src","/static/images/icons/menu/forest-alert-green.png");
-					$("#layers-icon").attr("src","/static/images/icons/menu/map-layers-green.png");
-					$("#fire-icon").attr("src","/static/images/icons/menu/fire-burned-green.png");
-
 				});
 
 				$("#biophysical-tab").click(function () {
@@ -1587,11 +1666,6 @@
 					$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 					$('#panel-biophysical').css('transform', ' translateX(6.75rem)');
 					$('#panel-biophysical').css('opacity', 1);
-					$("#biophysical-icon").attr("src","/static/images/icons/menu/biophysical-monitoring.png");
-					$("#forest-monitoring-icon").attr("src","/static/images/icons/menu/forest-monitoring-green.png");
-					$("#forest-alert-icon").attr("src","/static/images/icons/menu/forest-alert-green.png");
-					$("#layers-icon").attr("src","/static/images/icons/menu/map-layers-green.png");
-					$("#fire-icon").attr("src","/static/images/icons/menu/fire-burned-green.png");
 				});
 				$("#forest-monitoring-tab").click(function () {
 					$(".close-menu").click();
@@ -1605,11 +1679,6 @@
 					$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 					$('#panel-forest-monitoring').css('transform', ' translateX(6.75rem)');
 					$('#panel-forest-monitoring').css('opacity', 1);
-					$("#biophysical-icon").attr("src","/static/images/icons/menu/biophysical-monitoring-green.png");
-					$("#forest-monitoring-icon").attr("src","/static/images/icons/menu/forest-monitoring.png");
-					$("#forest-alert-icon").attr("src","/static/images/icons/menu/forest-alert-green.png");
-					$("#layers-icon").attr("src","/static/images/icons/menu/map-layers-green.png");
-					$("#fire-icon").attr("src","/static/images/icons/menu/fire-burned-green.png");
 				});
 				$("#forest-alert-tab").click(function () {
 					$(".close-menu").click();
@@ -1623,11 +1692,6 @@
 					$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 					$('#panel-forest-alert').css('transform', ' translateX(6.75rem)');
 					$('#panel-forest-alert').css('opacity', 1);
-					$("#biophysical-icon").attr("src","/static/images/icons/menu/biophysical-monitoring-green.png");
-					$("#forest-monitoring-icon").attr("src","/static/images/icons/menu/forest-monitoring-green.png");
-					$("#forest-alert-icon").attr("src","/static/images/icons/menu/forest-alert.png");
-					$("#layers-icon").attr("src","/static/images/icons/menu/map-layers-green.png");
-					$("#fire-icon").attr("src","/static/images/icons/menu/fire-burned-green.png");
 				});
 
 				$("#fire-tab").click(function () {
@@ -1640,11 +1704,6 @@
 					$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 					$('#panel-fire').css('transform', ' translateX(6.75rem)');
 					$('#panel-fire').css('opacity', 1);
-					$("#biophysical-icon").attr("src","/static/images/icons/menu/biophysical-monitoring-green.png");
-					$("#forest-monitoring-icon").attr("src","/static/images/icons/menu/forest-monitoring-green.png");
-					$("#forest-alert-icon").attr("src","/static/images/icons/menu/forest-alert-green.png");
-					$("#layers-icon").attr("src","/static/images/icons/menu/map-layers-green.png");
-					$("#fire-icon").attr("src","/static/images/icons/menu/fire-burned.png");
 				});
 
 				$("#basemap-tab").click(function () {
@@ -1675,12 +1734,6 @@
 					$('#panel-layers').css('transform', ' translateX(6.75rem)');
 					$('#panel-layers').css('opacity', 1);
 
-					$("#biophysical-icon").attr("src","/static/images/icons/menu/biophysical-monitoring-green.png");
-					$("#forest-monitoring-icon").attr("src","/static/images/icons/menu/forest-monitoring-green.png");
-					$("#forest-alert-icon").attr("src","/static/images/icons/menu/forest-alert-green.png");
-					$("#layers-icon").attr("src","/static/images/icons/menu/map-layers.png");
-					$("#fire-icon").attr("src","/static/images/icons/menu/fire-burned-green.png");
-
 				});
 
 				$("#update-map").click(function() {
@@ -1692,6 +1745,9 @@
 					//clear all map layers
 					if(map.hasLayer(protected_area_layer)){
 						map.removeLayer(protected_area_layer);
+					}
+					if(map.hasLayer(cam_adm1_layer)){
+						map.removeLayer(cam_adm1_layer);
 					}
 					if(map.hasLayer(cam_adm2_layer)){
 						map.removeLayer(cam_adm2_layer);

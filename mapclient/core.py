@@ -13,7 +13,7 @@ import requests
 # -----------------------------------------------------------------------------
 class GEEApi():
     """ Google Earth Engine API """
-    ee.Initialize()
+    ee.Initialize(settings.EE_CREDENTIALS)
     # image collection
     TREE_CANOPY = ee.ImageCollection(settings.TREE_CANOPY)
     TREE_HEIGHT = ee.ImageCollection(settings.TREE_HEIGHT)
@@ -31,7 +31,7 @@ class GEEApi():
     WEST, SOUTH, EAST, NORTH = 92.0, 9.5, 101.5, 29
     BOUNDING_BOX = (WEST,SOUTH,EAST,NORTH)
     COLOR = ['A8D9C6','B0DAB2','BFE1C9','AAD7A0','C3DE98','D5E59E','93D2BF','95CF9C','A4D7B8','9BD291','B1D78A','C9E08E','5CC199','77C78C','37B54A','126039','146232','0F8040','279445','449644','59A044','0E361E','236832','335024', '36461F']
-
+    COLORFORESTALERT = ['943126', 'B03A2E', 'CB4335', 'E74C3C', 'F1948A', 'F5B7B1']
 
     def __init__(self, area_path, area_name, shape, geom):
 
@@ -811,7 +811,7 @@ class GEEApi():
             }
 
     # -------------------------------------------------------------------------
-    def calForestAlert(self, get_image, imagecol, bandName):
+    def calForestAlert_0(self, get_image, imagecol, bandName):
 
         GLADIC = imagecol.filterBounds(self.geometry).sort('system:time_start', False)#.filterDate(series_start, series_end)
 
@@ -869,18 +869,77 @@ class GEEApi():
         }
 
     # -------------------------------------------------------------------------
+    def calForestAlert(self, get_image, imagecol, bandName, colorIndex):
+
+        GLADIC = imagecol.filterBounds(self.geometry).sort('system:time_start', False)#.filterDate(series_start, series_end)
+
+        image = GLADIC.first().select(bandName)
+
+        confAlert = image.updateMask(image.gt(0)).clip(self.geometry)
+        image1 = ee.Image(1).clip(self.geometry)
+        confrimAlert = image1.updateMask(confAlert)
+
+        vectorConf = confrimAlert.addBands(confrimAlert).reduceToVectors(
+          crs= confrimAlert.select('constant').projection(),
+          scale= 30,
+          geometryType= 'polygon',
+          eightConnected= False,
+          labelProperty= 'zone',
+          reducer= ee.Reducer.sum(),
+          maxPixels= 1E15,
+          bestEffort = True
+        )
+        #filter connected pixels more than 4 pixel
+        vectorConf_gt4pix = vectorConf.filterMetadata("sum","greater_than", 4)
+        total_number_conf = vectorConf_gt4pix.size().getInfo()
+
+        def calArea(feature):
+            #Compute area from the geometry.
+            area = feature.geometry().area(10);
+            return feature.set('area', area).set('conf', 1)
+
+        #Map the difference function over the collection.
+        featureCalAreas = vectorConf_gt4pix.map(calArea)
+
+        #area greater than x (m2)
+        area2 = ee.Number(featureCalAreas.aggregate_sum("area")).getInfo()
+        #area greater than x (ha)
+        areaHA = area2/10000
+
+        confAlertMap = featureCalAreas.filter(ee.Filter.notNull(['conf'])).reduceToImage(
+            properties= ['conf'],
+            reducer= ee.Reducer.first(),
+        );
+        colorMap = GEEApi.COLORFORESTALERT[colorIndex]
+        map_id = confAlertMap.getMapId({
+            'min': '0',
+            'max': '1',
+            'palette': colorMap
+        })
+
+        return {
+        'total_area': float('%.2f' % areaHA),
+        'total_number': total_number_conf,
+        'eeMapId': str(map_id['mapid']),
+        'eeMapURL': str(map_id['tile_fetcher'].url_format),
+        'color': colorMap
+        }
+
+    # -------------------------------------------------------------------------
     def getForestAlert(self, get_image, start_year, end_year):
         GLADIC = {
             '2019':[GEEApi.GLAD_FOREST_ALERT_2019, 'conf19'],
             '2020':[GEEApi.GLAD_FOREST_ALERT, 'conf20']
         }
         res = {}
+        colorIndex = 0
         for _year in range(2019, 2021):
             series_start = str(2020) + '-01-01'
             series_end = str(2020) + '-12-31'
             IC = GLADIC[str(_year)]
+            colorIndex += 1
 
-            res[str(_year)] = self.calForestAlert(get_image, IC[0], IC[1])
+            res[str(_year)] = self.calForestAlert(get_image, IC[0], IC[1], colorIndex)
         return res
 
     # -------------------------------------------------------------------------

@@ -67,6 +67,7 @@
 					</table>
 
 					<div class="image-options">
+
 		        <button class="protected_area_button">
 		          <div class="button-wrapper">
 		            <svg class="c-icon icon-square-point" viewBox="0 0 45 45">
@@ -77,13 +78,24 @@
 		            </div>
 		          </div>
 		        </button>
+            <button class="province_button">
+		          <div class="button-wrapper">
+		            <svg class="c-icon icon-square-point" viewBox="0 0 45 45">
+		              <image xlink:href="/static/images/icons/map-point.svg" />
+		            </svg>
+		            <div class="label-text">
+		              ADM. PROVINCE
+		            </div>
+		          </div>
+		        </button>
+
 		        <button class="district_button">
 		          <div class="button-wrapper">
 		            <svg class="c-icon icon-square-point" viewBox="0 0 45 45">
 		              <image xlink:href="/static/images/icons/map-point.svg" />
 		            </svg>
 		            <div class="label-text">
-		              ADMINISTRATIVE DISTRICT <br>
+		              ADM. DISTRICT <br>
 		            </div>
 		          </div>
 		        </button>
@@ -93,7 +105,7 @@
 		              <image xlink:href="/static/images/icons/draw-tool.svg" />
 		            </svg>
 		            <div class="label-text">
-		              DRAW / UPLOAD POLYGON
+		              DRAW POLYGON
 		            </div>
 		          </div>
 		        </button>
@@ -110,7 +122,7 @@
 		          </div>
 		        </button> -->
 		      </div>
-          <p>Selected Area: <span id="selected_area_name" style="color: #023b10;">Cambodia</span></p>
+          <p>Selected Area: <span class="selected_area_name" style="color: #023b10;">Cambodia</span></p>
 					<input id="files" type="file" multiple="" name="files1[]" hidden><output id="file_list"></output>
           <div class="text-center">
               <button type="button" name="update-map" id="update-map" class="update-btn">UPDATE MAP</button>

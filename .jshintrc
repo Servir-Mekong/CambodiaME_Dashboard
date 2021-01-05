@@ -27,7 +27,8 @@
 		"toGeoJSON": true,
 		"cambodia_polygon": true,
 		"cam_adm2": true,
-		"protected_area": true
+		"protected_area": true,
+		"cam_adm1": true
 	},
 	"predef": [ // Extra globals.
 		"inject",
