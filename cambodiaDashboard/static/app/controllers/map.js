@@ -1483,10 +1483,35 @@
 					}
 
 				});
-
+				function hideModel() {
+					$(".modal").removeClass('show');
+					$(".modal").addClass('hide');
+				}
 				$("#disclaimer-button").click(function() {
+					hideModel();
 					$("#disclaimer-modal").removeClass('hide');
 					$("#disclaimer-modal").addClass('show');
+				});
+
+				$("#evi-info").click(function() {
+					hideModel();
+					$("#evi-info-modal").removeClass('hide');
+					$("#evi-info-modal").addClass('show');
+				});
+				$("#forest-info").click(function() {
+					hideModel();
+					$("#forest-info-modal").removeClass('hide');
+					$("#forest-info-modal").addClass('show');
+				});
+				$("#forest-alert-info").click(function() {
+					hideModel();
+					$("#forest-alert-info-modal").removeClass('hide');
+					$("#forest-alert-info-modal").addClass('show');
+				});
+				$("#burned-area-info").click(function() {
+					hideModel();
+					$("#burned-area-info-modal").removeClass('hide');
+					$("#burned-area-info-modal").addClass('show');
 				});
 
 				$("#draw-polygon").click(function() {

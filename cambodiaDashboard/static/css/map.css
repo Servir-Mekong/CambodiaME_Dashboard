@@ -1365,3 +1365,10 @@ svg image{
   z-index: 999;
   display: none;
 }
+
+.layer-info-btn {
+  width: 80px;
+  padding: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
