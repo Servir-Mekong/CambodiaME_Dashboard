@@ -621,13 +621,13 @@ class GEEApi():
             ic = "projects/servir-mekong/Cambodia-Dashboard-tool/ForestArea/district_"+ str(year) +"Metadata"
             forestArea_fc = ee.FeatureCollection(ic)
             forestArea = forestArea_fc.filter(ee.Filter.eq('DIST_CODE', area_id))
-
-            areaHA = burnedArea.aggregate_array("areaHect").get(0).getInfo()
+            areaHA = forestArea.aggregate_array("areaHect").get(0).getInfo()
 
         elif area_type == "protected_area":
             ic = "projects/servir-mekong/Cambodia-Dashboard-tool/ForestArea/protected_"+ str(year) +"Metadata"
             forestArea_fc = ee.FeatureCollection(ic)
             forestArea = forestArea_fc.filter(ee.Filter.eq('map_id', area_id))
+            areaHA = forestArea.aggregate_array("areaHect").get(0).getInfo()
 
 
         elif area_type == "draw":
@@ -887,6 +887,8 @@ class GEEApi():
             elif area_type == "district":
                 burnedArea = burnedArea_fc.filter(ee.Filter.eq('DIST_CODE', area_id))
             elif area_type == "protected_area":
+                ic = "projects/servir-mekong/Cambodia-Dashboard-tool/BurnArea/protected_"+ str(year) +"Metadata"
+                burnedArea_fc = ee.FeatureCollection(ic)
                 burnedArea = burnedArea_fc.filter(ee.Filter.eq('map_id', area_id))
 
             areaHA = burnedArea.aggregate_array("areaHect").get(0).getInfo()
