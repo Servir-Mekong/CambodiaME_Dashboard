@@ -182,7 +182,7 @@ ul, ol {
 }
 
 input:checked + .slider_toggle {
-  background-color: #f9bf47;
+  background-color: #36461F;
 }
 
 input:checked + .slider_toggle_jrc {
@@ -658,7 +658,7 @@ ul {
     border: 2px solid #67956c;
 }
 .circle-selector-2 input:checked +.radiocard-cc, .circle-selector input:checked +.radiocard-cc{
-    border: 2px solid #67956c;
+    border: 3px solid #67956c;
     -webkit-filter: none;
        -moz-filter: none;
             filter: none;

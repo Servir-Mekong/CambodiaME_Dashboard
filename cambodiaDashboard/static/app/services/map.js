@@ -22,7 +22,8 @@
 		};
 
 		service.getPieEvi= function (options) {
-
+			var area_type = options.area_type;
+			var area_id = options.area_id;
 			var req = {
 				method: 'POST',
 				url: '/api/mapclient/',
@@ -31,7 +32,9 @@
 					refLow:options.refLow,
 					refHigh: options.refHigh,
 					studyLow: options.studyLow,
-					studyHigh:options.studyHigh
+					studyHigh:options.studyHigh,
+					area_type: options.area_type,
+					area_id: options.area_id,
 				},
 				params: {
 					action: 'get-pie-evi'
@@ -54,7 +57,9 @@
 					refLow:options.refLow,
 					refHigh: options.refHigh,
 					studyLow: options.studyLow,
-					studyHigh:options.studyHigh
+					studyHigh:options.studyHigh,
+					area_type: options.area_type,
+					area_id: options.area_id,
 				},
 				params: {
 					action: 'get-line-evi'
@@ -77,7 +82,9 @@
 					refLow:options.refLow,
 					refHigh: options.refHigh,
 					studyLow: options.studyLow,
-					studyHigh:options.studyHigh
+					studyHigh:options.studyHigh,
+					area_type: options.area_type,
+					area_id: options.area_id,
 				},
 				params: {
 					action: 'get-evi-map'
@@ -87,45 +94,6 @@
 			var promise = $http(req)
 			.then(function (response) {
 				return response.data;
-			});
-			return promise;
-		};
-
-
-		service.getStats = function (options) {
-			var year = options.year;
-			var startYear = options.startYear;
-			var endYear = options.endYear;
-			var polygon_id = options.polygon_id;
-			var treeCanopyDefinition = options.treeCanopyDefinition;
-			var treeHeightDefinition = options.treeHeightDefinition;
-			var type = options.type; // can be treeCanopy, forestGain, forestLoss or forestExtend
-
-			var req = {
-				method: 'POST',
-				url: '/api/mapclient/',
-				data: {
-					polygon_id: polygon_id,
-					year: year,
-					type: type,
-					startYear: startYear,
-					endYear: endYear,
-					treeCanopyDefinition: treeCanopyDefinition,
-					treeHeightDefinition: treeHeightDefinition
-				},
-				params: {
-					action: 'get-stats',
-					type: type
-				}
-			};
-
-			var promise = $http(req)
-			.then(function (response) {
-				return response.data;
-			})
-			.catch(function (e) {
-				console.log('Error: ', e);
-				throw e.data;
 			});
 			return promise;
 		};
@@ -147,7 +115,9 @@
 					startYear: startYear,
 					endYear: endYear,
 					treeCanopyDefinition: treeCanopyDefinition,
-					treeHeightDefinition: treeHeightDefinition
+					treeHeightDefinition: treeHeightDefinition,
+					area_type: options.area_type,
+					area_id: options.area_id,
 				},
 				params: {
 					action: 'get-forest-extent-map',
@@ -181,7 +151,9 @@
 					startYear: startYear,
 					endYear: endYear,
 					treeCanopyDefinition: treeCanopyDefinition,
-					treeHeightDefinition: treeHeightDefinition
+					treeHeightDefinition: treeHeightDefinition,
+					area_type: options.area_type,
+					area_id: options.area_id,
 				},
 				params: {
 					action: 'get-forest-gain-map'
@@ -214,7 +186,9 @@
 					startYear: startYear,
 					endYear: endYear,
 					treeCanopyDefinition: treeCanopyDefinition,
-					treeHeightDefinition: treeHeightDefinition
+					treeHeightDefinition: treeHeightDefinition,
+					area_type: options.area_type,
+					area_id: options.area_id,
 				},
 				params: {
 					action: 'get-forest-loss-map'
@@ -251,7 +225,9 @@
 					startYear: startYear,
 					endYear: endYear,
 					treeCanopyDefinition: treeCanopyDefinition,
-					treeHeightDefinition: treeHeightDefinition
+					treeHeightDefinition: treeHeightDefinition,
+					area_type: options.area_type,
+					area_id: options.area_id,
 				},
 				params: {
 					action: 'get-forestgainloss',
@@ -293,7 +269,9 @@
 					refLow: refLow,
 					refHigh: refHigh,
 					treeCanopyDefinition: treeCanopyDefinition,
-					treeHeightDefinition: treeHeightDefinition
+					treeHeightDefinition: treeHeightDefinition,
+					area_type: options.area_type,
+					area_id: options.area_id,
 				},
 				params: {
 					action: 'get-changeforestgainloss',
@@ -318,6 +296,8 @@
 			var endYear = options.endYear;
 			var polygon_id = options.polygon_id;
 			var get_image = options.get_image;
+			var area_type = options.area_type;
+			var area_id = options.area_id;
 
 			var req = {
 				method: 'POST',
@@ -326,7 +306,9 @@
 					polygon_id: polygon_id,
 					get_image: get_image,
 					startYear: startYear,
-					endYear: endYear
+					endYear: endYear,
+					area_type: area_type,
+					area_id: area_id
 				},
 				params: {
 					action: 'get-forest-alert'
@@ -348,6 +330,8 @@
 			var startYear = options.startYear;
 			var endYear = options.endYear;
 			var polygon_id = options.polygon_id;
+			var area_type = options.area_type;
+			var area_id = options.area_id;
 
 			var req = {
 				method: 'POST',
@@ -355,7 +339,9 @@
 				data: {
 					polygon_id: polygon_id,
 					startYear: startYear,
-					endYear: endYear
+					endYear: endYear,
+					area_type: area_type,
+					area_id: area_id
 				},
 				params: {
 					action: 'get-burned-area'

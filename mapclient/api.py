@@ -25,6 +25,8 @@ def api(request):
             area_path = post('areaSelectFrom', '')
             area_name = post('areaName', '')
             polygon_id=post('polygon_id', '')
+            area_type=post('area_type', '')
+            area_id=post('area_id', '')
             mycounter=post('mycounter', '')
             folder=post('folder', '')
             refLow=post('refLow', '')
@@ -39,7 +41,7 @@ def api(request):
             tree_height_definition = post('treeHeightDefinition', 5) # in meters
             get_image = post('get_image', False)
 
-            core = GEEApi(area_path, area_name, shape, geom)
+            core = GEEApi(area_path, area_name, geom, area_type, area_id)
             if action == 'get-line-evi':
                 data = core.GetPolygonTimeSeries(polygon_id, refLow, refHigh, studyLow, studyHigh)
             elif action == 'get-pie-evi':
@@ -51,15 +53,15 @@ def api(request):
             elif action == 'get-forestgainloss':
                 data = core.get_forestGainLoss(type, year, start_year, end_year, tree_canopy_definition, tree_height_definition)
             elif action == 'get-forest-extent-map':
-                data = core.get_mapid(type, start_year, end_year, tree_canopy_definition, tree_height_definition)
+                data = core.get_mapid(type, start_year, end_year, tree_canopy_definition, tree_height_definition, area_type, area_id)
             elif action == 'get-forest-gain-map':
                 data = core.forest_gain(False, start_year, end_year, tree_canopy_definition, tree_height_definition)
             elif action == 'get-forest-loss-map':
                 data = core.forest_loss(False, start_year, end_year, tree_canopy_definition, tree_height_definition)
             elif action == 'get-forest-alert':
-                data = core.getForestAlert(get_image, start_year, end_year)
+                data = core.getForestAlert(get_image, start_year, end_year, area_type, area_id)
             elif action == 'get-burned-area':
-                data = core.getBurnedArea(start_year, end_year)
+                data = core.getBurnedArea(start_year, end_year, area_type, area_id)
             elif action == 'get-changeforestgainloss':
                 data = core.get_changeForestGainLoss(type, studyLow, studyHigh, refLow, refHigh, tree_canopy_definition, tree_height_definition)
             return JsonResponse(data, safe=False)
