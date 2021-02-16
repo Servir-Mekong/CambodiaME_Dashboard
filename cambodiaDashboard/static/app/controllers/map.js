@@ -29,6 +29,7 @@
 			Forest2015, Forest2016, Forest2017, Forest2018, Forest2019, Forest2020, Forest2021, ForestAlert2000, ForestAlert2001, ForestAlert2002, ForestAlert2003,ForestAlert2004, ForestAlert2005, ForestAlert2006, ForestAlert2007, ForestAlert2008, ForestAlert2009, ForestAlert2010, ForestAlert2011, ForestAlert2012, ForestAlert2013, ForestAlert2014,
 			ForestAlert2015, ForestAlert2016, ForestAlert2017, ForestAlert2018, ForestAlert2019,ForestAlert2020, ForestAlert2021, BurnedArea2000, BurnedArea2001, BurnedArea2002, BurnedArea2003,BurnedArea2004, BurnedArea2005, BurnedArea2006, BurnedArea2007, BurnedArea2008, BurnedArea2009, BurnedArea2010, BurnedArea2011, BurnedArea2012, BurnedArea2013, BurnedArea2014,
 			BurnedArea2015, BurnedArea2016, BurnedArea2017, BurnedArea2018, BurnedArea2019,BurnedArea2020, BurnedArea2021, ForestGainLayer, ForestLossLayer, ForestAlertLayer];
+		var selected_admin = 'Cambodia';
 
 			var MapLayerArr = {
 				'2000': {
@@ -515,6 +516,7 @@
 				polygon_id = getCoordinates(coords[0]);
 				polygonVertex = coords.length;
 				area_type= "draw";
+				selected_admin = "Your Drawing Area";
 				//cal();
 			});
 			map.on('draw:edited', function(e) {
@@ -637,13 +639,14 @@
 					}
 
 					$('.selected_area_name').text(selectedArea);
+					selected_admin = selectedArea
 
 				}
 
 
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-				function showHightChart(chartContainer, chartType, categories, chartSeries, labelArea, pointWidth){
+				function showHightChart(chartContainer, chartType, categories, chartSeries, labelArea, pointWidth, subtitle){
 
 					Highcharts.chart(chartContainer, {
 						chart: {
@@ -674,8 +677,16 @@
 								}
 							}
 						},
-						exporting: {
-							enabled: false
+						exporting:{
+								chartOptions:{
+										title: {
+												text:''
+										},
+										subtitle: {
+											text: subtitle
+										}
+								},
+								enabled: false
 						},
 						credits: {
 							enabled: false
@@ -742,7 +753,7 @@
 							chart: {
 								type: 'pie',
 								// Explicitly tell the width and height of a chart
-								width: 300,
+								width: 315,
 								height: 300,
 								style: {
 									fontFamily: "Roboto Condensed"
@@ -789,9 +800,18 @@
 								}
 							},
 
-							exporting: {
-								enabled: false
-							},
+							exporting:{
+	                chartOptions:{
+	                    title: {
+	                        text:''
+	                    },
+											subtitle: {
+												text: 'PROPORTION OF BIOPHYSICAL HEALTH IN '+ selected_admin.toUpperCase()
+											}
+	                },
+									enabled: false
+	            },
+
 							series: [{
 								name: 'Percent',
 								data: graphData2,
@@ -876,7 +896,7 @@
 									fontFamily: 'Roboto Condensed'
 								},
 								type: 'spline',
-								width: 250,
+								width: 315,
 								height: 280,
 
 							},
@@ -912,9 +932,17 @@
 									color: "#2b5154"
 								}
 							},
-							exporting: {
-								enabled: false
-							},
+							exporting:{
+	                chartOptions:{
+	                    title: {
+	                        text:''
+	                    },
+											subtitle: {
+												text: 'CUMULATIVE ANOMALY EVI IN '+ selected_admin.toUpperCase()
+											}
+	                },
+									enabled: false
+	            },
 							series: serieses
 
 						});
@@ -994,9 +1022,17 @@
 									data: [data.forestgain],
 									color: '#0B5345'
 								}],
-								exporting: {
-									enabled: false
-								},
+								exporting:{
+		                chartOptions:{
+		                    title: {
+		                        text:''
+		                    },
+												subtitle: {
+													text: 'THE CHANGE OF FOREST GAIN AND LOSS IN '+ selected_admin.toUpperCase()
+												}
+		                },
+										enabled: false
+		            },
 								credits: {
 									enabled: false
 								},
@@ -1177,7 +1213,8 @@
 							data: forestArea,
 							color: '#138D75'
 						}];
-						showHightChart('forest_cover_chart', 'column', yearArr, series, true, 10);
+
+						showHightChart('forest_cover_chart', 'column', yearArr, series, true, 10, 'AREA OF FOREST COVER IN '+ selected_admin.toUpperCase());
 
 
 						var seriesNoneForest = [{
@@ -1190,7 +1227,7 @@
 							data: noneforestArea,
 							color: '#919F94'
 						}];
-						showHightChart('forest_noneforest_chart', 'bar', yearArr, seriesNoneForest, true, 10);
+						showHightChart('forest_noneforest_chart', 'bar', yearArr, seriesNoneForest, true, 10, 'AREA OF FOREST AND NONE FOREST IN '+ selected_admin.toUpperCase());
 
 					}, function (error) {
 						console.log(error);
@@ -1355,7 +1392,7 @@
 							data: area_data,
 							color: '#d95252'
 						}];
-						showHightChart('forest_alert_area', 'column', _yearArr, seriesArea, true, 30);
+						showHightChart('forest_alert_area', 'column', _yearArr, seriesArea, true, 30, 'TOTAL AREA OF FOREST ALERT IN'+ selected_admin.toUpperCase());
 
 
 					}, function (error) {
@@ -1423,7 +1460,7 @@
 							data: area_data,
 							color: '#d95252'
 						}];
-						showHightChart('burned_area_chart', 'column', _yearArr, series, true, 10);
+						showHightChart('burned_area_chart', 'column', _yearArr, series, true, 10, 'BURNED AREA IN'+ selected_admin.toUpperCase());
 
 						$scope.showLoader = false;
 
@@ -1932,6 +1969,50 @@
 					var chart = $('#forest_change_gainloss_chart').highcharts();
 					chart.downloadCSV();
 				});
+
+				$("#export_evi_report").click(function() {
+					$scope.showLoader = true;
+					var pdf = new jsPDF("p", "pt", "a4");
+					var width = pdf.internal.pageSize.getWidth();
+					var height = pdf.internal.pageSize.getHeight();
+
+					var currentMap = document.getElementById('chart');
+					pdf.setFont("helvetica");
+					pdf.setFontType("normal");
+					pdf.setFontSize(9);
+					domtoimage.toPng(currentMap)
+							.then(function (dataUrl) {
+									var img = new Image();
+									img.src = dataUrl;
+									var title = pdf.splitTextToSize('PROPORTION OF BIOPHYSICAL HEALTH IN '+ selected_admin.toUpperCase() + " FROM "+ studyLow+ " TO " + studyHigh , 500);
+									pdf.text(30, 20, title);
+									pdf.addImage(img, 'JPEG', 50, 40, 300, 300);
+
+									var outlookMap = document.getElementById('chart_div');
+									domtoimage.toPng(outlookMap)
+											.then(function (dataUrl) {
+													var imgOutlok = new Image();
+													imgOutlok.src = dataUrl;
+													//pdf.addPage();
+													var lines = pdf.splitTextToSize('CUMULATIVE ANOMALY EVI IN '+ selected_admin.toUpperCase()+ " FROM "+ studyLow+ " TO " + studyHigh , 500);
+													pdf.text(30, 380, lines);
+													pdf.addImage(imgOutlok, 'JPEG', 50, 400, 300, 300);
+													var newDate = new Date();
+													var pdffilename = "MDCW-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
+													pdf.save(pdffilename);
+													$scope.showLoader = false;
+											})
+											.catch(function (error) {
+													console.error('oops, something went wrong!', error);
+										});
+
+							})
+							.catch(function (error) {
+									console.error('oops, something went wrong!', error);
+						});
+
+				});
+
 
 				/**
 				* Upload Area Button

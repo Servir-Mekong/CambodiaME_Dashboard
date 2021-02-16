@@ -18,23 +18,17 @@ class GEEApi():
     TREE_CANOPY = ee.ImageCollection(settings.TREE_CANOPY)
     TREE_HEIGHT = ee.ImageCollection(settings.TREE_HEIGHT)
     PRIMARY_FOREST = ee.ImageCollection(settings.PRIMARY_FOREST)
-
     GLAD_FOREST_ALERT_IMG_2019 = settings.GLAD_FOREST_ALERT_2019
     GLAD_FOREST_ALERT_IMG_2020 = settings.GLAD_FOREST_ALERT_2020
-
     GLAD_FOREST_ALERT_FC_2018 = settings.GLAD_FOREST_ALERT_FC_2018
     GLAD_FOREST_ALERT_FC_2019 = settings.GLAD_FOREST_ALERT_FC_2019
     GLAD_FOREST_ALERT_FC_2020 = settings.GLAD_FOREST_ALERT_FC_2020
-
-
+    CAMBODIA_COUNTRY_BOUNDARY = settings.CAMBODIA_COUNTRY_BOUNDARY
+    PROTECTED_AREA = settings.PROTECTED_AREA
+    CAMBODIA_PROVINCE_BOUNDARY = settings.CAMBODIA_PROVINCE_BOUNDARY
+    CAMBODIA_DISTRICT_BOUNDARY = settings.CAMBODIA_DISTRICT_BOUNDARY
     BURNED_AREA = ee.ImageCollection(settings.BURNED_AREA)
 
-    # geometries
-    MEKONG_BOUNDARY = ee.FeatureCollection(settings.MEKONG_BOUNDARY)
-    MEKONG_FEATURE_COLLECTION = ee.FeatureCollection(settings.MEKONG_FEATURE_COLLECTION)
-
-    WEST, SOUTH, EAST, NORTH = 92.0, 9.5, 101.5, 29
-    BOUNDING_BOX = (WEST,SOUTH,EAST,NORTH)
     COLOR = ['A8D9C6','B0DAB2','BFE1C9','AAD7A0','C3DE98','D5E59E','93D2BF','95CF9C','A4D7B8','9BD291','B1D78A','C9E08E','5CC199','77C78C','37B54A','126039','146232','0F8040','279445','449644','59A044','0E361E','236832','335024', '36461F']
     COLORFORESTALERT = ['943126', 'B03A2E', 'CB4335', 'E74C3C', 'F1948A', 'F5B7B1']
 
@@ -49,16 +43,16 @@ class GEEApi():
             self.geometry =  ee.FeatureCollection(ee.Geometry.Polygon(coords)).geometry()
 
         elif area_type == "country":
-            self.geometry = ee.FeatureCollection("projects/servir-mekong/Cambodia-Dashboard-tool/boundaries/cambodia_country").filter(ee.Filter.eq("NAME_ENGLI", area_id)).geometry()
+            self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_COUNTRY_BOUNDARY).filter(ee.Filter.eq("NAME_ENGLI", area_id)).geometry()
 
         elif area_type == "protected_area":
-            self.geometry = ee.FeatureCollection("projects/servir-mekong/Cambodia-Dashboard-tool/boundaries/protected_area").filter(ee.Filter.eq("map_id", area_id)).geometry()
+            self.geometry = ee.FeatureCollection(GEEApi.PROTECTED_AREA).filter(ee.Filter.eq("map_id", area_id)).geometry()
 
         elif area_type == "province":
-            self.geometry = ee.FeatureCollection("projects/servir-mekong/Cambodia-Dashboard-tool/boundaries/cambodia_province").filter(ee.Filter.eq("gid", area_id)).geometry()
+            self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_PROVINCE_BOUNDARY).filter(ee.Filter.eq("gid", area_id)).geometry()
 
         elif area_type == "district":
-            self.geometry = ee.FeatureCollection("projects/servir-mekong/Cambodia-Dashboard-tool/boundaries/district").filter(ee.Filter.eq("DIST_CODE", area_id)).geometry()
+            self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_DISTRICT_BOUNDARY).filter(ee.Filter.eq("DIST_CODE", area_id)).geometry()
 
         #polygon area in square kilometers.
         self.geometryArea = self.geometry.area().divide(1000 * 1000)
