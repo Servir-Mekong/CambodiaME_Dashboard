@@ -27,7 +27,7 @@ admin.autodiscover()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name="map.html")),
+    path('', TemplateView.as_view(template_name="home.html")),
     path('map/', TemplateView.as_view(template_name="map.html")),
     url('api/mapclient/$', mapclient_api.api),
 

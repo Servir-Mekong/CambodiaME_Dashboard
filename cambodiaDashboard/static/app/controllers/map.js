@@ -228,7 +228,7 @@
 
 			//init leaflet map
 			var mapCenter_lat = 12.75118782414063;
-			var mapCenter_long = 103.22877523601562;
+			var mapCenter_long = 104.22877523601562;
 			// init map
 			map = L.map('map',{
 				center: [mapCenter_lat,mapCenter_long],
@@ -576,23 +576,20 @@
 
 					//show spiner
 					$scope.showLoader = true;
-
 					getPieEvi();
 					getLineEvi();
 					getEviMap();
-
 					getForestMapID();
-
 					getForestGainMapID();
 					getForestLossMapID();
 					getForestGainLossStats();
 					getChangeForestGainLossStats();
-
 					getForestAlert();
 					getBurnedArea();
 
-
 				}
+
+
 				var selected = null;
 				var previous = null;
 				function highlight (layer) {
@@ -639,7 +636,7 @@
 					}
 
 					$('.selected_area_name').text(selectedArea);
-					selected_admin = selectedArea
+					selected_admin = selectedArea;
 
 				}
 
@@ -847,10 +844,10 @@
 					.then(function (result){
 
 						EVILayer = addMapLayer(EVILayer, result.eeMapURL, 'EVILayer');
-						map.addLayer(EVILayer);
-						createToggleList('toggle-list-evi', 'EVILayer', 'Enhanced vegetation index', '', 'checked', '36461F');
+						//map.addLayer(EVILayer);
+						createToggleList('toggle-list-evi', 'EVILayer', 'Enhanced vegetation index', '', '', '36461F');
 
-						$("#EVILayer").click(function() {
+						$("#EVILayer").change(function() {
 							if(this.checked) {
 								EVILayer.addTo(map);
 								var toggleColor = $(this).attr('data-color');
@@ -862,6 +859,9 @@
 								}
 							}
 						});
+						if($("#biophysical-tab").hasClass("active")) {
+							$("#EVILayer").prop( "checked", true ).trigger( "change" );
+						}
 					});
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -943,7 +943,10 @@
 	                },
 									enabled: false
 	            },
-							series: serieses
+							series: serieses,
+							credits: {
+								enabled: false
+							},
 
 						});
 
@@ -1192,7 +1195,7 @@
 							createToggleList('toggle-list-forest', 'forest_'+year_string, year_string, year_string, '', data[year_string].color);
 
 							//toggle each of forest map layer
-							$("#forest_"+year_string).click(function() {
+							$("#forest_"+year_string).change(function() {
 								var layerID= $(this).attr('data-yid');
 								if(this.checked) {
 									var toggleColor = $(this).attr('data-color');
@@ -1257,7 +1260,7 @@
 						/*jshint loopfunc: true */
 						createToggleList('toggle-list-forest', 'ForestGainLayer', 'Forest Gain', '', '', data.color);
 
-						$("#ForestGainLayer").click(function() {
+						$("#ForestGainLayer").change(function() {
 							if(this.checked) {
 								var toggleColor = $(this).attr('data-color');
 								$(this).closest("label").find("span").css("background-color", toggleColor);
@@ -1269,6 +1272,11 @@
 								}
 							}
 						});
+
+						if($("#forest-monitoring-tab").hasClass("active")) {
+							$("#ForestGainLayer").prop( "checked", true ).trigger( "change" );
+						}
+
 
 					}, function (error) {
 						console.log(error);
@@ -1298,7 +1306,7 @@
 						/*jshint loopfunc: true */
 						createToggleList('toggle-list-forest', 'ForestLossLayer', 'Forest Loss', '', '', data.color);
 
-						$("#ForestLossLayer").click(function() {
+						$("#ForestLossLayer").change(function() {
 							if(this.checked) {
 								var toggleColor = $(this).attr('data-color');
 								$(this).closest("label").find("span").css("background-color", toggleColor);
@@ -1310,6 +1318,10 @@
 								}
 							}
 						});
+
+						if($("#forest-monitoring-tab").hasClass("active")) {
+							$("#ForestLossLayer").prop( "checked", true ).trigger( "change" );
+						}
 
 					}, function (error) {
 						console.log(error);
@@ -1362,7 +1374,7 @@
 							createToggleList('toggle-list-forest-alert', 'forestAlert_'+_year, _year, _year, '',_yearData.color);
 
 							//toggle each of forest map layer
-							$("#forestAlert_"+_year).click(function() {
+							$("#forestAlert_"+_year).change(function() {
 								var layerID= $(this).attr('data-yid');
 								if(this.checked) {
 									var toggleColor = $(this).attr('data-color');
@@ -1376,6 +1388,9 @@
 								}
 							});
 
+						}
+						if($("#forest-alert-tab").hasClass("active")) {
+							$("#forestAlert_"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
 						}
 
 						// $("#total_number_forest_alert").text(total_number);
@@ -1440,7 +1455,7 @@
 							createToggleList('toggle-list-burned-area', 'burnedArea_'+_year, _year, _year, '', _yearData.color);
 
 							//toggle each of forest map layer
-							$("#burnedArea_"+_year).click(function() {
+							$("#burnedArea_"+_year).change(function() {
 								var layerID= $(this).attr('data-yid');
 								if(this.checked) {
 									var toggleColor = $(this).attr('data-color');
@@ -1453,6 +1468,9 @@
 									}
 								}
 							});
+						}
+						if($("#fire-tab").hasClass("active")) {
+							$("#burnedArea_"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
 						}
 
 						var series = [{
@@ -1507,6 +1525,7 @@
 				$( document ).ready(function() {
 				    console.log( "ready!" );
 						cal();
+						$("#biophysical-tab").click();
 				});
 
 
@@ -1574,6 +1593,43 @@
 					$("#disclaimer-modal").addClass('show');
 				});
 
+				function clearMapLayers() {
+						//clear all map layers
+						if(map.hasLayer(EVILayer)){
+							map.removeLayer(EVILayer);
+						}
+						if(map.hasLayer(ForestGainLayer)){
+							map.removeLayer(ForestGainLayer);
+						}
+						if(map.hasLayer(ForestLossLayer)){
+							map.removeLayer(ForestLossLayer);
+						}
+
+						for(var i=studyLow; i<=studyHigh; i++){
+							var _year  = i.toString();
+							if(map.hasLayer(MapLayerArr[_year].forest)){
+								map.removeLayer(MapLayerArr[_year].forest);
+							}
+							if(map.hasLayer(MapLayerArr[_year].forestAlert)){
+								map.removeLayer(MapLayerArr[_year].forestAlert);
+							}
+							if(map.hasLayer(MapLayerArr[_year].burnedArea)){
+								map.removeLayer(MapLayerArr[_year].burnedArea);
+							}
+						}
+						if(map.hasLayer(MapLayerArr[2020].forestAlert)){
+							map.removeLayer(MapLayerArr[2020].forestAlert);
+						}
+
+
+				}
+
+				$("#guiding-button").click(function() {
+					hideModel();
+					$("#guiding-modal").removeClass('hide');
+					$("#guiding-modal").addClass('show');
+				});
+
 				$("#evi-info").click(function() {
 					hideModel();
 					$("#evi-info-modal").removeClass('hide');
@@ -1614,6 +1670,9 @@
 					$("input[type='file']").click();
 				});
 
+				$(".close").click(function() {
+					$(".modal-background").click();
+				});
 				// Modal Close Function
 				$(".modal-background").click(function() {
 					$(".modal").removeClass('show');
@@ -1757,10 +1816,15 @@
 					$("#forest-alert-tab").removeClass("active");
 					$("#layers-tab").removeClass("active");
 					$("#usecase-tab").removeClass("active");
+					//$(".legend").css("display", "none");
 
 				});
 
 				$("#biophysical-tab").click(function () {
+					clearMapLayers();
+					$("#EVILayer").prop( "checked", true ).trigger( "change" );
+					$(".legend").css("display", "block");
+
 					$(".close-menu").click();
 					$(".map-controller").css('left', '420px');
 					$("#forest-monitoring-tab").removeClass("active");
@@ -1774,6 +1838,10 @@
 					$('#panel-biophysical').css('opacity', 1);
 				});
 				$("#forest-monitoring-tab").click(function () {
+					clearMapLayers();
+					$("#ForestLossLayer").prop( "checked", true ).trigger( "change" );
+					$("#ForestGainLayer").prop( "checked", true ).trigger( "change" );
+					$(".legend").css("display", "none");
 					$(".close-menu").click();
 					$(".map-controller").css('left', '420px');
 					$("#biophysical-tab").removeClass("active");
@@ -1787,6 +1855,9 @@
 					$('#panel-forest-monitoring').css('opacity', 1);
 				});
 				$("#forest-alert-tab").click(function () {
+					clearMapLayers();
+					$("#forestAlert_"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
+					$(".legend").css("display", "none");
 					$(".close-menu").click();
 					$(".map-controller").css('left', '420px');
 					$("#biophysical-tab").removeClass("active");
@@ -1801,6 +1872,9 @@
 				});
 
 				$("#fire-tab").click(function () {
+					clearMapLayers();
+					$("#burnedArea_"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
+					$(".legend").css("display", "none");
 					$(".close-menu").click();
 					$(".map-controller").css('left', '420px');
 					$("#biophysical-tab").removeClass("active");
@@ -1975,8 +2049,63 @@
 					var pdf = new jsPDF("p", "pt", "a4");
 					var width = pdf.internal.pageSize.getWidth();
 					var height = pdf.internal.pageSize.getHeight();
+					var eviPieChart = document.getElementById('chart');
+					pdf.setFont("helvetica");
+					pdf.setFontType("normal");
+					pdf.setFontSize(9);
 
-					var currentMap = document.getElementById('chart');
+					domtoimage.toPng(eviPieChart)
+							.then(function (dataUrl) {
+									var img = new Image();
+									img.src = dataUrl;
+									var title = pdf.splitTextToSize('PROPORTION OF BIOPHYSICAL HEALTH IN '+ selected_admin.toUpperCase() + " FROM "+ studyLow+ " TO " + studyHigh , 200);
+									pdf.text(50, 20, title);
+									pdf.addImage(img, 'JPEG', 50, 40, 220, 150);
+									var bio_chart = document.getElementById('chart_div');
+									domtoimage.toPng(bio_chart)
+											.then(function (dataUrl) {
+													var imgChart = new Image();
+													imgChart.src = dataUrl;
+													//pdf.addPage();
+													var lines = pdf.splitTextToSize('CUMULATIVE ANOMALY EVI IN '+ selected_admin.toUpperCase()+ " FROM "+ studyLow+ " TO " + studyHigh , 200);
+													pdf.text(290, 20, lines);
+													// addImage(imageData, format, x, y, width, height, alias, compression, rotation)
+													pdf.addImage(imgChart, 'JPEG', 290, 40, 220, 150);
+
+													$scope.showLoader = false;
+													var mapDiv = document.getElementById('map');
+													domtoimage.toPng(mapDiv)
+															.then(function (dataUrl) {
+																	var img = new Image();
+																	img.src = dataUrl;
+
+																	pdf.addImage(img, 'JPEG', 50, 250, 480, 400);
+																	var newDate = new Date();
+																	var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
+																	pdf.save(pdffilename);
+																	$scope.showLoader = false;
+															})
+															.catch(function (error) {
+																	console.error('oops, something went wrong!', error);
+														});
+
+											})
+											.catch(function (error) {
+													console.error('oops, something went wrong!', error);
+										});
+							})
+							.catch(function (error) {
+									console.error('oops, something went wrong!', error);
+						});
+				});
+
+
+				$("#export_forest_report").click(function() {
+					$scope.showLoader = true;
+					var pdf = new jsPDF("p", "pt", "a4");
+					var width = pdf.internal.pageSize.getWidth();
+					var height = pdf.internal.pageSize.getHeight();
+					var currentMap = document.getElementById('forest_cover_chart');
 					pdf.setFont("helvetica");
 					pdf.setFontType("normal");
 					pdf.setFontSize(9);
@@ -1984,21 +2113,127 @@
 							.then(function (dataUrl) {
 									var img = new Image();
 									img.src = dataUrl;
-									var title = pdf.splitTextToSize('PROPORTION OF BIOPHYSICAL HEALTH IN '+ selected_admin.toUpperCase() + " FROM "+ studyLow+ " TO " + studyHigh , 500);
-									pdf.text(30, 20, title);
-									pdf.addImage(img, 'JPEG', 50, 40, 300, 300);
-
-									var outlookMap = document.getElementById('chart_div');
-									domtoimage.toPng(outlookMap)
+									var title = pdf.splitTextToSize('AREA OF FOREST COVER IN '+ selected_admin.toUpperCase() + " FROM "+ studyLow+ " TO " + studyHigh , 500);
+									pdf.text(50, 20, title);
+									pdf.addImage(img, 'JPEG', 50, 40, 400, 300);
+									var forest_noneforest = document.getElementById('forest_noneforest_chart');
+									domtoimage.toPng(forest_noneforest)
 											.then(function (dataUrl) {
-													var imgOutlok = new Image();
-													imgOutlok.src = dataUrl;
+													var imgChart = new Image();
+													imgChart.src = dataUrl;
 													//pdf.addPage();
-													var lines = pdf.splitTextToSize('CUMULATIVE ANOMALY EVI IN '+ selected_admin.toUpperCase()+ " FROM "+ studyLow+ " TO " + studyHigh , 500);
-													pdf.text(30, 380, lines);
-													pdf.addImage(imgOutlok, 'JPEG', 50, 400, 300, 300);
+													var lines = pdf.splitTextToSize('AREA OF FOREST AND NONE FOREST IN '+ selected_admin.toUpperCase()+ " FROM "+ studyLow+ " TO " + studyHigh , 500);
+													pdf.text(50, 380, lines);
+													pdf.addImage(imgChart, 'JPEG', 50, 400, 400, 300);
+
+													var outlookMap = document.getElementById('forest_change_gainloss_chart');
+													domtoimage.toPng(outlookMap)
+															.then(function (dataUrl) {
+																	var imgChart = new Image();
+																	imgChart.src = dataUrl;
+																	pdf.addPage();
+																	var lines = pdf.splitTextToSize('THE CHANGE OF FOREST GAIN AND LOSS IN '+ selected_admin.toUpperCase(), 500);
+																	pdf.text(50, 40, lines);
+
+																	lines = pdf.splitTextToSize('Compare the area of forest change between the baseline period '+ " ("+ refLow+ " - " + refHigh + ") and the measuring period "+ " ("+ studyLow+ " - " + studyHigh + ")", 500);
+																	pdf.text(50, 50, lines);
+
+																	pdf.addImage(imgChart, 'JPEG', 50, 80, 400, 300);
+
+																	$scope.showLoader = false;
+																	var mapDiv = document.getElementById('map');
+																	domtoimage.toPng(mapDiv)
+																			.then(function (dataUrl) {
+																					var img = new Image();
+																					img.src = dataUrl;
+
+																					pdf.addImage(img, 'JPEG', 50, 400, 450, 350);
+																					var newDate = new Date();
+																					var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
+																					pdf.save(pdffilename);
+																					$scope.showLoader = false;
+																			})
+																			.catch(function (error) {
+																					console.error('oops, something went wrong!', error);
+																		});
+
+																});
+											})
+											.catch(function (error) {
+													console.error('oops, something went wrong!', error);
+										});
+							})
+							.catch(function (error) {
+									console.error('oops, something went wrong!', error);
+						});
+				});
+
+				$("#export_forest_alert_report").click(function() {
+					var pdf = new jsPDF("p", "pt", "a4");
+					var width = pdf.internal.pageSize.getWidth();
+					var height = pdf.internal.pageSize.getHeight();
+					var currentMap = document.getElementById('forest_alert_area');
+					pdf.setFont("helvetica");
+					pdf.setFontType("normal");
+					pdf.setFontSize(9);
+					domtoimage.toPng(currentMap)
+							.then(function (dataUrl) {
+									var img = new Image();
+									img.src = dataUrl;
+									var title = pdf.splitTextToSize('TOTAL AREA OF FOREST ALERT IN '+ selected_admin.toUpperCase() + " FROM "+ studyLow+ " TO " + studyHigh , 500);
+									pdf.text(50, 20, title);
+									pdf.addImage(img, 'JPEG', 50, 40, 400, 300);
+
+									var mapDiv = document.getElementById('map');
+									domtoimage.toPng(mapDiv)
+											.then(function (dataUrl) {
+													var img = new Image();
+													img.src = dataUrl;
+
+													pdf.addImage(img, 'JPEG', 50, 400, 450, 350);
 													var newDate = new Date();
-													var pdffilename = "MDCW-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
+													var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
+													pdf.save(pdffilename);
+											})
+											.catch(function (error) {
+													console.error('oops, something went wrong!', error);
+										});
+
+
+							})
+							.catch(function (error) {
+									console.error('oops, something went wrong!', error);
+						});
+				});
+
+
+				$("#export_burned_area_report").click(function() {
+					$scope.showLoader = true;
+					var pdf = new jsPDF("p", "pt", "a4");
+					var width = pdf.internal.pageSize.getWidth();
+					var height = pdf.internal.pageSize.getHeight();
+					var currentMap = document.getElementById('burned_area_chart');
+					pdf.setFont("helvetica");
+					pdf.setFontType("normal");
+					pdf.setFontSize(9);
+					domtoimage.toPng(currentMap)
+							.then(function (dataUrl) {
+									var img = new Image();
+									img.src = dataUrl;
+									var title = pdf.splitTextToSize('BURNED AREA IN '+ selected_admin.toUpperCase() + " FROM "+ studyLow+ " TO " + studyHigh , 500);
+									pdf.text(50, 20, title);
+									pdf.addImage(img, 'JPEG', 50, 40, 400, 300);
+
+									$scope.showLoader = false;
+									var mapDiv = document.getElementById('map');
+									domtoimage.toPng(mapDiv)
+											.then(function (dataUrl) {
+													var img = new Image();
+													img.src = dataUrl;
+
+													pdf.addImage(img, 'JPEG', 50, 360, 450, 350);
+													var newDate = new Date();
+													var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 													pdf.save(pdffilename);
 													$scope.showLoader = false;
 											})
@@ -2010,9 +2245,7 @@
 							.catch(function (error) {
 									console.error('oops, something went wrong!', error);
 						});
-
 				});
-
 
 				/**
 				* Upload Area Button

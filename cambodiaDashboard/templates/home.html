@@ -1,20 +1,45 @@
 {% extends "layout.html" %}
 {% load cms_tags staticfiles %}
-
 {% block extra_css %}
 <link href="{% static 'css/home.css' %}" rel="stylesheet">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 {% endblock %}
-
-{% block extra_script %}
-  <script src="{% static 'app/controllers/rss-feeds.js' %}"></script>
-{% endblock %}
-
 {% block main_container %}
-<!-- main Container -->
-<div class="">
-
+<!-- Main Container -->
+<div class="cover-photo">
+  <div class="overlay-layer">
+    <div class="overlay-text">
+      <p>Monitoring performance of landscape-scale efforts and biophysical conditions on-the-ground</p>
+      <h1>M&E Dashboard</h1>
+      <a href="/map" class="launch-btn">Launch Tool</a>
+      <div class="img-credit">
+        Image credit: USAID Greening Prey Lang, Cambodia
+      </div>
+    </div>
+  </div>
 </div>
-{% endblock main_container %}
+
+<div class="main-padding">
+  <div class="col-lg-12" style="margin-bottom: 300px;">
+
+    <br>
+    <br>
+
+    <div class="row justify-content-md-center" >
+      <div class="col-lg-12 col-md-6">
+        <!-- <h2>Mekong Air Quality Explorer (In Production)</h2> -->
+        <p>Ensuring ecological stability and biological productivity over large areas is critical for landscape management and conservation policy. USAID/Cambodia, along with other stakeholders, require insight and reports on the effectiveness of biodiversity and conservation-related project interventions. SERVIR-Mekong’s M&E Dashboard tool was developed in response to a need expressed by stakeholders, who require insight and reports on the effectiveness of biodiversity and conservation-related project interventions. </p>
+        <p>The M&E Dashboard tool builds upon SERVIR-Mekong’s existing Eco-Dash platform and consists of four key components. The default ‘biophysical monitoring’ layer evaluates changes in broad-scale biological productivity using the Enhanced Vegetation Index (EVI), a measure of relative biomass particularly suited to high-biomass areas of the globe, derived from MODIS multispectral data. The other three components are namely, forest monitoring (forest gain/loss, derived from Landsat), forest alerts (threat alerts, derived from Landsat), and fire monitoring (hotspots and burned area, derived  from  MODIS). The user interface leverages the power of Google Earth Engine (GEE), a cloud computing platform that links extensive data archives with substantial processing power. With the continuous time-series feature, the user is able to select a baseline and evaluation period for each of the components as well as an identified area of interest which allows for easy comparisons between ‘before’ and ‘after’ intervention timeframes. The results can be exported in report-style format enabling decision-makers and non-technical users alike to directly use this analysis and information. These components of the tool were selected based on the needs of USAID/Cambodia and their specific M&E indicators, with carbon and biomass estimations to be incorporated in the future. </p>
+
+        <h2>Application Purpose</h2>
+        <p>Aside from monitoring performance of landscape-scale efforts and biophysical conditions on-the-ground, the M&E Dashboard Tool can provide valuable insights into the possible drivers of change such as climate change, urban expansion and infrastructure development.</p>
+
+        <h2>Application Uses</h2>
+        <p>The M&E Dashboard tool is currently being used by USAID/Cambodia to track performance and report on landscape-scale efforts and biophysical conditions on-the-ground in accordance with the project performance indicators, including quantifying areas of biological improvement and improved natural resource management.</p>
+
+      </div>
+      </div>
+
+    </div>
+</div>
+
+    {% endblock main_container %}

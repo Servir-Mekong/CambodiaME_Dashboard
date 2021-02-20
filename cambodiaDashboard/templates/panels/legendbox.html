@@ -1,32 +1,10 @@
 {% load cms_tags staticfiles %}
-<div class="legend" hidden>
+<div class="legend">
     <div class="legend-text">
-        <span>[[ 'Legend' | translate]] <button class="btn btn-default info-btn-xs" id="legend-infobox">i</button></span>
-        <!-- <button class="legend-info-button btn btn-danger btn-xs" id="legend-collapse">
-            <i class="glyphicon glyphicon-remove"></i>
-        </button>
-        <button class="legend-info-button btn btn-success btn-xs" id="legend-expand" style="display:none;">
-            <i class="glyphicon glyphicon-plus"></i>
-        </button> -->
+        <span>[[ 'Legend' | translate]] </span>
     </div>
-    <!-- <div class="legend-tabs">
-        <button class="legend-tab" id="tab-water">[[ 'Water' | translate]]</button>
-        <button class="legend-tab" id="tab-precip">[[ 'Precip' | translate]]</button>
-    </div> -->
     <div class="legend-line"></div>
     <div id='legend-content'>
-        <div id="legend-tab-water" class="legend-tab-content">
-            <div class="legend-value" id="legend-water-perm">
-                <div id="color-picker-wrapper-water" class="color-picker-wrapper"><input type="color" value="#00008b" id="color-picker-water"></div>
-                <div class="legend-textlist">[[ 'Occerenced Water' | translate]]</div>
-            </div>
-            <div class="legend-value" id="legend-water-temp">
-                <div id="color-picker-wrapper-flood" class="color-picker-wrapper"><input type="color" value="#9999FF" id="color-picker-flood"></div>
-                <div class="legend-textlist">[[ 'Water' | translate]]</div>
-            </div>
-        </div>
-        <!-- <div id="legend-tab-precip" class="legend-tab-content">
-            <img class="legend-cb" id="precip-cb" src="{% static 'images/precip_colorbar.png' %}" alt="Precipitation Colorbar">
-        </div> -->
+      <img src="/static/images/evi-legend.png" alt="" width="100%">
     </div>
 </div>

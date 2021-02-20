@@ -12,6 +12,11 @@
 	<meta name="keywords" content="Dashboard to monitor and evaluate landscape improvements in Cambodia, Mekong region, Cambodia, Thailand">
 	<title>M&E Dashboard</title>
 	<link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+
+
+</head>
+<body>
+
 	{% addtoblock "css" %}
 	<style type="text/css">
 	/** Hide when Angular is not yet loaded and initialized */
@@ -22,21 +27,21 @@
 
 	<!-- Bootstrap Core CSS -->
 	<link href="{% static 'vendor/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap2/bootstrap-switch.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap2/bootstrap-switch.css" rel="stylesheet" crossorigin="anonymous">
 	<!-- Bootstrap Plugins -->
 	<link rel="stylesheet" href="{% static 'vendor/bootstrap/dist/css/bootstrap.min.css' %}">
 	<link rel="stylesheet" href="{% static 'vendor/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}" >
 	<!-- FontAwesome -->
 	<link href="{% static 'vendor/components-font-awesome/css/all.css' %}" rel="stylesheet">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/css/bootstrap-slider.min.css" rel="stylesheet"/>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/css/bootstrap-slider.min.css" rel="stylesheet" crossorigin="anonymous"/>
 	<!-- lEAFLET -->
 	<link href="{% static 'vendor/leaflet/dist/leaflet.css' %}" rel="stylesheet">
 	<!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css"  data-require="leaflet@0.7.3" data-semver="0.7.3" /> -->
 	<link href="{% static 'vendor/leaflet-draw/dist/leaflet.draw.css' %}" rel="stylesheet">
 	<!--Plugin CSS file with desired skin-->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css"/>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css" crossorigin="anonymous"/>
 	<!-- Google Font Style -->
-	<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet" crossorigin="anonymous">
 	<!-- Load CSS -->
 	<!-- Custom CSS -->
 
@@ -57,9 +62,6 @@
 
 	{% render_block "css" %}
 
-</head>
-<body>
-
 	<div ng-cloak class="container-fluid-custom">
 		{% cms_toolbar %}
 		<!-- CMS Menu -->
@@ -68,9 +70,7 @@
 			</ul>
 		</div>
 		{% include "navigation.html" %}
-		<div class="container-fluid container-wrapper">
-			{% block main_container %} {% endblock main_container %}
-		</div>
+		{% block main_container %} {% endblock main_container %}
 	</div>
 	{% block footer %}
     	{% include "footer.html" %}

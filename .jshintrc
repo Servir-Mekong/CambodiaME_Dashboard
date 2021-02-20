@@ -28,7 +28,9 @@
 		"cambodia_polygon": true,
 		"cam_adm2": true,
 		"protected_area": true,
-		"cam_adm1": true
+		"cam_adm1": true,
+		"jsPDF": true,
+		"domtoimage": true
 	},
 	"predef": [ // Extra globals.
 		"inject",
