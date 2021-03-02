@@ -7,9 +7,33 @@
         <div class="area-modal-title">
           [['Biophysical Layer' | translate]]
         </div>
-        <hr>
         <div class="disclaimer-content">
-          <p></p>
+          <table>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Overview</td>
+              <td>The biophysical monitoring layer uses the Enhanced Vegetation Index (EVI) which is calculated using MODIS multispectral data (MOD13Q1) with a pixel resolution of 250 x 250m. The algorithm chooses the best available pixel value from all the acquisitions from the 16 day period. EVI is a measure of relative biomass and is particularly well-suited for high-biomass areas of the globe. </td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Resolution</td>
+              <td>250m</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Geographic Coverage</td>
+              <td>Greater Mekong region</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Data Source</td>
+              <td> <a href="https://lpdaac.usgs.gov/products/mod13q1v006/">https://lpdaac.usgs.gov/products/mod13q1v006/</a></td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Frequency updates</td>
+              <td> 16 days</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">URL link to tool</td>
+              <td> <a href="http://ecodash-servir.adpc.net/">http://ecodash-servir.adpc.net/</a></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
@@ -25,9 +49,39 @@
         <div class="area-modal-title">
           [['Forest' | translate]]
         </div>
-        <hr>
         <div class="disclaimer-content">
-          <p></p>
+          <table>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Overview</td>
+              <td>
+                The forest monitoring layer primarily uses annual forest cover time series data. This data is created using Tree Canopy Cover (TCC) and Tree Canopy Height (TCH) layers, which was collated and delivered by the GLAD/UMD team for the Mekong region <a href="https://doi.org/10.1016/j.rse.2019.111278">(Potapov et al. 2019)</a>. The data was taken from time-series analysis of Landsat images characterizing forest extent and change. Using FAO forest definition with TCC is equal or greater than 10% and TCH is higher or equal 5m, and the minimum mapping unit is 0.5ha.
+                <ul>
+                  <li>'Forest loss' is defined as a stand-replacement disturbance, or a change from a forest to non-forest state, during the period 2000-2019. </li>
+                  <li>'Forest cover gain' is defined as the inverse of loss, or a non-forest to forest change entirely within the period 2000-2019. </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Resolution</td>
+              <td>30m</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Geographic Coverage</td>
+              <td>Greater Mekong region</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Data Source</td>
+              <td> <a href="https://www.landcovermapping.org/en/about/">https://www.landcovermapping.org/en/about/</a></td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Frequency updates</td>
+              <td>Annually</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">URL link to tool</td>
+              <td><a href="https://www.landcovermapping.org/en/forest-monitor/">https://www.landcovermapping.org/en/forest-monitor/</a></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
@@ -43,9 +97,35 @@
         <div class="area-modal-title">
           [['Forest Alert' | translate]]
         </div>
-        <hr>
         <div class="disclaimer-content">
-          <p></p>
+          <table>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Overview</td>
+              <td>
+                The forest alert layer uses the GLAD Alert product from UMD, based on the definition of ‘forest’ being - ‘5-m tall trees with a canopy closure exceeding 30%’. An alert is defined as any Landsat pixel that experiences a canopy loss in excess of 50% cover. The alert system is designed to complement a current annual global forest cover loss product that is based on a calendar year update, first prototyped using Landsat-7 data (2000-2019), annually updated thereafter. Source: <a href="http://www.globalforestwatch.org/">http://www.globalforestwatch.org/</a> and <a href="http://earthenginepartners.appspot.com/science-2013-global-forest">http://earthenginepartners.appspot.com/science-2013-global-forest.</a>
+              </td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Resolution</td>
+              <td>30m</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Geographic Coverage</td>
+              <td>Global</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Data Source</td>
+              <td> <a href="https://glad.umd.edu/dataset/glad-forest-alerts">https://glad.umd.edu/dataset/glad-forest-alerts</a></td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Frequency updates</td>
+              <td> 16 days</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">URL link to tool</td>
+              <td> <a href="https://www.globalforestwatch.org/map/">https://www.globalforestwatch.org/map/</a></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
@@ -61,9 +141,35 @@
         <div class="area-modal-title">
           [['Fire / Burned Area' | translate]]
         </div>
-        <hr>
         <div class="disclaimer-content">
-          <p></p>
+          <table>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Overview</td>
+              <td>
+                This data shows areas where fire was detected during the period 2000-2018. The pixel shows the last year in which fire was detected. The Terra and Aqua combined MCD64A1 Version 6 Burned Area data product is a monthly, global-gridded 500-m product containing per-pixel burned-area and high-quality information.
+              </td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Resolution</td>
+              <td>500m</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Geographic Coverage</td>
+              <td>Global</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Data Source</td>
+              <td> <a href="https://lpdaac.usgs.gov/products/mcd64a1v006/">https://lpdaac.usgs.gov/products/mcd64a1v006/</a></td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Frequency updates</td>
+              <td>Monthly</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">URL link to tool</td>
+              <td> <a href=https://earthmap.org/>https://earthmap.org/</a></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>

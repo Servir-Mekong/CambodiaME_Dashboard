@@ -736,7 +736,7 @@ ul {
 
 .modal-wrapper {
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
     height: 100%;
     max-height: 450px;
     box-sizing: border-box;
@@ -748,7 +748,7 @@ ul {
 
 .area-modal-title {
     text-align: center;
-    font-size: 18px;
+    font-size: 24px;
     color: rgb(1, 23, 6);
     font-weight: 600;
 }
@@ -1372,3 +1372,17 @@ svg image{
   font-size: 12px;
   cursor: pointer;
 }
+
+.disclaimer-content table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.disclaimer-content table td, table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.disclaimer-content table tr:nth-child(even){background-color: #f2f2f2;}
+
+.disclaimer-content table tr:hover {background-color: #ddd;}
