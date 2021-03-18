@@ -83,7 +83,7 @@
 
 .menu-container {
 	/*background-color: #34495e !important;*/
-    background-color: #000!important;
+    background-color: #02495f;
     height: 42px;
 }
 
@@ -155,11 +155,11 @@
 
 .navmenu {
 	color: rgb(255,255,255) !important;
-  color: rgba(255,255,255,0.87) !important;
+  color: #FFF !important;
   text-transform: uppercase;
 }
 
 #toggle-nav:hover, .nav  > li >a:hover {
-    color: #2a4b2a !important;
+    color: #04ab9b !important;
     font-weight: 700;
 }

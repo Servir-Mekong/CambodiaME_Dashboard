@@ -3,6 +3,8 @@
 	angular.module('baseApp')
 	.controller('mapcontroller' ,function ($scope, $timeout, MapService, appSettings) {
 
+		$(".menu-container").css("background-color", "#000");
+
 		/* global variables to be tossed around like hot potatoes */
 		$scope.showAlert = false;
 		$scope.showLoader = false;
