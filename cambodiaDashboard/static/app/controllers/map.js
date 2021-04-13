@@ -1228,11 +1228,11 @@
 							color: '#138D75'
 						},
 						{
-							name: 'None Forest',
+							name: 'Non-Forest',
 							data: noneforestArea,
 							color: '#919F94'
 						}];
-						showHightChart('forest_noneforest_chart', 'bar', yearArr, seriesNoneForest, true, 10, 'AREA OF FOREST AND NONE FOREST IN '+ selected_admin.toUpperCase());
+						showHightChart('forest_noneforest_chart', 'bar', yearArr, seriesNoneForest, true, 10, 'AREA OF FOREST AND NON-FOREST IN '+ selected_admin.toUpperCase());
 
 					}, function (error) {
 						console.log(error);
@@ -2062,7 +2062,7 @@
 									img.src = dataUrl;
 									var title = pdf.splitTextToSize('PROPORTION OF BIOPHYSICAL HEALTH IN '+ selected_admin.toUpperCase() + " FROM "+ studyLow+ " TO " + studyHigh , 200);
 									pdf.text(50, 20, title);
-									pdf.addImage(img, 'JPEG', 50, 40, 220, 150);
+									pdf.addImage(img, 'JPEG', 50, 40, 230, 190);
 									var bio_chart = document.getElementById('chart_div');
 									domtoimage.toPng(bio_chart)
 											.then(function (dataUrl) {
@@ -2072,7 +2072,7 @@
 													var lines = pdf.splitTextToSize('CUMULATIVE ANOMALY EVI IN '+ selected_admin.toUpperCase()+ " FROM "+ studyLow+ " TO " + studyHigh , 200);
 													pdf.text(290, 20, lines);
 													// addImage(imageData, format, x, y, width, height, alias, compression, rotation)
-													pdf.addImage(imgChart, 'JPEG', 290, 40, 220, 150);
+													pdf.addImage(imgChart, 'JPEG', 290, 40, 230, 190);
 
 													$scope.showLoader = false;
 													var mapDiv = document.getElementById('map');
@@ -2081,7 +2081,7 @@
 																	var img = new Image();
 																	img.src = dataUrl;
 
-																	pdf.addImage(img, 'JPEG', 50, 250, 480, 400);
+																	pdf.addImage(img, 'JPEG', 50, 250, 530, 410);
 																	var newDate = new Date();
 																	var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 																	pdf.save(pdffilename);
@@ -2149,7 +2149,7 @@
 																					var img = new Image();
 																					img.src = dataUrl;
 
-																					pdf.addImage(img, 'JPEG', 50, 400, 450, 350);
+																					pdf.addImage(img, 'JPEG', 50, 420, 450, 350);
 																					var newDate = new Date();
 																					var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 																					pdf.save(pdffilename);

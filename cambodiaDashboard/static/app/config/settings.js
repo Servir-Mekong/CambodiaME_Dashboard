@@ -26,7 +26,7 @@ angular.module('baseApp').constant('appSettings', {
 			'code': 'mm'
 		}
 	],
-	applicationName: 'M&E Dashboard',
+	applicationName: 'Biophysical M&E Dashboard',
 	footerLinks: [
 		{
 			'name': 'About',
