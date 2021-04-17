@@ -43,11 +43,11 @@ def api(request):
 
             core = GEEApi(area_path, area_name, geom, area_type, area_id)
             if action == 'get-line-evi':
-                data = core.GetPolygonTimeSeries(polygon_id, refLow, refHigh, studyLow, studyHigh)
+                data = core.GetPolygonTimeSeries(refLow, refHigh, studyLow, studyHigh)
             elif action == 'get-pie-evi':
-                data = core.calcPie(polygon_id, refLow, refHigh, studyLow, studyHigh)
+                data = core.calcPie(refLow, refHigh, studyLow, studyHigh)
             elif action == 'get-evi-map':
-                data = core.getEVIMap(polygon_id, refLow, refHigh, studyLow, studyHigh)
+                data = core.getEVIMap(refLow, refHigh, studyLow, studyHigh)
             elif action == 'get-stats':
                 data = core.get_stats(type, year, start_year, end_year, tree_canopy_definition, tree_height_definition)
             elif action == 'get-forestgainloss':

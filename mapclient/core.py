@@ -42,6 +42,12 @@ class GEEApi():
                 coords.append([items[1],items[0]])
             self.geometry =  ee.FeatureCollection(ee.Geometry.Polygon(coords)).geometry()
 
+        elif area_type == "upload":
+            polygons = []
+            for items in geom:
+                polygons.append(ee.Geometry.Polygon(items))
+            self.geometry =  ee.FeatureCollection(ee.Geometry.MultiPolygon(polygons)).geometry()
+
         elif area_type == "country":
             self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_COUNTRY_BOUNDARY).filter(ee.Filter.eq("NAME_ENGLI", area_id)).geometry()
 
@@ -87,12 +93,8 @@ class GEEApi():
 
 
     # -------------------------------------------------------------------------
-    def calcPie(self, polygon_id,ref_start,ref_end,series_start,series_end):
-        coords = []
-        for items in eval(polygon_id):
-            coords.append([items[1],items[0]])
+    def calcPie(self,ref_start,ref_end,series_start,series_end):
 
-        feature =  ee.FeatureCollection(ee.Geometry.Polygon(coords))
         res = []
 
         # The scale at which to reduce the polygons for the brightness time series.
@@ -142,14 +144,9 @@ class GEEApi():
         myArray = [p1,p2,middle,m2,m1]
         return myArray
 
-    def GetPolygonTimeSeries(self, polygon_id,ref_start,ref_end,series_start,series_end):
+    def GetPolygonTimeSeries(self,ref_start,ref_end,series_start,series_end):
         """Returns details about the polygon with the passed-in ID."""
 
-        coords = []
-        for items in eval(polygon_id):
-            coords.append([items[1],items[0]])
-
-        feature =  ee.FeatureCollection(ee.Geometry.Polygon(coords))
 
         #details = memcache.get(polygon_id)
 
@@ -160,7 +157,7 @@ class GEEApi():
         details = {}
 
         try:
-            details['timeSeries'] = self.ComputePolygonTimeSeries(feature,ref_start,ref_end,series_start,series_end)
+            details['timeSeries'] = self.ComputePolygonTimeSeries(ref_start,ref_end,series_start,series_end)
         # Store the results in memcache.
         #memcache.add(polygon_id, json.dumps(details), MEMCACHE_EXPIRATION)
         except ee.EEException as e:
@@ -171,7 +168,7 @@ class GEEApi():
         return details
 
 
-    def ComputePolygonTimeSeries(self, feature,ref_start,ref_end,series_start,series_end):
+    def ComputePolygonTimeSeries(self,ref_start,ref_end,series_start,series_end):
 
         """Returns a series of brightness over time for the polygon."""
         ref_start = str(ref_start) + '-01-01'
@@ -208,7 +205,7 @@ class GEEApi():
         return res
 
 
-    def ComputePolygonDrawTimeSeries(feature,ref_start,ref_end,series_start,series_end):
+    def ComputePolygonDrawTimeSeries(ref_start,ref_end,series_start,series_end):
 
         """Returns a series of brightness over time for the polygon."""
         ref_start = str(ref_start) + '-01-01'
@@ -304,12 +301,8 @@ class GEEApi():
         return cumulative
 
     # -------------------------------------------------------------------------
-    def getEVIMap(self, polygon_id,ref_start,ref_end,series_start,series_end):
-        coords = []
-        for items in eval(polygon_id):
-            coords.append([items[1],items[0]])
+    def getEVIMap(self,ref_start,ref_end,series_start,series_end):
 
-        feature =  ee.FeatureCollection(ee.Geometry.Polygon(coords))
         ref_start = str(ref_start) + '-01-01'
         ref_end = str(ref_end) + '-12-31'
         series_start = str(series_start) + '-01-01'
@@ -624,7 +617,7 @@ class GEEApi():
             areaHA = forestArea.aggregate_array("areaHect").get(0).getInfo()
 
 
-        elif area_type == "draw":
+        elif area_type == "draw" or area_type == "upload":
             reducer = image.gt(0).multiply(self.scale).multiply(self.scale).reduceRegion(
                 reducer = ee.Reducer.sum(),
                 geometry = self.geometry,
@@ -635,8 +628,6 @@ class GEEApi():
             stats = reducer.getInfo()["forest_cover"]
             # in hectare
             areaHA = stats * 0.0001
-
-
 
         if get_image:
             return image
@@ -859,18 +850,18 @@ class GEEApi():
         ic = "projects/servir-mekong/Cambodia-Dashboard-tool/BurnArea/"+ area_type +"_"+ str(year) +"Metadata"
         burnedArea_fc = ee.FeatureCollection(ic)
 
-        if area_type == "draw":
+        if area_type == "draw" or area_type == "upload":
             reducer = image.multiply(ee.Image.pixelArea()).reduceRegion(
               reducer= ee.Reducer.sum(),
               geometry= self.geometry,
               scale= imgScale,
               maxPixels= 1E20
             )
-
             #area in squre meter
             stats = reducer.getInfo()['BurnDate']
             #convert to hactare divide by 10000
             areaHA = stats / 10000
+
         else:
             if area_type == "country":
                 ic = "projects/servir-mekong/Cambodia-Dashboard-tool/BurnArea/camMetadata"
