@@ -6,5 +6,5 @@ git reset --hard HEAD
 git pull
 gulp build
 python manage.py collectstatic
-sudo service restart supervisor
+sudo systemctl restart supervisor
 sudo service nginx restart
