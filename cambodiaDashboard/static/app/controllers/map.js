@@ -2265,7 +2265,7 @@
 										var img = new Image();
 										img.src = dataUrl;
 										pdf.text(50,350, pdf.splitTextToSize("Map of biophysical health in the period from "+studyLow+" to "+studyHigh , 500))
-										pdf.addImage(img, 'JPEG', 50, 370, 530, 300);
+										pdf.addImage(img, 'JPEG', 50, 370, 530, 350);
 										var newDate = new Date();
 										var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 										pdf.save(pdffilename);
@@ -2348,7 +2348,7 @@
 											var img = new Image();
 											img.src = dataUrl;
 											pdf.text(50, 390, pdf.splitTextToSize('Map of forest cover and change in '+ selected_admin+ " from "+ studyLow+ " to " + studyHigh , 500));
-											pdf.addImage(img, 'JPEG', 50, 410, 530, 300);
+											pdf.addImage(img, 'JPEG', 50, 410, 530, 350);
 											var newDate = new Date();
 											var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 											pdf.save(pdffilename);
@@ -2397,7 +2397,7 @@
 								var img = new Image();
 								img.src = dataUrl;
 								pdf.text(50, 410, pdf.splitTextToSize('Map of forest cover change' , 500));
-								pdf.addImage(img, 'JPEG', 50, 430, 530, 300);
+								pdf.addImage(img, 'JPEG', 50, 430, 530, 350);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);
@@ -2441,7 +2441,7 @@
 								var img = new Image();
 								img.src = dataUrl;
 								pdf.text(50, 410, pdf.splitTextToSize('Map of forest fire hotspot ' , 500));
-								pdf.addImage(img, 'JPEG', 50, 430, 530, 300);
+								pdf.addImage(img, 'JPEG', 50, 430, 530, 350);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);
