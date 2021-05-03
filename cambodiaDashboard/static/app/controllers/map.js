@@ -19,14 +19,18 @@
 		$scope.forestAlertStartYear = appSettings.forestAlertStartYear_controller;
 
 		var showSpiner = function(){
-			$scope.showLoader = true;
+			setTimeout(function () {
+        $scope.$apply(function(){
+            $scope.showLoader = true;
+        });
+    	}, 100);
 		};
 		var hideSpiner = function(){
 			setTimeout(function () {
         $scope.$apply(function(){
             $scope.showLoader = false;
         });
-    	}, 20000);
+    	}, 10000);
 		};
 
 		var MAPBOXAPI = appSettings.mapboxapi;
@@ -2202,12 +2206,8 @@
 
 
 					$("#export_evi_report").click(function() {
-						$scope.showLoader = true;
-						setTimeout(function () {
-			        $scope.$apply(function(){
-			            $scope.showLoader = false;
-			        });
-				    }, 6000);
+						showSpiner();
+						hideSpiner();
 						var pdf = new jsPDF("p", "pt", "a4");
 						var width = pdf.internal.pageSize.getWidth();
 						var height = pdf.internal.pageSize.getHeight();
@@ -2265,7 +2265,7 @@
 										var img = new Image();
 										img.src = dataUrl;
 										pdf.text(50,350, pdf.splitTextToSize("Map of biophysical health in the period from "+studyLow+" to "+studyHigh , 500))
-										pdf.addImage(img, 'JPEG', 50, 370, 530, 390);
+										pdf.addImage(img, 'JPEG', 50, 370, 530, 300);
 										var newDate = new Date();
 										var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 										pdf.save(pdffilename);
@@ -2295,12 +2295,8 @@
 
 
 					$("#export_forest_report").click(function() {
-						$scope.showLoader = true;
-						setTimeout(function () {
-			        $scope.$apply(function(){
-			            $scope.showLoader = false;
-			        });
-				    }, 6000);
+						showSpiner();
+						hideSpiner();
 						var pdf = new jsPDF("p", "pt", "a4");
 						var width = pdf.internal.pageSize.getWidth();
 						var height = pdf.internal.pageSize.getHeight();
@@ -2352,7 +2348,7 @@
 											var img = new Image();
 											img.src = dataUrl;
 											pdf.text(50, 390, pdf.splitTextToSize('Map of forest cover and change in '+ selected_admin+ " from "+ studyLow+ " to " + studyHigh , 500));
-											pdf.addImage(img, 'JPEG', 50, 410, 530, 390);
+											pdf.addImage(img, 'JPEG', 50, 410, 530, 300);
 											var newDate = new Date();
 											var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 											pdf.save(pdffilename);
@@ -2374,12 +2370,8 @@
 					});
 
 					$("#export_forest_alert_report").click(function() {
-						$scope.showLoader = true;
-						setTimeout(function () {
-			        $scope.$apply(function(){
-			            $scope.showLoader = false;
-			        });
-				    }, 6000);
+						showSpiner();
+						hideSpiner();
 						var pdf = new jsPDF("p", "pt", "a4");
 						var width = pdf.internal.pageSize.getWidth();
 						var height = pdf.internal.pageSize.getHeight();
@@ -2405,7 +2397,7 @@
 								var img = new Image();
 								img.src = dataUrl;
 								pdf.text(50, 410, pdf.splitTextToSize('Map of forest cover change' , 500));
-								pdf.addImage(img, 'JPEG', 50, 430, 530, 390);
+								pdf.addImage(img, 'JPEG', 50, 430, 530, 300);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);
@@ -2424,12 +2416,8 @@
 
 
 					$("#export_burned_area_report").click(function() {
-						$scope.showLoader = true;
-						setTimeout(function () {
-			        $scope.$apply(function(){
-			            $scope.showLoader = false;
-			        });
-				    }, 6000);
+						showSpiner();
+						hideSpiner();
 						var pdf = new jsPDF("p", "pt", "a4");
 						var width = pdf.internal.pageSize.getWidth();
 						var height = pdf.internal.pageSize.getHeight();
@@ -2445,7 +2433,7 @@
 							pdf.text(50,90, pdf.splitTextToSize("Name of Area Admin boundary/ protected area: "+ selected_admin , 500))
 							pdf.text(50,110, pdf.splitTextToSize("Total area of fire burned from "+ studyLow+ " to " + studyHigh+" : "+total_burned_area.toFixed(2)+ " (ha)", 500))
 							pdf.text(50, 140, pdf.splitTextToSize('Burned area in '+ selected_admin + " from "+ studyLow+ " to " + studyHigh  , 500));
-							pdf.addImage(img, 'JPEG', 50, 150, 530, 390);
+							pdf.addImage(img, 'JPEG', 50, 150, 350, 250);
 							var mapDiv = document.getElementById('map');
 							domtoimage.toPng(mapDiv)
 
@@ -2453,7 +2441,7 @@
 								var img = new Image();
 								img.src = dataUrl;
 								pdf.text(50, 410, pdf.splitTextToSize('Map of forest fire hotspot ' , 500));
-								pdf.addImage(img, 'JPEG', 50, 430, 450, 350);
+								pdf.addImage(img, 'JPEG', 50, 430, 530, 300);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);
@@ -2572,13 +2560,8 @@
 
 
 					var export_report  = function (e) {
-						$scope.showLoader = true;
-						setTimeout(function(){
-							$("#biophysical-tab").click();
-							setTimeout(function(){
-								$("#export_evi_report").click();
-							}, 6000);
-						}, 1000);
+						showSpiner();
+						hideSpiner();
 
 						setTimeout(function(){
 							$("#forest-monitoring-tab").click();
