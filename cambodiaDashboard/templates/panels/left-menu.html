@@ -85,7 +85,10 @@
         <p>Selected Area: <span class="selected_area_name" style="color: #023b10;">Cambodia</span></p>
         <ul class="toggles-list" id="toggle-list-evi"></ul>
 
-        <h4>BIOPHYSICAL HEALTH <span> <a id="export_evi_report" class="chart-btn-sm" style="float: right;">EXPORT A REPORT</a></span></h4>
+        <p>Land Cover</p>
+        <ul class="toggles-list ul-columns" id="toggle-list-landcover"></ul>
+
+        <h4>BIOPHYSICAL HEALTH <span> <a id="export_evi_report" class="chart-btn-sm" style="float: right;">EXPORT A REPORT</a> </span></h4>
         <a id="evi_pie_png" class="chart-btn-sm">PNG</a>
         <a id="evi_pie_csv" href="#" class="chart-btn-sm">CSV</a>
         <div id="chart"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
@@ -93,6 +96,13 @@
         <a id="evi_line_png" class="chart-btn-sm">PNG</a>
         <a id="evi_line_csv" href="#" class="chart-btn-sm">CSV</a>
         <div id="chart_div"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+
+        <h4>LAND COVER</h4>
+        <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+        <a id="landcover_bar_png" class="chart-btn-sm">PNG</a>
+        <a id="landcover_bar_csv" href="#" class="chart-btn-sm">CSV</a>
+        <div id="landcover_chart"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+        <br>
 
 
     </div>
@@ -276,6 +286,16 @@
         <li class="toggle"><label class="switch_layer"><input name="province_toggle" id="province_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Province</label></li>
         <li class="toggle"><label class="switch_layer"><input name="district_toggle" id="district_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>District/City</label></li>
         <li class="toggle"><label class="switch_layer"><input name="protected_area_toggle" id="protected_area_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Protected Area</label></li>
+      </ul>
+
+      <label><b>GIS Layers</b></label>
+      <ul class="toggles-list">
+        <li class="toggle"><label class="switch_layer"><input name="airport_toggle" id="airport_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Airport</label></li>
+        <li class="toggle"><label class="switch_layer"><input name="cpa_toggle" id="cpa_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Community Protected Area</label></li>
+        <li class="toggle"><label class="switch_layer"><input name="dams_toggle" id="dams_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Hydro Power Dams</label></li>
+        <li class="toggle"><label class="switch_layer"><input name="main_road_toggle" id="main_road_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Main Road</label></li>
+        <li class="toggle"><label class="switch_layer"><input name="railway_toggle" id="railway_toggle" type="checkbox"><span class="slider_toggle round"></span></label><label>Railway</label></li>
+
       </ul>
 
     </div>

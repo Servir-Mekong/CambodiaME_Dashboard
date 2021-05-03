@@ -18,16 +18,14 @@ class GEEApi():
     TREE_CANOPY = ee.ImageCollection(settings.TREE_CANOPY)
     TREE_HEIGHT = ee.ImageCollection(settings.TREE_HEIGHT)
     PRIMARY_FOREST = ee.ImageCollection(settings.PRIMARY_FOREST)
-    GLAD_FOREST_ALERT_IMG_2019 = settings.GLAD_FOREST_ALERT_2019
-    GLAD_FOREST_ALERT_IMG_2020 = settings.GLAD_FOREST_ALERT_2020
-    GLAD_FOREST_ALERT_FC_2018 = settings.GLAD_FOREST_ALERT_FC_2018
-    GLAD_FOREST_ALERT_FC_2019 = settings.GLAD_FOREST_ALERT_FC_2019
-    GLAD_FOREST_ALERT_FC_2020 = settings.GLAD_FOREST_ALERT_FC_2020
+    GLAD_ALERT = settings.GLAD_ALERT
+    GLAD_FOREST_ALERT_FC = settings.GLAD_FOREST_ALERT_FC
     CAMBODIA_COUNTRY_BOUNDARY = settings.CAMBODIA_COUNTRY_BOUNDARY
     PROTECTED_AREA = settings.PROTECTED_AREA
     CAMBODIA_PROVINCE_BOUNDARY = settings.CAMBODIA_PROVINCE_BOUNDARY
     CAMBODIA_DISTRICT_BOUNDARY = settings.CAMBODIA_DISTRICT_BOUNDARY
     BURNED_AREA = ee.ImageCollection(settings.BURNED_AREA)
+    LANDCOVER = ee.ImageCollection(settings.LANDCOVER)
 
     COLOR = ['A8D9C6','B0DAB2','BFE1C9','AAD7A0','C3DE98','D5E59E','93D2BF','95CF9C','A4D7B8','9BD291','B1D78A','C9E08E','5CC199','77C78C','37B54A','126039','146232','0F8040','279445','449644','59A044','0E361E','236832','335024', '36461F']
     COLORFORESTALERT = ['943126', 'B03A2E', 'CB4335', 'E74C3C', 'F1948A', 'F5B7B1']
@@ -768,11 +766,11 @@ class GEEApi():
         }
 
     # -------------------------------------------------------------------------
-    def calForestAlert(self, get_image, featurecol, imagecol, bandName, colorIndex, area_type, area_id):
+    def calForestAlert(self, get_image, colorIndex, area_type, area_id, series_start, series_end, year):
 
-        GLADIC = ee.ImageCollection(imagecol).filterBounds(self.geometry).sort('system:time_start', False)#.filterDate(series_start, series_end)
+        GLADIC = ee.ImageCollection(GEEApi.GLAD_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
 
-        image = GLADIC.sort('system:time_start', False).first().select(bandName).clip(self.geometry).toInt16()
+        image = GLADIC.sort('system:time_start', False).first().select("alert").clip(self.geometry).toInt16()
 
         binary_image = image.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
 
@@ -790,16 +788,16 @@ class GEEApi():
             areaHA = stats / 10000
         else:
             if area_type == "country":
-                forest_featurecol = ee.FeatureCollection(featurecol+"cambodia_areaMeta")
+                forest_featurecol = ee.FeatureCollection(GEEApi.GLAD_FOREST_ALERT_FC+""+str(year)+"/cambodia_areaMeta")
                 forest_alert = forest_featurecol.filter(ee.Filter.eq('NAME_ENGLI', area_id))
             elif area_type == "province":
-                forest_featurecol = ee.FeatureCollection(featurecol+"province_Metadata")
+                forest_featurecol = ee.FeatureCollection(GEEApi.GLAD_FOREST_ALERT_FC+""+str(year)+"/province_Metadata")
                 forest_alert = forest_featurecol.filter(ee.Filter.eq('gid', area_id))
             elif area_type == "district":
-                forest_featurecol = ee.FeatureCollection(featurecol+"district_Metadata")
+                forest_featurecol = ee.FeatureCollection(GEEApi.GLAD_FOREST_ALERT_FC+""+str(year)+"/district_Metadata")
                 forest_alert = forest_featurecol.filter(ee.Filter.eq('DIST_CODE', area_id))
             elif area_type == "protected_area":
-                forest_featurecol = ee.FeatureCollection(featurecol+"protected_Metadata")
+                forest_featurecol = ee.FeatureCollection(GEEApi.GLAD_FOREST_ALERT_FC+""+str(year)+"/protected_Metadata")
                 forest_alert = forest_featurecol.filter(ee.Filter.eq('map_id', area_id))
 
             areaHA = forest_alert.aggregate_array("areaHect").get(0).getInfo()
@@ -822,19 +820,14 @@ class GEEApi():
 
     # -------------------------------------------------------------------------
     def getForestAlert(self, get_image, start_year, end_year, area_type, area_id):
-        GLADIC = {
-            '2019':[GEEApi.GLAD_FOREST_ALERT_FC_2019, GEEApi.GLAD_FOREST_ALERT_IMG_2019, 'conf19'],
-            '2020':[GEEApi.GLAD_FOREST_ALERT_FC_2020, GEEApi.GLAD_FOREST_ALERT_IMG_2020, 'conf20']
-        }
+
         res = {}
         colorIndex = 0
-        for _year in range(2019, 2021):
-            series_start = str(2020) + '-01-01'
-            series_end = str(2020) + '-12-31'
-            IC = GLADIC[str(_year)]
+        for _year in range(start_year, end_year+1):
+            series_start = str(_year) + '-01-01'
+            series_end = str(_year) + '-12-31'
             colorIndex += 1
-
-            res[str(_year)] = self.calForestAlert(get_image, IC[0], IC[1], IC[2],colorIndex, area_type, area_id)
+            res[str(_year)] = self.calForestAlert(get_image, colorIndex, area_type, area_id, series_start, series_end, _year)
         return res
 
     # -------------------------------------------------------------------------
@@ -982,3 +975,67 @@ class GEEApi():
             return {
                 'reportError': e.message
             }
+
+
+    # -------------------------------------------------------------------------
+    def calLandcoverArea(self, series_start, series_end, year, area_type, area_id):
+        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).clip(self.geometry)
+        IC= GEEApi.LANDCOVER.filterBounds(self.geometry).sort('system:time_start', False).filterDate(series_start, series_end)
+        LANDCOVERCLASSES = [
+          {'name':'evergreen' ,'number': 0, 'color': '267300'},
+          {'name':'semi-evergreen' ,'number': 1, 'color': '38A800'},
+          {'name':'deciduous' ,'number': 2, 'color': '70A800'},
+          {'name':'mangrove' ,'number': 3, 'color': '00A884'},
+          {'name':'flooded forest' ,'number': 4, 'color': 'B4D79E'},
+          {'name':'rubber' ,'number': 5, 'color': 'AAFF00'},
+          {'name':'other plantations' ,'number': 6, 'color': 'F5F57A'},
+          {'name':'rice' ,'number': 7, 'color': 'FFFFBE'},
+          {'name':'cropland' ,'number': 8, 'color': 'FFD37F'},
+          {'name':'surface water' ,'number': 9, 'color': '004DA8'},
+          {'name':'grassland' ,'number': 10, 'color': 'D7C29E'},
+          {'name':'woodshrub' ,'number': 11, 'color': '89CD66'},
+          {'name':'built-up area' ,'number': 12, 'color': 'E600A9'},
+          {'name':'village' ,'number': 13, 'color': 'A900E6'},
+          {'name':'other' ,'number': 14, 'color': '6f6f6f'}
+        ];
+
+        INDEX_CLASS = {}
+        for _class in LANDCOVERCLASSES:
+            INDEX_CLASS[int(_class['number'])] = _class['name']
+
+        classNames = ['evergreen', 'semi-evergreen', 'deciduous', 'mangrove', 'flooded forest','rubber', 'other plantations', 'rice', 'cropland', 'surface water', 'grassland', 'woodshrub', 'built-up area', 'village', 'other'];
+        classNumbers = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+        PALETTE_list = ['267300', '38A800', '70A800', '00A884', 'B4D79E','AAFF00', 'F5F57A', 'FFFFBE', 'FFD37F', '004DA8', 'D7C29E', '89CD66', 'E600A9', 'A900E6', '6f6f6f'];
+
+        stats = lcImage.reduceRegion(reducer = ee.Reducer.frequencyHistogram(),
+                                   geometry = self.geometry,
+                                   crs = 'EPSG:32647', # WGS Zone N 47
+                                   scale = 100,
+                                   maxPixels = 1E13
+                                   )
+
+        data = stats.getInfo()['lc']
+
+        lcarea = {INDEX_CLASS[int(float(k))]:float('{0:.2f}'.format(v)) for k,v  in data.items()}
+
+        map_id = lcImage.getMapId({
+            'min': '0',
+            'max': str(len(classNames)-1),
+            'palette': '267300, 38A800, 70A800, 00A884, B4D79E, AAFF00, F5F57A, FFFFBE, FFD37F, 004DA8, D7C29E, 89CD66, E600A9, A900E6, 6f6f6f'
+        })
+
+        return {
+        'total_area': lcarea,
+        'eeMapId': str(map_id['mapid']),
+        'eeMapURL': str(map_id['tile_fetcher'].url_format),
+        'color':'267300'
+        }
+
+    # -------------------------------------------------------------------------
+    def getLandcoverArea(self, start_year, end_year, area_type, area_id):
+        res = {}
+        for _year in range(start_year, end_year+1):
+            series_start = str(_year) + '-01-01'
+            series_end = str(_year) + '-12-31'
+            res[str(_year)] = self.calLandcoverArea(series_start, series_end, _year, area_type, area_id)
+        return res

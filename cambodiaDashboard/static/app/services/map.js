@@ -359,6 +359,39 @@
 			return promise;
 		};
 
+		service.getLandcover= function (options) {
+			var startYear = options.startYear;
+			var endYear = options.endYear;
+			var polygon_id = options.polygon_id;
+			var area_type = options.area_type;
+			var area_id = options.area_id;
+
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id: polygon_id,
+					startYear: startYear,
+					endYear: endYear,
+					area_type: area_type,
+					area_id: area_id
+				},
+				params: {
+					action: 'get-landcover'
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
+			})
+			.catch(function (e) {
+				console.log('Error: ', e);
+				throw e.data;
+			});
+			return promise;
+		};
+
 		service.removeGeoJson = function (map) {
 			map.data.forEach(function (feature) {
 				map.data.remove(feature);
