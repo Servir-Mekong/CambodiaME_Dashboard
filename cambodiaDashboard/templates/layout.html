@@ -138,7 +138,6 @@
 		<script src="{% static 'data/main_road_osm.js' %}"></script>
 		<script src="{% static 'data/railway.js' %}"></script>
 
-	{% if debug %}
 	<!-- Bootstrap Application -->
 	<script src="{% static 'app/init.js' %}"></script>
 	<!-- Load Settings -->
@@ -149,9 +148,7 @@
 	<!-- Controllers -->
 	<script src="{% static 'app/controllers/settings.js' %}"></script>
 	<script src="{% static 'app/controllers/map.js' %}"></script>
-	{% else %}
-	<script src="{% static 'dist/application.min.js' %}"></script>
-	{% endif %}
+
 
 	{% block extra_script %}{% endblock %}
 
