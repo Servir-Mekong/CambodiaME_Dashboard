@@ -30,7 +30,7 @@
         $scope.$apply(function(){
             $scope.showLoader = false;
         });
-    	}, 10000);
+    	}, 6000);
 		};
 
 		var MAPBOXAPI = appSettings.mapboxapi;
@@ -112,7 +112,7 @@
 				min: yearInt($scope.startYear),
 				max: yearInt($scope.endYear),
 				from: yearInt(2009),
-				to: yearInt($scope.endYear),
+				to: yearInt(2019),
 				prettify: yearToInt,
 				onChange: function (data) {
 					studyHigh = data.to;
@@ -120,6 +120,9 @@
 					$scope.STUDYHIGH = studyHigh;
 					$scope.STUDYLOW = studyLow;
 					$scope.$apply();
+				},
+				onFinish: function (data) {
+					checkAvailableData(studyHigh, studyLow);
 				},
 			});
 
@@ -135,7 +138,7 @@
 				grid: false,
 				min: yearInt($scope.startYear),
 				max: yearInt($scope.endYear),
-				from: yearInt($scope.startYear),
+				from: yearInt(2000),
 				to: yearInt(2008),
 				prettify: yearToInt,
 				onChange: function (data) {
@@ -143,6 +146,9 @@
 					refLow = data.from;
 					$scope.REFHIGH = refHigh;
 					$scope.REFLOW = refLow;
+				},
+				onFinish: function (data) {
+					checkAvailableData(refHigh, refLow);
 				},
 			});
 
@@ -174,6 +180,9 @@
 			map.createPane('EVILayer');
 			map.getPane('EVILayer').style.zIndex = 300;
 
+			map.createPane('geeMapLayer');
+			map.getPane('geeMapLayer').style.zIndex = 300;
+
 			map.createPane('ForestLossLayer');
 			map.getPane('ForestLossLayer').style.zIndex = 401;
 
@@ -184,7 +193,7 @@
 			map.getPane('ForestAlertLayer').style.zIndex = 403;
 
 			map.createPane('admin');
-			map.getPane('admin').style.zIndex = 9999;
+			map.getPane('admin').style.zIndex =1000;
 			//	map.getPane('admin').style.pointerEvents = 'none';
 			map.createPane('maplayer_cam');
 			map.getPane('maplayer_cam').style.zIndex = 450;
@@ -194,7 +203,7 @@
 			map.getPane('maplayer_protect').style.pointerEvents = 'none';
 
 			map.createPane('maplayer_gis');
-			map.getPane('maplayer_gis').style.zIndex = 9999;
+			map.getPane('maplayer_gis').style.zIndex = 1001;
 
 			map.createPane('basemap');
 			map.getPane('basemap').style.zIndex = 0;
@@ -714,6 +723,89 @@
 						'<li class="toggle"><label class="switch_layer"><input name="'+inputID+'" id="'+inputID+'" data-yid="'+yid+'" data-color="#'+bgcolor+'" type="checkbox" '+checked+'><span class="slider_toggle round"></span></input></label><label>'+label+'</label></li>'
 					);
 				}
+
+				function isInArray(value, array) {
+				  return array.indexOf(value) > -1;
+				}
+
+				function checkAvailableData(high, low){
+					showSpiner();
+					showInfoAlert("Checking available dataset");
+					var parameters = {
+						polygon_id: polygon_id,
+						area_id: area_id,
+						area_type: area_type,
+						startYear: low,
+						endYear: high,
+					};
+					MapService.checkAvailableData(parameters)
+					.then(function (res) {
+						console.log(res)
+						hideSpiner();
+						var eviyear = res.evi;
+						var landcoveryear = res.landcover;
+						var foresttccyear = res.tcc;
+						var foresttchyear = res.tch;
+						var forestalertyear = res.forestalert;
+						var burnedyear = res.burned;
+						var noforestalertyear = "";
+						var nolandcoveryear = "";
+						var noeviyear = "";
+						var notccyear = "";
+						var notchyear = "";
+						var noburnedyear = "";
+						var forestalertA= [];
+						var lca= [];
+						var evia= [];
+						var tcca= [];
+						var tcha= [];
+						var burneda = [];
+						for(var i=low; i<=high; i++){
+							if(!isInArray(i.toString(), forestalertyear)){
+								noforestalertyear += i.toString()+" ";
+								forestalertA.push(i);
+								//document.getElementById("update-map").disabled = true;
+							}
+							if(!isInArray(i.toString(), landcoveryear)){
+								nolandcoveryear += i.toString()+" ";
+								lca.push(i);
+								document.getElementById("update-map").disabled = true;
+							}
+							if(!isInArray(i.toString(), eviyear)){
+								noeviyear += i.toString()+" ";
+								evia.push(i);
+								//document.getElementById("update-map").disabled = true;
+							}
+							if(!isInArray(i.toString(), foresttccyear)){
+								notccyear += i.toString()+" ";
+								tcca.push(i);
+								document.getElementById("update-map").disabled = true;
+							}
+							if(!isInArray(i.toString(), foresttchyear)){
+								notchyear += i.toString()+" ";
+								tcha.push(i);
+								document.getElementById("update-map").disabled = true;
+							}
+							if(!isInArray(i.toString(), burnedyear)){
+								noburnedyear += i.toString()+" ";
+								burneda.push(i);
+								document.getElementById("update-map").disabled = true;
+							}
+						}
+
+						if(burneda.length === 0 || tcca.length === 0 || tcha.length === 0 || forestalertA.length === 0){
+							document.getElementById("update-map").disabled = false;
+						}else{
+							var mgsAlert = "<b>Please select period agian</b> <br>No Fire Burned Area data: " + noburnedyear + "  <br> " + "No Tree Conopy data: " + notccyear + "  <br> " + "No Tree Height  data: " + notchyear + "  <br> " + "No Forest GLAD Alert data: " + noforestalertyear ;
+							showErrorAlert(mgsAlert);
+						}
+
+
+					}, function (error) {
+						console.log(error);
+					});
+				}
+
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				var total_area_evi = 0;
 				var graphDataEVI;
@@ -1180,15 +1272,11 @@
 								forestArea.push(data[year_string].forest);
 								noneforestArea.push(data[year_string].noneForest);
 
-								var paneIndex = 'forest_'+year_string;
-								map.createPane(paneIndex);
-								map.getPane(paneIndex).style.zIndex = 300+i;
-
 								if(map.hasLayer(MapLayerArr[year_string].forest)){
 									map.removeLayer(MapLayerArr[year_string].forest);
 								}
 								//add map layer
-								MapLayerArr[year_string].forest = addMapLayer(MapLayerArr[year_string].forest, data[year_string].eeMapURL, paneIndex);
+								MapLayerArr[year_string].forest = addMapLayer(MapLayerArr[year_string].forest, data[year_string].eeMapURL, 'geeMapLayer');
 								//set map style with opacity = 0.5
 								MapLayerArr[year_string].forest.setOpacity(1);
 
@@ -1358,17 +1446,12 @@
 
 								total_forest_alert_area += _yearData.total_area;
 
-								//create map layer index
-								var paneIndex = 'forestAlert_'+_year;
-								map.createPane(paneIndex);
-								map.getPane(paneIndex).style.zIndex = 350+i;
-
 								if(map.hasLayer(MapLayerArr[_year].forestAlert)){
 									map.removeLayer(MapLayerArr[_year].forestAlert);
 								}
 
 								//add map layer
-								MapLayerArr[_year].forestAlert = addMapLayer(MapLayerArr[_year].forestAlert, _yearData.eeMapURL, paneIndex);
+								MapLayerArr[_year].forestAlert = addMapLayer(MapLayerArr[_year].forestAlert, _yearData.eeMapURL, 'geeMapLayer');
 								//set map style with opacity = 0.5
 								MapLayerArr[_year].forestAlert.setOpacity(1);
 
@@ -1441,16 +1524,12 @@
 								_yearArr.push(i);
 								total_burned_area = total_burned_area + _yearData.total_area;
 
-								var paneIndex = 'burnedArea_'+_year;
-								map.createPane(paneIndex);
-								map.getPane(paneIndex).style.zIndex = 380+i;
-
 								if(map.hasLayer(MapLayerArr[_year].burnedArea)){
 									map.removeLayer(MapLayerArr[_year].burnedArea);
 								}
 
 								//add map layer
-								MapLayerArr[_year].burnedArea = addMapLayer(MapLayerArr[_year].burnedArea, _yearData.eeMapURL, paneIndex);
+								MapLayerArr[_year].burnedArea = addMapLayer(MapLayerArr[_year].burnedArea, _yearData.eeMapURL, 'geeMapLayer');
 								//set map style with opacity = 0.5
 								MapLayerArr[_year].burnedArea.setOpacity(1);
 
@@ -1536,17 +1615,12 @@
 										}
 									}
 								}
-
-								var paneIndex = 'LandcoverArea_'+_year;
-								map.createPane(paneIndex);
-								map.getPane(paneIndex).style.zIndex = 50+i;
-
 								if(map.hasLayer(MapLayerArr[_year].landcover)){
 									map.removeLayer(MapLayerArr[_year].landcover);
 								}
 
 								//add map layer
-								MapLayerArr[_year].landcover = addMapLayer(MapLayerArr[_year].landcover, _yearData.eeMapURL, paneIndex);
+								MapLayerArr[_year].landcover = addMapLayer(MapLayerArr[_year].landcover, _yearData.eeMapURL, 'geeMapLayer');
 								//set map style with opacity = 0.5
 								MapLayerArr[_year].landcover.setOpacity(1);
 
@@ -1584,19 +1658,23 @@
 					* Alert
 					*/
 					$scope.closeAlert = function () {
+						$(".alert").html('');
 						$('.custom-alert').addClass('display-none');
 						$scope.alertContent = '';
+						$(".alert").html('');
 					};
 
 					var showErrorAlert = function (alertContent) {
-						$scope.alertContent = alertContent;
+						$scope.alertContent = '';
+						$(".alert").html(alertContent);
 						$('.custom-alert').removeClass('display-none').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
 						$timeout(function () {
 							$scope.closeAlert();
-						}, 10000);
+						}, 5000000);
 					};
 
 					var showSuccessAlert = function (alertContent) {
+						$(".alert").html('');
 						$scope.alertContent = alertContent;
 						$('.custom-alert').removeClass('display-none').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
 						$timeout(function () {
@@ -1605,7 +1683,8 @@
 					};
 
 					var showInfoAlert = function (alertContent) {
-						$scope.alertContent = alertContent;
+						$(".alert").html(alertContent);
+						$scope.alertContent = '';
 						$('.custom-alert').removeClass('display-none').removeClass('alert-success').removeClass('alert-danger').addClass('alert-info');
 						$timeout(function () {
 							$scope.closeAlert();
@@ -1727,6 +1806,11 @@
 						hideModel();
 						$("#evi-info-modal").removeClass('hide');
 						$("#evi-info-modal").addClass('show');
+					});
+					$("#landcover-info").click(function() {
+						hideModel();
+						$("#landcover-info-modal").removeClass('hide');
+						$("#landcover-info-modal").addClass('show');
 					});
 					$("#forest-info").click(function() {
 						hideModel();

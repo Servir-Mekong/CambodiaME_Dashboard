@@ -17,7 +17,6 @@ class GEEApi():
     # image collection
     TREE_CANOPY = ee.ImageCollection(settings.TREE_CANOPY)
     TREE_HEIGHT = ee.ImageCollection(settings.TREE_HEIGHT)
-    PRIMARY_FOREST = ee.ImageCollection(settings.PRIMARY_FOREST)
     GLAD_ALERT = settings.GLAD_ALERT
     GLAD_FOREST_ALERT_FC = settings.GLAD_FOREST_ALERT_FC
     CAMBODIA_COUNTRY_BOUNDARY = settings.CAMBODIA_COUNTRY_BOUNDARY
@@ -1038,4 +1037,40 @@ class GEEApi():
             series_start = str(_year) + '-01-01'
             series_end = str(_year) + '-12-31'
             res[str(_year)] = self.calLandcoverArea(series_start, series_end, _year, area_type, area_id)
+        return res
+
+    # -------------------------------------------------------------------------
+    def checkAvailableData(self, start_year, end_year):
+
+        EVI_IC = ee.ImageCollection('MODIS/006/MYD13A1')
+        series_start = str(start_year) + '-01-01'
+        series_end = str(end_year) + '-12-31'
+
+        def imgDate(d):
+            return ee.Date(d).format("YYYY")
+
+        EVI_dates = ee.List(EVI_IC.filterDate(series_start, series_end).aggregate_array("system:time_start")).map(imgDate).getInfo()
+        #LANDCOVER_dates = ee.List(GEEApi.LANDCOVER.filterDate(series_start, series_end).aggregate_array("system:time_start")).map(imgDate).getInfo()
+        TREE_CANOPY_dates = ee.List(ee.ImageCollection(GEEApi.TREE_CANOPY).filterDate(series_start, series_end).aggregate_array("system:time_start")).map(imgDate).getInfo()
+        TREE_HEIGHT_dates = ee.List(ee.ImageCollection(GEEApi.TREE_HEIGHT).filterDate(series_start, series_end).aggregate_array("system:time_start")).map(imgDate).getInfo()
+        GLAD_ALERT_dates = ee.List(ee.ImageCollection(GEEApi.GLAD_ALERT).filterDate(series_start, series_end).aggregate_array("system:time_start")).map(imgDate).getInfo()
+        BURNED_AREA_dates = ee.List(ee.ImageCollection(GEEApi.BURNED_AREA).filterDate(series_start, series_end).aggregate_array("system:time_start")).map(imgDate).getInfo()
+        LANDCOVER_dates = []
+
+        for _year in range(start_year, end_year+1):
+            try:
+                lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(_year)).clip(self.geometry)
+                LANDCOVER_dates.append(str(_year))
+                #break
+            except ValueError:
+                print("Oops!  That was no valid number.  Try again...")
+
+
+        res = {}
+        res["evi"] = list(dict.fromkeys(EVI_dates))
+        res["landcover"] = LANDCOVER_dates
+        res["tcc"] = list(dict.fromkeys(TREE_CANOPY_dates))
+        res["tch"] = list(dict.fromkeys(TREE_HEIGHT_dates))
+        res["forestalert"] = list(dict.fromkeys(GLAD_ALERT_dates))
+        res["burned"] = list(dict.fromkeys(BURNED_AREA_dates))
         return res

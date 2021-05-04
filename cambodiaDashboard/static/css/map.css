@@ -129,6 +129,9 @@ p {
     display: none;
 }
 
+.leaflet-popup-pane{
+  z-index: 9999;
+}
 ul, ol {
     list-style-type: none;
     margin: 0;
@@ -1219,6 +1222,11 @@ svg image{
   border-radius: 15px;
   border: none;
   color: #FFF;
+  cursor: pointer;
+}
+
+.map-controller .update-btn:disabled {
+  background-color: #ddd;
 }
 
 .map-controller .clear-btn {
@@ -1229,6 +1237,7 @@ svg image{
   border-radius: 15px;
   border: none;
   color: #FFF;
+  cursor: pointer;
 }
 
 .map-controller .body-controls .image-options button {

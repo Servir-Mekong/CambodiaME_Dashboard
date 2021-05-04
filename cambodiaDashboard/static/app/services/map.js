@@ -21,6 +21,30 @@
 			return new google.maps.ImageMapType(eeMapOptions);
 		};
 
+
+		service.checkAvailableData= function (options) {
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id:options.polygon_id,
+					startYear: options.startYear,
+					endYear:options.endYear,
+					area_type: options.area_type,
+					area_id: options.area_id,
+				},
+				params: {
+					action: 'check-date'
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
+			});
+			return promise;
+		};
+
 		service.getPieEvi= function (options) {
 			var area_type = options.area_type;
 			var area_id = options.area_id;
