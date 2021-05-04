@@ -2185,6 +2185,9 @@
 							if(map.hasLayer(MapLayerArr[_year].burnedArea)){
 								map.removeLayer(MapLayerArr[_year].burnedArea);
 							}
+							if(map.hasLayer(MapLayerArr[_year].landcover)){
+								map.removeLayer(MapLayerArr[_year].landcover);
+							}
 						}
 
 						// clear all toggle layer list
