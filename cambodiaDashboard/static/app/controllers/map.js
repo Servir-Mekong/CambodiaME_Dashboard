@@ -497,14 +497,14 @@
 						'mouseover': function (e) {
 							highlight(e.target);
 							$(".highlight_area_textbox").css("display", "block");
-							$(".highlight_area_textbox").text( e.target.feature.properties.ADM1_NAME + '/' + e.target.feature.properties.ADM2_NAME);
+							$(".highlight_area_textbox").text(e.target.feature.properties.DIST_NAME);
 						},
 						'mouseout': function (e) {
 							dehighlight(e.target, cam_adm2_layer);
 							$(".highlight_area_textbox").css("display", "none");
 						},
 						'click': function (e) {
-							var selected_name = e.target.feature.properties.ADM1_NAME + '/' + e.target.feature.properties.ADM2_NAME;
+							var selected_name =  e.target.feature.properties.DIST_NAME;
 							select(e.target, cam_adm2_layer, selected_name, "district");
 						}
 					});
@@ -1695,7 +1695,7 @@
 
 					// A $( document ).ready() block.
 					$( document ).ready(function() {
-						cal();
+						//cal();
 						$("#biophysical-tab").click();
 					});
 

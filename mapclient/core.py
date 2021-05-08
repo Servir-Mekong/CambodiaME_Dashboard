@@ -898,10 +898,10 @@ class GEEApi():
         #confidance more then 90%
         maskconf = IC.select('confidence').mean().gt(90).toInt16()
         fire = fire.updateMask(maskconf);
-        fire = fire.reproject(proj,None,  1000);
+        fire = fire.reproject(crs=proj,scale=1000);
         #binary image
         image = fire.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
-        image = image.reproject(proj,None, 1000);
+        image = image.reproject(crs=proj,scale=1000);
 
         if area_type == "draw" or area_type == "upload":
 
@@ -919,9 +919,9 @@ class GEEApi():
 
             number_fire = v1.size().getInfo()
             #area in squre meter
-            number_fire = number_fire * (1000*1000)
+            areaSq = number_fire * (1000*1000)
             #convert to hactare divide by 10000
-            areaHA = number_fire / 10000
+            areaHA = areaSq / 10000
 
         else:
             if area_type == "country":
