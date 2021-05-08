@@ -423,9 +423,8 @@ class GEEApi():
 
     # -------------------------------------------------------------------------
     @staticmethod
-    def _get_combined_img_coll():
-
-        years = ee.List.sequence(2000, 2019)
+    def _get_combined_img_coll(end_year):
+        years = ee.List.sequence(2000, end_year)
         date_ymd = ee.Date.fromYMD
 
         def addBands(_year):
@@ -467,7 +466,7 @@ class GEEApi():
                 'message': 'Please specify a start and end year for which you want to perform the calculations!'
             }
 
-        combined_img_coll = GEEApi._get_combined_img_coll()
+        combined_img_coll = GEEApi._get_combined_img_coll(end_year)
 
         filtered_img_coll = GEEApi._filter_for_forest_definition(\
                                                         combined_img_coll,
@@ -516,7 +515,7 @@ class GEEApi():
                 'message': 'Please specify a start and end year for which you want to perform the calculations!'
             }
 
-        combined_img_coll = GEEApi._get_combined_img_coll()
+        combined_img_coll = GEEApi._get_combined_img_coll(end_year)
 
         filtered_img_coll = GEEApi._filter_for_forest_definition(\
                                                         combined_img_coll,
@@ -559,15 +558,17 @@ class GEEApi():
                       tree_canopy_definition = 10,
                       tree_height_definition = 5,
                       start_year = 2000,
+                      end_year=None,
                       area_type='',
                       area_id=''):
+
 
         if not year:
             return {
                 'message': 'Please specify a year for which you want to perform the calculations!'
             }
 
-        combined_img_coll = GEEApi._get_combined_img_coll()
+        combined_img_coll = GEEApi._get_combined_img_coll(end_year)
 
         filtered_img_coll = GEEApi._filter_for_forest_definition(\
                                                         combined_img_coll,
@@ -641,7 +642,6 @@ class GEEApi():
     # -------------------------------------------------------------------------
     def get_mapid(self, type, start_year, end_year, tree_canopy_definition, tree_height_definition, area_type, area_id):
         mapid = []
-
         res = {}
         for _year in range(start_year, end_year+1):
             res[str(_year)] = self.forest_extend(get_image = False,
@@ -649,6 +649,7 @@ class GEEApi():
                                        tree_canopy_definition = tree_canopy_definition,
                                        tree_height_definition = tree_height_definition,
                                        start_year = start_year,
+                                       end_year= end_year,
                                        area_type= area_type, area_id=area_id)
 
         try:

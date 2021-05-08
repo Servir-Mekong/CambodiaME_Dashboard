@@ -112,7 +112,7 @@
 				min: yearInt($scope.startYear),
 				max: yearInt($scope.endYear),
 				from: yearInt(2009),
-				to: yearInt(2019),
+				to: yearInt(2020),
 				prettify: yearToInt,
 				onChange: function (data) {
 					studyHigh = data.to;
@@ -2064,6 +2064,7 @@
 						$("#fire-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
+						$("#s1-alert-tab").removeClass("active");
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-biophysical').css('transform', ' translateX(6.75rem)');
@@ -2081,6 +2082,7 @@
 						$("#fire-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
+						$("#s1-alert-tab").removeClass("active");
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-forest-monitoring').css('transform', ' translateX(6.75rem)');
@@ -2097,10 +2099,28 @@
 						$("#fire-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
+						$("#s1-alert-tab").removeClass("active");
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-forest-alert').css('transform', ' translateX(6.75rem)');
 						$('#panel-forest-alert').css('opacity', 1);
+					});
+
+					$("#s1-alert-tab").click(function () {
+						clearMapLayers();
+						$(".legend").css("display", "none");
+						$(".close-menu").click();
+						$(".map-controller").css('left', '420px');
+						$("#biophysical-tab").removeClass("active");
+						$("#forest-monitoring-tab").removeClass("active");
+						$("#fire-tab").removeClass("active");
+						$("#basemap-tab").removeClass("active");
+						$("#layers-tab").removeClass("active");
+						$("#forest-alert-tab").removeClass("active");
+						$(this).addClass("active");
+						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
+						$('#panel-s1-alert').css('transform', ' translateX(6.75rem)');
+						$('#panel-s1-alert').css('opacity', 1);
 					});
 
 					$("#fire-tab").click(function () {
@@ -2112,6 +2132,7 @@
 						$("#biophysical-tab").removeClass("active");
 						$("#forest-monitoring-tab").removeClass("active");
 						$("#forest-alert-tab").removeClass("active");
+						$("#s1-alert-tab").removeClass("active");
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-fire').css('transform', ' translateX(6.75rem)');
@@ -2126,6 +2147,7 @@
 						$("#forest-alert-tab").removeClass("active");
 						$("#usecase-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
+						$("#s1-alert-tab").removeClass("active");
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel3').css('transform', ' translateX(6.75rem)');
@@ -2141,6 +2163,7 @@
 						$("#fire-tab").removeClass("active");
 						$("#usecase-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
+						$("#s1-alert-tab").removeClass("active");
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-layers').css('transform', ' translateX(6.75rem)');
