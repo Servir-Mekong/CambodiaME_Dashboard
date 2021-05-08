@@ -695,7 +695,7 @@
 								if(labelArea){
 									return this.series.name + " (" + this.point.y + " hectare)";
 								}else{
-									return this.series.name + " (" + this.point.y + " evidence)";
+									return this.series.name + " (" + this.point.y + " )";
 								}
 							}
 						},
@@ -1520,9 +1520,9 @@
 								var _yearData = data[i.toString()];
 								var _year = i.toString();
 
-								area_data.push([i, _yearData.total_area]);
+								area_data.push([i, _yearData.number_fire]);
 								_yearArr.push(i);
-								total_burned_area = total_burned_area + _yearData.total_area;
+								total_burned_area = total_burned_area + _yearData.number_fire;
 
 								if(map.hasLayer(MapLayerArr[_year].burnedArea)){
 									map.removeLayer(MapLayerArr[_year].burnedArea);
@@ -1556,11 +1556,11 @@
 							}
 
 							var series = [{
-								name: 'Area in Hectare',
+								name: 'Number of Fire hotspot',
 								data: area_data,
 								color: '#d95252'
 							}];
-							showHightChart('burned_area_chart', 'column', _yearArr, series, true, 10, 'BURNED AREA IN'+ selected_admin.toUpperCase());
+							showHightChart('burned_area_chart', 'column', _yearArr, series, false, 10, 'NUMBER OF FIRE HOTSPOT '+ selected_admin.toUpperCase());
 
 							//$scope.showLoader = false;
 
@@ -1826,6 +1826,11 @@
 						hideModel();
 						$("#burned-area-info-modal").removeClass('hide');
 						$("#burned-area-info-modal").addClass('show');
+					});
+					$("#gis-info").click(function() {
+						hideModel();
+						$("#gis-info-modal").removeClass('hide');
+						$("#gis-info-modal").addClass('show');
 					});
 
 					$("#draw-polygon").click(function() {
@@ -2375,7 +2380,7 @@
 										var img = new Image();
 										img.src = dataUrl;
 										pdf.text(50,350, pdf.splitTextToSize("Map of biophysical health in the period from "+studyLow+" to "+studyHigh , 500))
-										pdf.addImage(img, 'JPEG', 50, 370, 530, 350);
+										pdf.addImage(img, 'JPEG', 50, 370, 530, 355);
 										var newDate = new Date();
 										var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 										pdf.save(pdffilename);
@@ -2458,7 +2463,7 @@
 											var img = new Image();
 											img.src = dataUrl;
 											pdf.text(50, 390, pdf.splitTextToSize('Map of forest cover and change in '+ selected_admin+ " from "+ studyLow+ " to " + studyHigh , 500));
-											pdf.addImage(img, 'JPEG', 50, 410, 530, 350);
+											pdf.addImage(img, 'JPEG', 50, 410, 530, 355);
 											var newDate = new Date();
 											var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 											pdf.save(pdffilename);
@@ -2507,7 +2512,7 @@
 								var img = new Image();
 								img.src = dataUrl;
 								pdf.text(50, 410, pdf.splitTextToSize('Map of forest cover change' , 500));
-								pdf.addImage(img, 'JPEG', 50, 430, 530, 350);
+								pdf.addImage(img, 'JPEG', 50, 430, 530, 355);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);
@@ -2541,8 +2546,8 @@
 							img.src = dataUrl;
 							pdf.text(50,70, pdf.splitTextToSize("FIRE BURNED AREA" , 500))
 							pdf.text(50,90, pdf.splitTextToSize("Name of Area Admin boundary/ protected area: "+ selected_admin , 500))
-							pdf.text(50,110, pdf.splitTextToSize("Total area of fire burned from "+ studyLow+ " to " + studyHigh+" : "+total_burned_area.toFixed(2)+ " (ha)", 500))
-							pdf.text(50, 140, pdf.splitTextToSize('Burned area in '+ selected_admin + " from "+ studyLow+ " to " + studyHigh  , 500));
+							pdf.text(50,110, pdf.splitTextToSize("Total number of fire burned from "+ studyLow+ " to " + studyHigh+" : "+total_burned_area.toFixed(2)+ " ", 500))
+							pdf.text(50, 140, pdf.splitTextToSize('Number of fire hotspot in '+ selected_admin + " from "+ studyLow+ " to " + studyHigh  , 500));
 							pdf.addImage(img, 'JPEG', 50, 150, 350, 250);
 							var mapDiv = document.getElementById('map');
 							domtoimage.toPng(mapDiv)
@@ -2551,7 +2556,7 @@
 								var img = new Image();
 								img.src = dataUrl;
 								pdf.text(50, 410, pdf.splitTextToSize('Map of forest fire hotspot ' , 500));
-								pdf.addImage(img, 'JPEG', 50, 430, 530, 350);
+								pdf.addImage(img, 'JPEG', 50, 430, 530, 355);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);

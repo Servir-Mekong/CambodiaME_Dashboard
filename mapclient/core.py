@@ -24,6 +24,7 @@ class GEEApi():
     CAMBODIA_PROVINCE_BOUNDARY = settings.CAMBODIA_PROVINCE_BOUNDARY
     CAMBODIA_DISTRICT_BOUNDARY = settings.CAMBODIA_DISTRICT_BOUNDARY
     BURNED_AREA = ee.ImageCollection(settings.BURNED_AREA)
+    FIRMS_BURNED_AREA = ee.ImageCollection(settings.FIRMS_BURNED_AREA)
     LANDCOVER = ee.ImageCollection(settings.LANDCOVER)
 
     COLOR = ['A8D9C6','B0DAB2','BFE1C9','AAD7A0','C3DE98','D5E59E','93D2BF','95CF9C','A4D7B8','9BD291','B1D78A','C9E08E','5CC199','77C78C','37B54A','126039','146232','0F8040','279445','449644','59A044','0E361E','236832','335024', '36461F']
@@ -885,12 +886,81 @@ class GEEApi():
         }
 
     # -------------------------------------------------------------------------
+    def calFirmBurnedArea(self, series_start, series_end, year, area_type, area_id):
+        #burned Area Feature collection
+        ic = "projects/servir-mekong/Cambodia-Dashboard-tool/BurnArea/"+ area_type +"_"+ str(year) +"Metadata"
+        burnedArea_fc = ee.FeatureCollection(ic)
+
+        IC= GEEApi.FIRMS_BURNED_AREA.filterBounds(self.geometry).sort('system:time_start', False).filterDate(series_start, series_end)
+        proj = ee.Projection('EPSG:4326');
+        fire = IC.select('T21').max().toInt16().clip(self.geometry);
+
+        #confidance more then 90%
+        maskconf = IC.select('confidence').mean().gt(90).toInt16()
+        fire = fire.updateMask(maskconf);
+        fire = fire.reproject(proj,None,  1000);
+        #binary image
+        image = fire.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
+        image = image.reproject(proj,None, 1000);
+
+        if area_type == "draw" or area_type == "upload":
+
+            v1 = image.addBands(image).reduceToVectors(
+              crs= image.select('binary').projection(),
+              scale= 1000,
+              geometryType= 'polygon',
+              eightConnected= False,
+              labelProperty= 'zone',
+              reducer= ee.Reducer.sum(),
+              maxPixels= 1E15,
+              bestEffort = True
+            ).filterMetadata("sum","greater_than", 1)
+
+
+            number_fire = v1.size().getInfo()
+            #area in squre meter
+            number_fire = number_fire * (1000*1000)
+            #convert to hactare divide by 10000
+            areaHA = number_fire / 10000
+
+        else:
+            if area_type == "country":
+                ic = "projects/servir-mekong/Cambodia-Dashboard-tool/BurnArea/camMetadata"
+                burnedArea_fc = ee.FeatureCollection(ic)
+                burnedArea = burnedArea_fc.filter(ee.Filter.eq('NAME_ENGLI', area_id)).filter(ee.Filter.eq('year', year))
+            elif area_type == "province":
+                burnedArea = burnedArea_fc.filter(ee.Filter.eq('gid', area_id))
+            elif area_type == "district":
+                burnedArea = burnedArea_fc.filter(ee.Filter.eq('DIST_CODE', area_id))
+            elif area_type == "protected_area":
+                ic = "projects/servir-mekong/Cambodia-Dashboard-tool/BurnArea/protected_"+ str(year) +"Metadata"
+                burnedArea_fc = ee.FeatureCollection(ic)
+                burnedArea = burnedArea_fc.filter(ee.Filter.eq('map_id', area_id))
+
+            areaHA = burnedArea.aggregate_array("areaHect").get(0).getInfo()
+            number_fire = burnedArea.aggregate_array("numberFire").get(0).getInfo()
+
+        map_id = fire.getMapId({
+            'min': '300',
+            'max': '400',
+            'palette': 'red,orange,yellow'
+        })
+
+        return {
+        'number_fire': int(number_fire),
+        'total_area': float('%.2f' % areaHA),
+        'eeMapId': str(map_id['mapid']),
+        'eeMapURL': str(map_id['tile_fetcher'].url_format),
+        'color': 'ff0000'
+        }
+
+    # -------------------------------------------------------------------------
     def getBurnedArea(self, start_year, end_year, area_type, area_id):
         res = {}
         for _year in range(start_year, end_year+1):
             series_start = str(_year) + '-01-01'
             series_end = str(_year) + '-12-31'
-            res[str(_year)] = self.calBurnedArea(series_start, series_end, _year, area_type, area_id)
+            res[str(_year)] = self.calFirmBurnedArea(series_start, series_end, _year, area_type, area_id)
         return res
 
     # -------------------------------------------------------------------------
