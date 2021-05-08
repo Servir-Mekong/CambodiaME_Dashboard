@@ -1695,7 +1695,7 @@
 
 					// A $( document ).ready() block.
 					$( document ).ready(function() {
-						//cal();
+						cal();
 						$("#biophysical-tab").click();
 					});
 
