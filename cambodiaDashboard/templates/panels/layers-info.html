@@ -146,6 +146,7 @@
               <td width="30%" style="font-weight:800; color:#333;">Overview</td>
               <td>
                 The forest alert layer uses the GLAD Alert product from UMD, based on the definition of ‘forest’ being - ‘5-m tall trees with a canopy closure exceeding 30%’. An alert is defined as any Landsat pixel that experiences a canopy loss in excess of 50% cover. The alert system is designed to complement a current annual global forest cover loss product that is based on a calendar year update, first prototyped using Landsat-7 data (2000-2019), annually updated thereafter. Source: <a href="http://www.globalforestwatch.org/">http://www.globalforestwatch.org/</a> and <a href="http://earthenginepartners.appspot.com/science-2013-global-forest">http://earthenginepartners.appspot.com/science-2013-global-forest.</a>
+                <p>The alert function here included the SAR - Sentinel 1 forest alert information. The SAR Sentinel -1 alert model is developed by SERVIR-Mekong in partnership with the USAID Greening Prey Lang Project and technical support of the Applied Science Team from Oregon State University. The model prioritized the deep learning model technology using SAR image to detect near real time deforestation alerts. The technology can detect deforestation without considering time and weather.</p>
               </td>
             </tr>
             <tr>
@@ -189,12 +190,14 @@
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Overview</td>
               <td>
-                This data shows areas where fire was detected during the period 2000-2018. The pixel shows the last year in which fire was detected. The Terra and Aqua combined MCD64A1 Version 6 Burned Area data product is a monthly, global-gridded 500-m product containing per-pixel burned-area and high-quality information.
+                Overview: The information shows the active fire / hotspot of the Fire Information for Resource Management System (FIRMS). This system was developed to provide near real-time active fire locations to natural resource managers that faced challenges obtaining timely satellite-derived fire information.
+Data displayed in this tool is the Earth Engine version of the Fire Information for Resource Management System (FIRMS) dataset containing the LANCE fire detection product in rasterized form. The near real-time (NRT) active fire locations are processed by LANCE using the standard MODIS MOD14/MYD14 Fire and Thermal Anomalies product. Pixel displayed as a fire hotspot in this tool achieves 90% confidence of the LANCE fire detection model.
+
               </td>
             </tr>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Resolution</td>
-              <td>500m</td>
+              <td>1000-m</td>
             </tr>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Geographic Coverage</td>
@@ -202,15 +205,15 @@
             </tr>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Data Source</td>
-              <td> <a href="https://lpdaac.usgs.gov/products/mcd64a1v006/">https://lpdaac.usgs.gov/products/mcd64a1v006/</a></td>
+              <td> <a href="https://lpdaac.usgs.gov/products/mcd64a1v006/">https://earthdata.nasa.gov/earth-observation-data/near-real-time/firms</a></td>
             </tr>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Frequency updates</td>
-              <td>Monthly</td>
+              <td>NASA's Fire Information for Resource Management System (FIRMS) distributes Near Real-Time (NRT) active fire data within 3 hours</td>
             </tr>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">URL link to tool</td>
-              <td> <a href=https://earthmap.org/>https://earthmap.org/</a></td>
+              <td> <a href=https://firms.modaps.eosdis.nasa.gov/>https://firms.modaps.eosdis.nasa.gov/</a></td>
             </tr>
           </table>
         </div>
@@ -227,33 +230,30 @@
 
       <div class="modal-wrapper custom-scroll">
         <div class="area-modal-title">
-          [['GIS DATA' | translate]]
+          [['GIS Layers' | translate]]
         </div>
         <div class="disclaimer-content">
-          <h4>Road and railway networks in Cambodia (2012- 2020)</h4>
+          <h4>Cambodia Protected Area</h4>
           <table>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Overview</td>
               <td>
-                The Commune Database is produced by the NCDD (National Committee for Subnational Democratic Development). This file contains excerpts of the Database, namely the road and railway networks in relation to market density data. Data were provided to ODC in vector and raster format by Save Cambodia's Wildlife's Atlas Working Group.
+                This dataset contains data of boundary of protected areas in Cambodia with issuing dates starting from 1993 to 2020. The data was collected from government agencies and provided to SERVIR-Mekong by USAID mission in Cambodia. Geographic data is encoded in the WGS 84, Zone 48 North coordinate reference system.
               </td>
             </tr>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Published by</td>
-              <td>Open Development Cambodia</td>
-            </tr>
-            <tr>
-              <td width="30%" style="font-weight:800; color:#333;">Data Source</td>
-              <td> <a href="https://data.opendevelopmentmekong.net/en/dataset/road-and-railway-networks--in-cambodia?type=dataset">https://data.opendevelopmentmekong.net/en/dataset/road-and-railway-networks--in-cambodia?type=dataset</a></td>
+              <td>Cambodia Ministry of Environment</td>
             </tr>
           </table>
           <br>
-          <h4>Community forestry (2008-2017)</h4>
+
+          <h4>Cambodia Airports</h4>
           <table>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Overview</td>
               <td>
-                This dataset describes the information of community forestry (CF) in Cambodia from 2008 to 2017. The total number of 339 CFs is recorded. The data was collected from many sources by ODC’s mappers such as the Prakas and reports of the Ministry of Agriculture Forestry and Fisheries and Forestry Administration, in PDF format. Geographic data is encoded in the WGS 84, Zone 48 North coordinate reference system.
+                This dataset shows the point location of airports both international and national airports in Cambodia. The points also have additional information including attributes (name, type, ICAO and IATA code). The data was extracted from Open Flights database via Environment Operations Centre.
               </td>
             </tr>
             <tr>
@@ -262,7 +262,7 @@
             </tr>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Data Source</td>
-              <td> <a href="https://data.opendevelopmentcambodia.net/en/dataset/community-forestry-2008-2014">https://data.opendevelopmentcambodia.net/en/dataset/community-forestry-2008-2014</a></td>
+              <td> <a href="https://data.opendevelopmentcambodia.net/en/dataset/airports-of-cambodia">https://data.opendevelopmentcambodia.net/en/dataset/airports-of-cambodia</a></td>
             </tr>
           </table>
           <br>
@@ -285,12 +285,12 @@
             </tr>
           </table>
           <br>
-          <h4>Airports of Cambodia</h4>
+          <h4>Hydropower dams in Cambodia (1993-2014)</h4>
           <table>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Overview</td>
               <td>
-                This dataset show about the point location of airports both international and national airports in Cambodia. The points also have additional information including attributes (name, type, ICAO and IATA code). The data was extracted from Open Flights database via Environment Operations Centre.
+                This dataset describes the information of transmission lines for each of Cambodia’s province from 1993 to 2014. The data was collected from many sources by ODC’s mappers such as government agency, and final reports of Electricité du Cambodge (EDC) in pdf format. Geographic data is encoded in the WGS 84, Zone 48 North coordinate reference system.
               </td>
             </tr>
             <tr>
@@ -299,10 +299,27 @@
             </tr>
             <tr>
               <td width="30%" style="font-weight:800; color:#333;">Data Source</td>
-              <td> <a href="https://data.opendevelopmentcambodia.net/en/dataset/airports-of-cambodia">https://data.opendevelopmentcambodia.net/en/dataset/airports-of-cambodia/</a></td>
+              <td> <a href="https://data.opendevelopmentmekong.net/en/dataset/hydropower-2009-2014?type=dataset">https://data.opendevelopmentmekong.net/en/dataset/hydropower-2009-2014?type=dataset</a></td>
             </tr>
           </table>
           <br>
+          <h4>Road and railway networks in Cambodia (2012- 2020)</h4>
+          <table>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Overview</td>
+              <td>
+                Road networks are produced by Open Street Map. ODC's map and data team extracted the data in vector format. Moreover, the polyline data of railway​ given by Save Cambodia's Wildlife's Atlas Working Group in Cambodia for two statuses such as existing, proposed new lines in Cambodia.
+              </td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Published by</td>
+              <td>Open Development Cambodia</td>
+            </tr>
+            <tr>
+              <td width="30%" style="font-weight:800; color:#333;">Data Source</td>
+              <td> <a href="https://data.opendevelopmentmekong.net/en/dataset/road-and-railway-networks--in-cambodia?type=dataset">https://data.opendevelopmentmekong.net/en/dataset/road-and-railway-networks--in-cambodia?type=dataset</a></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>

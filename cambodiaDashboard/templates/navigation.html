@@ -3,12 +3,22 @@
 <nav ng-cloak class="navbar navbar-default navbar-fixed-top" role="navigation" style="border-color: #eee;">
     <div class="navbar-container" ng-controller="settingsCtrl" >
         <div class="container-fluid banner-container main-padding">
-            <div ng-repeat="partner in partnersHeader" class="banner">
-                <a href="[[partner.url]]" target="_blank">
-                    <img class="grow img-responsive [[partner.className]]" src="{% static '' %}[[partner.src]]" alt="[[partner.alt]]">
+            <div class="banner">
+                <a href="https://www.usaid.gov/" target="_blank">
+                    <img class="grow img-responsive usaid" src="{% static '' %}images/usaid.png" alt="The United States Agency for International Developmen">
+                </a>
+                <a href="https://www.nasa.gov/" target="_blank">
+                    <img class="grow img-responsive nasa" src="{% static '' %}images/nasa.png" alt="The National Aeronautics and Space Administration">
+                </a>
+                <a href="http://www.adpc.net/" target="_blank">
+                    <img class="grow img-responsive adpc" src="{% static '' %}images/adpc.png" alt="Asian Disaster Preparedness Center">
+                </a>
+                <a href="https://servir.adpc.net/" target="_blank">
+                    <img class="grow img-responsive servir" src="{% static '' %}images/servir-mekong.png" alt="SERVIR">
                 </a>
             </div>
         </div>
+
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header menu-container main-padding">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">

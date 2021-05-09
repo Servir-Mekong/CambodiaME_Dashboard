@@ -1,5 +1,4 @@
 (function () {
-
 	'use strict';
 	angular.module('baseApp')
 	.controller('settingsCtrl', function ($scope, appSettings, $translate, $rootScope) {
@@ -8,8 +7,6 @@
 		$scope.language = appSettings.Languages;
 		$scope.applicationName = appSettings.applicationName;
 		$scope.footerLinks = appSettings.footerLinks;
-		$scope.partnersHeader = appSettings.partnersHeader;
-		$scope.partnersFooter = appSettings.partnersFooter;
 
 		$scope.toggleSidePanel = function () {
 			if ($('#map').hasClass('pull-margin')) {

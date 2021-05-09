@@ -15,6 +15,7 @@
 
 		$scope.startYear = appSettings.startYear_controller;
 		$scope.endYear = appSettings.endYear_controller;
+		$scope.partnersFooter = appSettings.partnersFooter;
 
 		$scope.forestAlertStartYear = appSettings.forestAlertStartYear_controller;
 
@@ -832,6 +833,7 @@
 							graphDataEVI.push({ name: className[i], y: data[i], color: classColor[i]});
 							total_area_evi = total_area_evi + data[i];
 						}
+						//var totalEVIArea = graphDataEVI[0]["y"].toString() +   graphDataEVI[1]["y"].toString() + graphDataEVI[2]["y"].toString() + graphDataEVI[3]["y"].toString()+graphDataEVI[4]["y"].toString()
 
 						//Showing the pie chart
 						Highcharts.chart('chart', {
@@ -2069,7 +2071,7 @@
 						$("#fire-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
-						$("#s1-alert-tab").removeClass("active");
+
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-biophysical').css('transform', ' translateX(6.75rem)');
@@ -2087,7 +2089,7 @@
 						$("#fire-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
-						$("#s1-alert-tab").removeClass("active");
+
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-forest-monitoring').css('transform', ' translateX(6.75rem)');
@@ -2104,29 +2106,13 @@
 						$("#fire-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
-						$("#s1-alert-tab").removeClass("active");
+
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-forest-alert').css('transform', ' translateX(6.75rem)');
 						$('#panel-forest-alert').css('opacity', 1);
 					});
 
-					$("#s1-alert-tab").click(function () {
-						clearMapLayers();
-						$(".legend").css("display", "none");
-						$(".close-menu").click();
-						$(".map-controller").css('left', '420px');
-						$("#biophysical-tab").removeClass("active");
-						$("#forest-monitoring-tab").removeClass("active");
-						$("#fire-tab").removeClass("active");
-						$("#basemap-tab").removeClass("active");
-						$("#layers-tab").removeClass("active");
-						$("#forest-alert-tab").removeClass("active");
-						$(this).addClass("active");
-						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
-						$('#panel-s1-alert').css('transform', ' translateX(6.75rem)');
-						$('#panel-s1-alert').css('opacity', 1);
-					});
 
 					$("#fire-tab").click(function () {
 						clearMapLayers();
@@ -2137,7 +2123,7 @@
 						$("#biophysical-tab").removeClass("active");
 						$("#forest-monitoring-tab").removeClass("active");
 						$("#forest-alert-tab").removeClass("active");
-						$("#s1-alert-tab").removeClass("active");
+
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-fire').css('transform', ' translateX(6.75rem)');
@@ -2152,7 +2138,7 @@
 						$("#forest-alert-tab").removeClass("active");
 						$("#usecase-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
-						$("#s1-alert-tab").removeClass("active");
+
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel3').css('transform', ' translateX(6.75rem)');
@@ -2168,7 +2154,7 @@
 						$("#fire-tab").removeClass("active");
 						$("#usecase-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
-						$("#s1-alert-tab").removeClass("active");
+
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-layers').css('transform', ' translateX(6.75rem)');
@@ -2342,7 +2328,7 @@
 							pdf.text(50,70, evi_main_title)
 
 							pdf.text(50,90, pdf.splitTextToSize("Name of Area Admin boundary/ protected area: "+ selected_admin , 500))
-							pdf.text(50,110, pdf.splitTextToSize("Total area: "+graphDataEVI[0]["y"]+graphDataEVI[1]["y"]+graphDataEVI[2]["y"]+graphDataEVI[3]["y"]+graphDataEVI[4]["y"] , 500))
+							pdf.text(50,110, pdf.splitTextToSize("Total area: "+total_area_evi , 500))
 							pdf.text(50,130, pdf.splitTextToSize("Area of biophysical change:" , 500))
 							pdf.text(70,150, pdf.splitTextToSize("-	Large improvement   "+graphDataEVI[0]["y"]+" (ha)" , 500))
 							pdf.text(70,170, pdf.splitTextToSize("-	Improvement         "+graphDataEVI[1]["y"]+" (ha)" , 500))
@@ -2351,7 +2337,7 @@
 							pdf.text(70,230, pdf.splitTextToSize("-	Severe stress       "+graphDataEVI[4]["y"]+" (ha)" , 500))
 
 							pdf.text(50, 250, chart_title);
-							pdf.addImage(img, 'JPEG', 50, 260, 320, 250);
+							pdf.addImage(img, 'JPEG', 50, 260, undefined, undefined);
 							var bio_chart = document.getElementById('chart_div');
 							domtoimage.toPng(bio_chart)
 							.then(function (dataUrl) {
@@ -2362,7 +2348,7 @@
 								var lines = pdf.splitTextToSize('Cumulative anomaly EVI in '+ selected_admin+ " from "+ studyLow+ " to " + studyHigh , 500);
 								pdf.text(50, 530, lines);
 								// addImage(imageData, format, x, y, width, height, alias, compression, rotation)
-								pdf.addImage(imgChart, 'JPEG', 50, 550, 320, 240);
+								pdf.addImage(imgChart, 'JPEG', 50, 550, undefined, undefined);
 								pdf.addPage();
 
 								var landcover_chartDiv = document.getElementById('landcover_chart');
@@ -2372,15 +2358,14 @@
 									var img = new Image();
 									img.src = dataUrl;
 									pdf.text(50,70, pdf.splitTextToSize('Land Cover in '+ selected_admin+ " from "+ studyLow+ " to " + studyHigh , 500))
-									pdf.addImage(img, 'JPEG', 50, 90, 320, 240);
+									pdf.addImage(img, 'JPEG', 50, 90, undefined, undefined);
 
 									var mapDiv = document.getElementById('map');
-									domtoimage.toPng(mapDiv)
-									.then(function (dataUrl) {
+									domtoimage.toPng(mapDiv).then(function (dataUrl) {
 										var img = new Image();
 										img.src = dataUrl;
-										pdf.text(50,350, pdf.splitTextToSize("Map of biophysical health in the period from "+studyLow+" to "+studyHigh , 500))
-										pdf.addImage(img, 'JPEG', 50, 370, 530, 355);
+										pdf.text(50,330, pdf.splitTextToSize("Map of biophysical health in the period from "+studyLow+" to "+studyHigh , 500))
+										pdf.addImage(img, 'JPEG', 50, 350 ,map.getSize().x*0.4,map.getSize().y*0.4);
 										var newDate = new Date();
 										var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 										pdf.save(pdffilename);
@@ -2435,7 +2420,7 @@
 								pdf.text(50, 210, pdf.splitTextToSize('The change of forest gain and loss in '+ selected_admin + " from "+ studyLow+ " to " + studyHigh , 500));
 								pdf.text(50, 230, pdf.splitTextToSize('Compare the area of forest change between the baseline period '+ " ("+ refLow+ " - " + refHigh + ") and the measuring period "+ " ("+ studyLow+ " - " + studyHigh + ")", 500));
 
-								pdf.addImage(img, 'JPEG', 50, 250, 350, 250);
+								pdf.addImage(img, 'JPEG', 50, 250, undefined, undefined);
 
 								var forest_noneforest = document.getElementById('forest_cover_chart');
 								domtoimage.toPng(forest_noneforest)
@@ -2444,8 +2429,8 @@
 									imgChart.src = dataUrl;
 									//pdf.addPage();
 									var lines = pdf.splitTextToSize('Area of forest cover in '+ selected_admin + " from "+ studyLow+ " to " + studyHigh , 500);
-									pdf.text(50, 550, lines);
-									pdf.addImage(imgChart, 'JPEG', 50, 570, 350, 250);
+									pdf.text(50, 500, lines);
+									pdf.addImage(imgChart, 'JPEG', 50, 520, undefined, undefined);
 									pdf.addPage();
 									var outlookMap = document.getElementById('forest_noneforest_chart');
 
@@ -2455,15 +2440,15 @@
 										imgChart.src = dataUrl;
 										var lines = pdf.splitTextToSize('Area of forest and none forest in '+ selected_admin+ " from "+ studyLow+ " to " + studyHigh , 500);
 										pdf.text(50, 70, lines);
-										pdf.addImage(imgChart, 'JPEG', 50, 90, 350, 250);
+										pdf.addImage(imgChart, 'JPEG', 50, 90, undefined, undefined);
 										var mapDiv = document.getElementById('map');
 										domtoimage.toPng(mapDiv)
 										.then(function (dataUrl) {
 
 											var img = new Image();
 											img.src = dataUrl;
-											pdf.text(50, 390, pdf.splitTextToSize('Map of forest cover and change in '+ selected_admin+ " from "+ studyLow+ " to " + studyHigh , 500));
-											pdf.addImage(img, 'JPEG', 50, 410, 530, 355);
+											pdf.text(50, 300, pdf.splitTextToSize('Map of forest cover and change in '+ selected_admin+ " from "+ studyLow+ " to " + studyHigh , 500));
+											pdf.addImage(img, 'JPEG', 50, 320,map.getSize().x*0.4,map.getSize().y*0.4);
 											var newDate = new Date();
 											var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 											pdf.save(pdffilename);
@@ -2505,14 +2490,14 @@
 							pdf.text(50,110, pdf.splitTextToSize("Total area of forest alert : "+total_forest_alert_area.toFixed(2)+ " (ha)", 500))
 							var title = pdf.splitTextToSize('Total area of forest alert in '+ selected_admin , 500);
 							pdf.text(50, 140, title);
-							pdf.addImage(img, 'JPEG', 50, 150, 350, 250);
+							pdf.addImage(img, 'JPEG', 50, 150, undefined, undefined);
 							var mapDiv = document.getElementById('map');
 							domtoimage.toPng(mapDiv)
 							.then(function (dataUrl) {
 								var img = new Image();
 								img.src = dataUrl;
-								pdf.text(50, 410, pdf.splitTextToSize('Map of forest cover change' , 500));
-								pdf.addImage(img, 'JPEG', 50, 430, 530, 355);
+								pdf.text(50, 370, pdf.splitTextToSize('Map of forest cover change' , 500));
+								pdf.addImage(img, 'JPEG', 50, 390,map.getSize().x*0.4,map.getSize().y*0.4);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);
@@ -2548,15 +2533,15 @@
 							pdf.text(50,90, pdf.splitTextToSize("Name of Area Admin boundary/ protected area: "+ selected_admin , 500))
 							pdf.text(50,110, pdf.splitTextToSize("Total number of fire burned from "+ studyLow+ " to " + studyHigh+" : "+total_burned_area.toFixed(2)+ " ", 500))
 							pdf.text(50, 140, pdf.splitTextToSize('Number of fire hotspot in '+ selected_admin + " from "+ studyLow+ " to " + studyHigh  , 500));
-							pdf.addImage(img, 'JPEG', 50, 150, 350, 250);
+							pdf.addImage(img, 'JPEG', 50, 150, undefined, undefined);
 							var mapDiv = document.getElementById('map');
 							domtoimage.toPng(mapDiv)
 
 							.then(function (dataUrl) {
 								var img = new Image();
 								img.src = dataUrl;
-								pdf.text(50, 410, pdf.splitTextToSize('Map of forest fire hotspot ' , 500));
-								pdf.addImage(img, 'JPEG', 50, 430, 530, 355);
+								pdf.text(50, 370, pdf.splitTextToSize('Map of forest fire hotspot ' , 500));
+								pdf.addImage(img, 'JPEG', 50, 390,map.getSize().x*0.4,map.getSize().y*0.4);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);
