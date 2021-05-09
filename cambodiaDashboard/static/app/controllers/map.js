@@ -216,6 +216,9 @@
 				pane:'basemap'
 			}).addTo(map);
 
+			var mapWidth = map.getSize().x*0.3;
+			var mapHeight = map.getSize().y*0.3;
+
 
 			// Initialise the FeatureGroup to store editable layers
 			var editableLayers = new L.FeatureGroup({pane:'admin'});
@@ -2365,7 +2368,7 @@
 										var img = new Image();
 										img.src = dataUrl;
 										pdf.text(50,330, pdf.splitTextToSize("Map of biophysical health in the period from "+studyLow+" to "+studyHigh , 500))
-										pdf.addImage(img, 'JPEG', 50, 350 ,map.getSize().x*0.4,map.getSize().y*0.4);
+										pdf.addImage(img, 'JPEG', 50, 350 ,mapWidth, mapHeight);
 										var newDate = new Date();
 										var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 										pdf.save(pdffilename);
@@ -2373,6 +2376,7 @@
 									})
 									.catch(function (error) {
 										console.error('oops, something went wrong!', error);
+										showErrorAlert('oops, something went wrong! Please try agian');
 									});
 
 								})
@@ -2448,13 +2452,14 @@
 											var img = new Image();
 											img.src = dataUrl;
 											pdf.text(50, 300, pdf.splitTextToSize('Map of forest cover and change in '+ selected_admin+ " from "+ studyLow+ " to " + studyHigh , 500));
-											pdf.addImage(img, 'JPEG', 50, 320,map.getSize().x*0.4,map.getSize().y*0.4);
+											pdf.addImage(img, 'JPEG', 50, 320,mapWidth, mapHeight);
 											var newDate = new Date();
 											var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 											pdf.save(pdffilename);
 										})
 										.catch(function (error) {
 											console.error('oops, something went wrong!', error);
+											showErrorAlert('oops, something went wrong! Please try agian');
 										});
 
 									});
@@ -2497,13 +2502,14 @@
 								var img = new Image();
 								img.src = dataUrl;
 								pdf.text(50, 370, pdf.splitTextToSize('Map of forest cover change' , 500));
-								pdf.addImage(img, 'JPEG', 50, 390,map.getSize().x*0.4,map.getSize().y*0.4);
+								pdf.addImage(img, 'JPEG', 50, 390,mapWidth, mapHeight);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);
 							})
 							.catch(function (error) {
 								console.error('oops, something went wrong!', error);
+								showErrorAlert('oops, something went wrong! Please try agian');
 							});
 
 
@@ -2541,13 +2547,14 @@
 								var img = new Image();
 								img.src = dataUrl;
 								pdf.text(50, 370, pdf.splitTextToSize('Map of forest fire hotspot ' , 500));
-								pdf.addImage(img, 'JPEG', 50, 390,map.getSize().x*0.4,map.getSize().y*0.4);
+								pdf.addImage(img, 'JPEG', 50, 390,mapWidth, mapHeight);
 								var newDate = new Date();
 								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
 								pdf.save(pdffilename);
 							})
 							.catch(function (error) {
 								console.error('oops, something went wrong!', error);
+								showErrorAlert('oops, something went wrong! Please try agian');
 							});
 
 						})
