@@ -165,7 +165,7 @@
 			// init map
 			map = L.map('map',{
 				center: [mapCenter_lat,mapCenter_long],
-				zoom: 7,
+				zoom: 8,
 				minZoom:2,
 				maxZoom: 16,
 				maxBounds: [
