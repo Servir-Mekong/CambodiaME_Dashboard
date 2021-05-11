@@ -122,9 +122,9 @@
 					$scope.STUDYLOW = studyLow;
 					$scope.$apply();
 				},
-				onFinish: function (data) {
-					checkAvailableData(studyHigh, studyLow);
-				},
+				// onFinish: function (data) {
+				// 	checkAvailableData(studyHigh, studyLow);
+				// },
 			});
 
 			studyHigh = $("#measure_period").data("ionRangeSlider").result.to;
@@ -148,9 +148,9 @@
 					$scope.REFHIGH = refHigh;
 					$scope.REFLOW = refLow;
 				},
-				onFinish: function (data) {
-					checkAvailableData(refHigh, refLow);
-				},
+				// onFinish: function (data) {
+				// 	checkAvailableData(refHigh, refLow);
+				// },
 			});
 
 			refHigh = $("#baseline_period").data("ionRangeSlider").result.to;
@@ -724,7 +724,7 @@
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				function createToggleList(parentUL, inputID, label, yid, checked, bgcolor) {
 					$("#"+parentUL).append(
-						'<li class="toggle"><label class="switch_layer"><input name="'+inputID+'" id="'+inputID+'" data-yid="'+yid+'" data-color="#'+bgcolor+'" type="checkbox" '+checked+'><span class="slider_toggle round"></span></input></label><label>'+label+'</label></li>'
+						'<li class="toggle"><label class="switch_layer"><input name="'+inputID+'" id="'+inputID+'" data-id="'+inputID+'"  data-yid="'+yid+'" data-name="'+label+'" data-color="#'+bgcolor+'" type="checkbox" '+checked+'><span class="slider_toggle round"></span></input></label><label>'+label+'</label></li>'
 					);
 				}
 
@@ -735,6 +735,18 @@
 				function checkAvailableData(high, low){
 					showSpiner();
 					showInfoAlert("Checking available dataset");
+					var noforestalertyear = "";
+					var nolandcoveryear = "";
+					var noeviyear = "";
+					var notccyear = "";
+					var notchyear = "";
+					var noburnedyear = "";
+					var forestalertA= [];
+					var lca= [];
+					var evia= [];
+					var tcca= [];
+					var tcha= [];
+					var burneda = [];
 					var parameters = {
 						polygon_id: polygon_id,
 						area_id: area_id,
@@ -744,26 +756,14 @@
 					};
 					MapService.checkAvailableData(parameters)
 					.then(function (res) {
-						console.log(res)
-						hideSpiner();
+						//hideSpiner();
 						var eviyear = res.evi;
 						var landcoveryear = res.landcover;
 						var foresttccyear = res.tcc;
 						var foresttchyear = res.tch;
 						var forestalertyear = res.forestalert;
 						var burnedyear = res.burned;
-						var noforestalertyear = "";
-						var nolandcoveryear = "";
-						var noeviyear = "";
-						var notccyear = "";
-						var notchyear = "";
-						var noburnedyear = "";
-						var forestalertA= [];
-						var lca= [];
-						var evia= [];
-						var tcca= [];
-						var tcha= [];
-						var burneda = [];
+
 						for(var i=low; i<=high; i++){
 							if(!isInArray(i.toString(), forestalertyear)){
 								noforestalertyear += i.toString()+" ";
@@ -773,7 +773,7 @@
 							if(!isInArray(i.toString(), landcoveryear)){
 								nolandcoveryear += i.toString()+" ";
 								lca.push(i);
-								document.getElementById("update-map").disabled = true;
+								//document.getElementById("update-map").disabled = true;
 							}
 							if(!isInArray(i.toString(), eviyear)){
 								noeviyear += i.toString()+" ";
@@ -783,25 +783,28 @@
 							if(!isInArray(i.toString(), foresttccyear)){
 								notccyear += i.toString()+" ";
 								tcca.push(i);
-								document.getElementById("update-map").disabled = true;
+								//document.getElementById("update-map").disabled = true;
 							}
 							if(!isInArray(i.toString(), foresttchyear)){
 								notchyear += i.toString()+" ";
 								tcha.push(i);
-								document.getElementById("update-map").disabled = true;
+								//document.getElementById("update-map").disabled = true;
 							}
 							if(!isInArray(i.toString(), burnedyear)){
 								noburnedyear += i.toString()+" ";
 								burneda.push(i);
-								document.getElementById("update-map").disabled = true;
+								//document.getElementById("update-map").disabled = true;
 							}
 						}
 
-						if(burneda.length === 0 || tcca.length === 0 || tcha.length === 0 || forestalertA.length === 0){
-							document.getElementById("update-map").disabled = false;
+						if(burneda.length === 0 && tcca.length === 0 && tcha.length === 0){
+							//document.getElementById("update-map").disabled = false;
+							showInfoAlert("Please wait while we are processing your request.");
+							cal();
 						}else{
 							var mgsAlert = "<b>Please select period agian</b> <br>No Fire Burned Area data: " + noburnedyear + "  <br> " + "No Tree Conopy data: " + notccyear + "  <br> " + "No Tree Height  data: " + notchyear + "  <br> " + "No Forest GLAD Alert data: " + noforestalertyear ;
 							showErrorAlert(mgsAlert);
+							hideSpiner();
 						}
 
 
@@ -831,7 +834,7 @@
 
 						var className = ['Large improvement', 'improvement', 'No Change', 'Under Stress', 'Severe stress'];
 						var classColor = ['#264653','#2A9D8F','#E9C46A','#F4A261','#E76F51'];
-
+						total_area_evi = 0;
 						for (var i=0; i< className.length; i++) {
 							graphDataEVI.push({ name: className[i], y: data[i], color: classColor[i]});
 							total_area_evi = total_area_evi + data[i];
@@ -1291,15 +1294,21 @@
 								//toggle each of forest map layer
 								$("#forest_"+year_string).change(function() {
 									var layerID= $(this).attr('data-yid');
+									var toggleColor = $(this).attr('data-color');
+									var toggleName = $(this).attr('data-name');
+									var toggleId = $(this).attr('data-id');
 									if(this.checked) {
-										var toggleColor = $(this).attr('data-color');
 										$(this).closest("label").find("span").css("background-color", toggleColor);
+										$("#ul-forest-legend").append(
+											'<li id="'+toggleId+'"> <p><span style="width: 500px; height: 100px; background:'+toggleColor+'; border: 1px solid '+toggleColor+'; color:'+toggleColor+'; "> XX</span> '+toggleName+'</p> </li>'
+										);
 										MapLayerArr[layerID].forest.addTo(map);
 									} else {
 										$(this).closest("label").find("span").css("background-color", '#bbb');
 										if(map.hasLayer(MapLayerArr[layerID].forest)){
 											map.removeLayer(MapLayerArr[layerID].forest);
 										}
+										$('li[id="' + toggleId + '"').remove();
 									}
 								});
 
@@ -1356,15 +1365,22 @@
 							createToggleList('toggle-list-forest', 'ForestGainLayer', 'Forest Gain', '', '', data.color);
 
 							$("#ForestGainLayer").change(function() {
+								var layerID= $(this).attr('data-yid');
+								var toggleColor = $(this).attr('data-color');
+								var toggleName = $(this).attr('data-name');
+								var toggleId = $(this).attr('data-id');
 								if(this.checked) {
-									var toggleColor = $(this).attr('data-color');
 									$(this).closest("label").find("span").css("background-color", toggleColor);
+									$("#ul-forest-legend").append(
+										'<li id="'+toggleId+'"> <p><span style="width: 500px; height: 100px; background:'+toggleColor+'; border: 1px solid '+toggleColor+'; color:'+toggleColor+'; "> XX</span> '+toggleName+'</p> </li>'
+									);
 									ForestGainLayer.addTo(map);
 								} else {
 									$(this).closest("label").find("span").css("background-color", '#bbb');
 									if(map.hasLayer(ForestGainLayer)){
 										map.removeLayer(ForestGainLayer);
 									}
+									$('li[id="' + toggleId + '"').remove();
 								}
 							});
 
@@ -1402,15 +1418,24 @@
 							createToggleList('toggle-list-forest', 'ForestLossLayer', 'Forest Loss', '', '', data.color);
 
 							$("#ForestLossLayer").change(function() {
+								var layerID= $(this).attr('data-yid');
+								var toggleColor = $(this).attr('data-color');
+								var toggleName = $(this).attr('data-name');
+								var toggleId = $(this).attr('data-id');
 								if(this.checked) {
-									var toggleColor = $(this).attr('data-color');
 									$(this).closest("label").find("span").css("background-color", toggleColor);
 									ForestLossLayer.addTo(map);
+									$("#ul-forest-legend").append(
+										'<li id="'+toggleId+'"> <p><span style="width: 500px; height: 100px; background:'+toggleColor+'; border: 1px solid '+toggleColor+'; color:'+toggleColor+'; "> XX</span> '+toggleName+'</p> </li>'
+									);
+
+
 								} else {
 									$(this).closest("label").find("span").css("background-color", '#bbb');
 									if(map.hasLayer(ForestLossLayer)){
 										map.removeLayer(ForestLossLayer);
 									}
+									$('li[id="' + toggleId + '"').remove();
 								}
 							});
 
@@ -1466,15 +1491,21 @@
 								//toggle each of forest map layer
 								$("#forestAlert_"+_year).change(function() {
 									var layerID= $(this).attr('data-yid');
+									var toggleColor = $(this).attr('data-color');
+									var toggleName = $(this).attr('data-name');
+									var toggleId = $(this).attr('data-id');
 									if(this.checked) {
-										var toggleColor = $(this).attr('data-color');
 										$(this).closest("label").find("span").css("background-color", toggleColor);
+										$("#ul-forest-alert-legend").append(
+											'<li id="'+toggleId+'"> <p><span style="width: 500px; height: 100px; background:'+toggleColor+'; border: 1px solid '+toggleColor+'; color:'+toggleColor+'; "> XX</span> '+toggleName+'</p> </li>'
+										);
 										MapLayerArr[layerID].forestAlert.addTo(map);
 									} else {
 										$(this).closest("label").find("span").css("background-color", '#bbb');
 										if(map.hasLayer(MapLayerArr[layerID].forestAlert)){
 											map.removeLayer(MapLayerArr[layerID].forestAlert);
 										}
+										$('li[id="' + toggleId + '"').remove();
 									}
 								});
 
@@ -1519,7 +1550,7 @@
 						.then(function (data) {
 							var area_data = [];
 							var _yearArr = [];
-
+							total_burned_area= 0;
 							for(var i=studyLow; i<=studyHigh; i++){
 
 								var _yearData = data[i.toString()];
@@ -1544,15 +1575,23 @@
 								//toggle each of forest map layer
 								$("#burnedArea_"+_year).change(function() {
 									var layerID= $(this).attr('data-yid');
+									var toggleColor = $(this).attr('data-color');
+									var toggleName = $(this).attr('data-name');
+									var toggleId = $(this).attr('data-id');
 									if(this.checked) {
-										var toggleColor = $(this).attr('data-color');
+
 										$(this).closest("label").find("span").css("background-color", toggleColor);
+										$("#ul-fire-legend").append(
+											'<li id="'+toggleId+'"> <p><span style="width: 500px; height: 100px; background:'+toggleColor+'; border: 1px solid '+toggleColor+'; color:'+toggleColor+'; "> XX</span> '+toggleName+'</p> </li>'
+										);
 										MapLayerArr[layerID].burnedArea.addTo(map);
 									} else {
 										$(this).closest("label").find("span").css("background-color", '#bbb');
 										if(map.hasLayer(MapLayerArr[layerID].burnedArea)){
 											map.removeLayer(MapLayerArr[layerID].burnedArea);
 										}
+										$('li[id="' + toggleId + '"').remove();
+
 									}
 								});
 							}
@@ -1675,7 +1714,7 @@
 						$('.custom-alert').removeClass('display-none').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
 						$timeout(function () {
 							$scope.closeAlert();
-						}, 5000000);
+						}, 6000);
 					};
 
 					var showSuccessAlert = function (alertContent) {
@@ -1770,6 +1809,9 @@
 					});
 
 					function clearMapLayers() {
+						$("#ul-forest-legend").html('');
+						$("#ul-forest-alert-legend").html('');
+						$("#ul-fire-legend").html('');
 						//clear all map layers
 						if(map.hasLayer(EVILayer)){
 							map.removeLayer(EVILayer);
@@ -1781,7 +1823,7 @@
 							map.removeLayer(ForestLossLayer);
 						}
 
-						for(var i=studyLow; i<=studyHigh; i++){
+						for(var i=$scope.startYear; i<=$scope.endYear+1; i++){
 							var _year  = i.toString();
 							if(map.hasLayer(MapLayerArr[_year].forest)){
 								map.removeLayer(MapLayerArr[_year].forest);
@@ -2018,14 +2060,6 @@
 						map.zoomOut();
 					});
 
-					$("#legend-toggle").click(function () {
-						if($(".legend").css("display") === "none"){
-							$(".legend").show();
-						}else{
-							$(".legend").hide();
-						}
-
-					});
 
 					$("#full-screen").click(function() {
 						if($(".container-wrapper").css("margin-top") ===  "90px" ){
@@ -2065,8 +2099,10 @@
 						clearMapLayers();
 						$("#EVILayer").prop( "checked", true ).trigger( "change" );
 						$("#landcover"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
-						$(".legend").css("display", "block");
-
+						$("#evi-legend").css("display", "block");
+						$("#forest-legend").css("display", "none");
+						$("#forest-alert-legend").css("display", "none");
+						$("#fire-legend").css("display", "none");
 						$(".close-menu").click();
 						$(".map-controller").css('left', '420px');
 						$("#forest-monitoring-tab").removeClass("active");
@@ -2084,7 +2120,10 @@
 						clearMapLayers();
 						$("#ForestLossLayer").prop( "checked", true ).trigger( "change" );
 						$("#ForestGainLayer").prop( "checked", true ).trigger( "change" );
-						$(".legend").css("display", "none");
+						$("#evi-legend").css("display", "none");
+						$("#forest-legend").css("display", "block");
+						$("#forest-alert-legend").css("display", "none");
+						$("#fire-legend").css("display", "none");
 						$(".close-menu").click();
 						$(".map-controller").css('left', '420px');
 						$("#biophysical-tab").removeClass("active");
@@ -2101,7 +2140,10 @@
 					$("#forest-alert-tab").click(function () {
 						clearMapLayers();
 						$("#forestAlert_"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
-						$(".legend").css("display", "none");
+						$("#evi-legend").css("display", "none");
+						$("#forest-legend").css("display", "none");
+						$("#forest-alert-legend").css("display", "block");
+						$("#fire-legend").css("display", "none");
 						$(".close-menu").click();
 						$(".map-controller").css('left', '420px');
 						$("#biophysical-tab").removeClass("active");
@@ -2120,7 +2162,10 @@
 					$("#fire-tab").click(function () {
 						clearMapLayers();
 						$("#burnedArea_"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
-						$(".legend").css("display", "none");
+						$("#evi-legend").css("display", "none");
+						$("#forest-legend").css("display", "none");
+						$("#forest-alert-legend").css("display", "none");
+						$("#fire-legend").css("display", "block");
 						$(".close-menu").click();
 						$(".map-controller").css('left', '420px');
 						$("#biophysical-tab").removeClass("active");
@@ -2166,7 +2211,21 @@
 					});
 
 					$("#update-map").click(function() {
-						cal();
+						//cal();
+						var min = 0
+						var max = 0
+						if(studyHigh >= refHigh){
+							max = studyHigh;
+						}else{
+							max = refHigh;
+						}
+
+						if(studyLow <= refLow){
+							min = studyLow;
+						}else{
+							min = refLow;
+						}
+						checkAvailableData(max, min);
 					});
 
 					$("#clear-map").click(function() {
@@ -2181,31 +2240,8 @@
 						if(map.hasLayer(cam_adm2_layer)){
 							map.removeLayer(cam_adm2_layer);
 						}
-						if(map.hasLayer(EVILayer)){
-							map.removeLayer(EVILayer);
-						}
-						if(map.hasLayer(ForestGainLayer)){
-							map.removeLayer(ForestGainLayer);
-						}
-						if(map.hasLayer(ForestLossLayer)){
-							map.removeLayer(ForestLossLayer);
-						}
 
-						for(var i=studyLow; i<=studyHigh; i++){
-							var _year  = i.toString();
-							if(map.hasLayer(MapLayerArr[_year].forest)){
-								map.removeLayer(MapLayerArr[_year].forest);
-							}
-							if(map.hasLayer(MapLayerArr[_year].forestAlert)){
-								map.removeLayer(MapLayerArr[_year].forestAlert);
-							}
-							if(map.hasLayer(MapLayerArr[_year].burnedArea)){
-								map.removeLayer(MapLayerArr[_year].burnedArea);
-							}
-							if(map.hasLayer(MapLayerArr[_year].landcover)){
-								map.removeLayer(MapLayerArr[_year].landcover);
-							}
-						}
+						clearMapLayers();
 
 						// clear all toggle layer list
 						$("#toggle-list-forest").html('');
@@ -2306,9 +2342,6 @@
 						chart.downloadCSV();
 					});
 
-
-
-
 					$("#export_evi_report").click(function() {
 						showSpiner();
 						hideSpiner();
@@ -2331,7 +2364,7 @@
 							pdf.text(50,70, evi_main_title)
 
 							pdf.text(50,90, pdf.splitTextToSize("Name of Area Admin boundary/ protected area: "+ selected_admin , 500))
-							pdf.text(50,110, pdf.splitTextToSize("Total area: "+total_area_evi , 500))
+							pdf.text(50,110, pdf.splitTextToSize("Total area: "+total_area_evi + " (ha)", 500))
 							pdf.text(50,130, pdf.splitTextToSize("Area of biophysical change:" , 500))
 							pdf.text(70,150, pdf.splitTextToSize("-	Large improvement   "+graphDataEVI[0]["y"]+" (ha)" , 500))
 							pdf.text(70,170, pdf.splitTextToSize("-	Improvement         "+graphDataEVI[1]["y"]+" (ha)" , 500))
@@ -2535,9 +2568,9 @@
 						.then(function (dataUrl) {
 							var img = new Image();
 							img.src = dataUrl;
-							pdf.text(50,70, pdf.splitTextToSize("FIRE BURNED AREA" , 500))
+							pdf.text(50,70, pdf.splitTextToSize("FIRE HOTSPOT MONITORING" , 500))
 							pdf.text(50,90, pdf.splitTextToSize("Name of Area Admin boundary/ protected area: "+ selected_admin , 500))
-							pdf.text(50,110, pdf.splitTextToSize("Total number of fire burned from "+ studyLow+ " to " + studyHigh+" : "+total_burned_area.toFixed(2)+ " ", 500))
+							pdf.text(50,110, pdf.splitTextToSize("Total count number of fire hotspot was detected from "+ studyLow+ " to " + studyHigh+" : "+total_burned_area.toFixed(2)+ " (points)", 500))
 							pdf.text(50, 140, pdf.splitTextToSize('Number of fire hotspot in '+ selected_admin + " from "+ studyLow+ " to " + studyHigh  , 500));
 							pdf.addImage(img, 'JPEG', 50, 150, undefined, undefined);
 							var mapDiv = document.getElementById('map');

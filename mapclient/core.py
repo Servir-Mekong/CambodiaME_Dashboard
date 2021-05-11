@@ -940,10 +940,10 @@ class GEEApi():
             areaHA = burnedArea.aggregate_array("areaHect").get(0).getInfo()
             number_fire = burnedArea.aggregate_array("numberFire").get(0).getInfo()
 
-        map_id = fire.getMapId({
-            'min': '300',
-            'max': '400',
-            'palette': 'red,orange,yellow'
+        map_id = image.getMapId({
+            'min': '0',
+            'max': '1',
+            'palette': 'red'
         })
 
         return {

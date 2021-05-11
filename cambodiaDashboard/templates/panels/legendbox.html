@@ -1,6 +1,5 @@
 {% load cms_tags staticfiles %}
-<div class="legend">
-
+<div class="legend" id="evi-legend">
     <div class="legend-line"></div>
     <div id='legend-content'>
       <div class="legend-text">
@@ -11,5 +10,26 @@
           <span> Land Cover </span>
       </div>
       <img src="/static/images/lc-legend.png" alt="" width="100%">
+    </div>
+</div>
+
+<div class="legend" id="forest-legend">
+    <div class="legend-line"></div>
+    <div id='legend-content'>
+      <ul id="ul-forest-legend"></ul>
+    </div>
+</div>
+
+<div class="legend" id="forest-alert-legend">
+    <div class="legend-line"></div>
+    <div id='legend-content'>
+      <ul id="ul-forest-alert-legend"></ul>
+    </div>
+</div>
+
+<div class="legend" id="fire-legend">
+    <div class="legend-line"></div>
+    <div id='legend-content'>
+      <ul id="ul-fire-legend"></ul>
     </div>
 </div>
