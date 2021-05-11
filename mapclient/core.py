@@ -117,27 +117,29 @@ class GEEApi():
         Threshold3 = months * -0.02
         Threshold4 = months * -0.04
 
+        #area in hectare unit
         T1 = fit.where(fit.lt(Threshold1),0)
-        T1 = T1.where(T1.gt(0),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI']
+        T1 = T1.where(T1.gt(0),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI'] * (REDUCTION_SCALE_METERS * REDUCTION_SCALE_METERS) * 0.0001
 
         T2 = fit.where(fit.lt(Threshold2),0)
-        T2 = T2.where(T2.gt(0),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI']
+        T2 = T2.where(T2.gt(0),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI'] * (REDUCTION_SCALE_METERS * REDUCTION_SCALE_METERS) * 0.0001
 
         T3 = fit.where(fit.gt(Threshold3),0)
-        T3 = T3.where(T3.lt(0),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI']
+        T3 = T3.where(T3.lt(0),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI'] * (REDUCTION_SCALE_METERS * REDUCTION_SCALE_METERS) * 0.0001
 
         T4 = fit.where(fit.gt(Threshold4),0)
-        T4 = T4.where(T4.lt(0),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI']
+        T4 = T4.where(T4.lt(0),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI'] * (REDUCTION_SCALE_METERS * REDUCTION_SCALE_METERS) * 0.0001
 
-        T5 = fit.where(fit.gt(-9999),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI']
+        T5 = fit.where(fit.gt(-9999),1).reduceRegion(ee.Reducer.sum(), self.geometry, REDUCTION_SCALE_METERS).getInfo()['EVI'] * (REDUCTION_SCALE_METERS * REDUCTION_SCALE_METERS) * 0.0001
 
-        p1 = float('%.3f' % (T1*0.5*0.5))
-        p2 = float('%.3f' % ((T2 - T1)*0.5*0.5 ))
 
-        m1 = float('%.3f' % (T4*0.5*0.5))
-        m2 = float('%.3f' % ((T3 - T4)*0.5*0.5))
+        p1 = float('%.2f' % (T1))
+        p2 = float('%.2f' % ((T2 - T1)))
 
-        middle = float('%.3f' % ((T5*0.5*0.5) - p1 - p2 - m1 - m2))
+        m1 = float('%.2f' % (T4))
+        m2 = float('%.2f' % ((T3 - T4)))
+
+        middle = float('%.2f' % ((T5 - p1 - p2 - m1 - m2)))
 
         myArray = [p1,p2,middle,m2,m1]
         return myArray

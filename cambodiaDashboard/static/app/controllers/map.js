@@ -2364,7 +2364,7 @@
 							pdf.text(50,70, evi_main_title)
 
 							pdf.text(50,90, pdf.splitTextToSize("Name of Area Admin boundary/ protected area: "+ selected_admin , 500))
-							pdf.text(50,110, pdf.splitTextToSize("Total area: "+total_area_evi + " (ha)", 500))
+							pdf.text(50,110, pdf.splitTextToSize("Total area: "+total_area_evi.toFixed(2) + " (ha)", 500))
 							pdf.text(50,130, pdf.splitTextToSize("Area of biophysical change:" , 500))
 							pdf.text(70,150, pdf.splitTextToSize("-	Large improvement   "+graphDataEVI[0]["y"]+" (ha)" , 500))
 							pdf.text(70,170, pdf.splitTextToSize("-	Improvement         "+graphDataEVI[1]["y"]+" (ha)" , 500))
