@@ -1078,17 +1078,25 @@ class GEEApi():
         classNames = ['evergreen', 'semi-evergreen', 'deciduous', 'mangrove', 'flooded forest','rubber', 'other plantations', 'rice', 'cropland', 'surface water', 'grassland', 'woodshrub', 'built-up area', 'village', 'other'];
         classNumbers = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
         PALETTE_list = ['267300', '38A800', '70A800', '00A884', 'B4D79E','AAFF00', 'F5F57A', 'FFFFBE', 'FFD37F', '004DA8', 'D7C29E', '89CD66', 'E600A9', 'A900E6', '6f6f6f'];
+        AreaClass= {}
+        class_areas = ee.Image.pixelArea().addBands(lcImage).reduceRegion(
+            reducer= ee.Reducer.sum().group(
+              groupField= 1,
+              groupName= 'code',
+            ),
+            geometry= self.geometry,
+            scale= 100,  # sample the geometry at 1m intervals
+            maxPixels= 1e15
+          );
 
-        stats = lcImage.reduceRegion(reducer = ee.Reducer.frequencyHistogram(),
-                                   geometry = self.geometry,
-                                   crs = 'EPSG:32647', # WGS Zone N 47
-                                   scale = 100,
-                                   maxPixels = 1E13
-                                   )
+        data = class_areas.getInfo()['groups']
+        for item in data:
+            #area hetare
+            AreaClass[INDEX_CLASS[int(item['code'])]] = float('{0:.2f}'.format(item['sum']/10000))
 
-        data = stats.getInfo()['lc']
+        lcarea = AreaClass
 
-        lcarea = {INDEX_CLASS[int(float(k))]:float('{0:.2f}'.format(v)) for k,v  in data.items()}
+
 
         map_id = lcImage.getMapId({
             'min': '0',
