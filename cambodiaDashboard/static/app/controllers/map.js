@@ -906,7 +906,7 @@
 							},
 
 							series: [{
-								name: 'Percent',
+								name: 'Area (ha)',
 								data: graphDataEVI,
 								showInLegend: true,
 
