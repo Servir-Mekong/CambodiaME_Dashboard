@@ -22,8 +22,8 @@ from django.conf.urls import include, url
 from django.views.static import serve
 from django.views.generic import TemplateView
 from mapclient import api as mapclient_api
+from django.conf import settings
 admin.autodiscover()
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,3 +32,10 @@ urlpatterns = [
     url('api/mapclient/$', mapclient_api.api),
 
 ]
+if settings.DEBUG:
+    from django.conf.urls.static import static
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+    # serve static and media files from development server
+    urlpatterns += staticfiles_urlpatterns()
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

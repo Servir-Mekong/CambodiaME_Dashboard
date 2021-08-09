@@ -8,6 +8,7 @@ credentials/
 # Exception to the rule
 !media/README.md
 static/*
+media/*.mp4
 # Exception to the rule
 !static/README.md
 

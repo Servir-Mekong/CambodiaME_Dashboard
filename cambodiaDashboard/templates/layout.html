@@ -113,28 +113,25 @@
 	<script src="{% static 'vendor/highcharts/modules/export-data.js' %}"></script>
 
 	<!-- lEAFLET -->
-
 	<!-- Angular Translation -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-translate/2.18.1/angular-translate.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-translate/2.18.1/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
+	<!-- Leaflet -->
+	<script src="{% static 'vendor/leaflet/dist/leaflet.js' %}"></script>
+	<script src="{% static 'vendor/leaflet-draw/dist/leaflet.draw.js' %}"></script>
+	<!-- toGeoJSON -->
+	<script src="{% static 'vendor/togeojson/togeojson.js' %}"></script>
 
-
-		<!-- Leaflet -->
-		<script src="{% static 'vendor/leaflet/dist/leaflet.js' %}"></script>
-		<script src="{% static 'vendor/leaflet-draw/dist/leaflet.draw.js' %}"></script>
-		<!-- toGeoJSON -->
-		<script src="{% static 'vendor/togeojson/togeojson.js' %}"></script>
-
-		<script src="{% static 'data/cambodia.js' %}"></script>
-		<script src="{% static 'data/cam_adm1.js' %}"></script>
-		<script src="{% static 'data/cam_adm2.js' %}"></script>
-		<script src="{% static 'data/protected_area.js' %}"></script>
-		<script src="{% static 'data/airport.js' %}"></script>
-		<script src="{% static 'data/cpa.js' %}"></script>
-		<script src="{% static 'data/dams.js' %}"></script>
-		<script src="{% static 'data/main_road_osm.js' %}"></script>
-		<script src="{% static 'data/railway.js' %}"></script>
+	<script src="{% static 'data/cambodia.js' %}"></script>
+	<script src="{% static 'data/cam_adm1.js' %}"></script>
+	<script src="{% static 'data/cam_adm2.js' %}"></script>
+	<script src="{% static 'data/protected_area.js' %}"></script>
+	<script src="{% static 'data/airport.js' %}"></script>
+	<script src="{% static 'data/cpa.js' %}"></script>
+	<script src="{% static 'data/dams.js' %}"></script>
+	<script src="{% static 'data/main_road_osm.js' %}"></script>
+	<script src="{% static 'data/railway.js' %}"></script>
 
 	<!-- Bootstrap Application -->
 	<script src="{% static 'app/init.js' %}"></script>
@@ -146,6 +143,7 @@
 	<!-- Controllers -->
 	<script src="{% static 'app/controllers/settings.js' %}"></script>
 	<script src="{% static 'app/controllers/map.js' %}"></script>
+	<script src="{% static 'app/controllers/home.js' %}"></script>
 
 
 	{% block extra_script %}{% endblock %}

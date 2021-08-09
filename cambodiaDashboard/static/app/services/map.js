@@ -122,13 +122,46 @@
 			return promise;
 		};
 
+		service.download_evi_map= function (options) {
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id:options.polygon_id,
+					refLow:options.refLow,
+					refHigh: options.refHigh,
+					studyLow: options.studyLow,
+					studyHigh:options.studyHigh,
+					area_type: options.area_type,
+					area_id: options.area_id,
+				},
+				params: {
+					action: 'download-evi-map'
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
+			});
+			return promise;
+		};
+
 		service.getForestMapID = function (options) {
 			var startYear = options.startYear;
 			var endYear = options.endYear;
 			var polygon_id = options.polygon_id;
 			var treeCanopyDefinition = options.treeCanopyDefinition;
 			var treeHeightDefinition = options.treeHeightDefinition;
-			var type = options.type; // can be treeCanopy, forestGain, forestLoss or forestExtend
+			var type = options.type; // can be treeCanopy, forestGain, forestLoss or forestExtend\
+			var download = options.download;
+			var year = options.year;
+			var action = ''
+			if(download === false){
+				action = 'get-forest-extent-map';
+			}else{
+				action = 'download-forest-extent-map';
+			}
 
 			var req = {
 				method: 'POST',
@@ -142,9 +175,10 @@
 					treeHeightDefinition: treeHeightDefinition,
 					area_type: options.area_type,
 					area_id: options.area_id,
+					year: year
 				},
 				params: {
-					action: 'get-forest-extent-map',
+					action: action,
 					type: type
 				}
 			};
@@ -166,6 +200,9 @@
 			var polygon_id = options.polygon_id;
 			var treeCanopyDefinition = options.treeCanopyDefinition;
 			var treeHeightDefinition = options.treeHeightDefinition;
+			var download = options.download;
+			var action = 'get-forest-gain-map'
+			
 
 			var req = {
 				method: 'POST',
@@ -178,9 +215,10 @@
 					treeHeightDefinition: treeHeightDefinition,
 					area_type: options.area_type,
 					area_id: options.area_id,
+					download: download
 				},
 				params: {
-					action: 'get-forest-gain-map'
+					action: action
 				}
 			};
 
@@ -201,7 +239,7 @@
 			var polygon_id = options.polygon_id;
 			var treeCanopyDefinition = options.treeCanopyDefinition;
 			var treeHeightDefinition = options.treeHeightDefinition;
-
+			var download = options.download;
 			var req = {
 				method: 'POST',
 				url: '/api/mapclient/',
@@ -213,6 +251,7 @@
 					treeHeightDefinition: treeHeightDefinition,
 					area_type: options.area_type,
 					area_id: options.area_id,
+					download: download
 				},
 				params: {
 					action: 'get-forest-loss-map'
@@ -322,7 +361,14 @@
 			var get_image = options.get_image;
 			var area_type = options.area_type;
 			var area_id = options.area_id;
-
+			var download = options.download;
+			var year = options.year;
+			var action = ''
+			if(download === false){
+				action = 'get-forest-alert'
+			}else{
+				action = 'download-forest-alert'
+			}
 			var req = {
 				method: 'POST',
 				url: '/api/mapclient/',
@@ -331,11 +377,12 @@
 					get_image: get_image,
 					startYear: startYear,
 					endYear: endYear,
+					year: year,
 					area_type: area_type,
 					area_id: area_id
 				},
 				params: {
-					action: 'get-forest-alert'
+					action: action
 				}
 			};
 
@@ -350,12 +397,20 @@
 			return promise;
 		};
 
+
 		service.getBurnedArea = function (options) {
 			var startYear = options.startYear;
 			var endYear = options.endYear;
 			var polygon_id = options.polygon_id;
 			var area_type = options.area_type;
 			var area_id = options.area_id;
+			var download = options.download;
+			var action = ''
+			if(download === false){
+				action = 'get-burned-area'
+			}else{
+				action = 'download-burned-area'
+			}
 
 			var req = {
 				method: 'POST',
@@ -383,12 +438,20 @@
 			return promise;
 		};
 
-		service.getLandcover= function (options) {
+		service.downloadBurnedArea = function (options) {
 			var startYear = options.startYear;
 			var endYear = options.endYear;
 			var polygon_id = options.polygon_id;
 			var area_type = options.area_type;
 			var area_id = options.area_id;
+			var download = options.download;
+			var year = options.year;
+			var action = ''
+			if(download === false){
+				action = 'get-burned-area'
+			}else{
+				action = 'download-burned-area'
+			}
 
 			var req = {
 				method: 'POST',
@@ -397,11 +460,55 @@
 					polygon_id: polygon_id,
 					startYear: startYear,
 					endYear: endYear,
+					year: year,
 					area_type: area_type,
 					area_id: area_id
 				},
 				params: {
-					action: 'get-landcover'
+					action: action
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
+			})
+			.catch(function (e) {
+				console.log('Error: ', e);
+				throw e.data;
+			});
+			return promise;
+		};
+
+
+		service.getLandcover= function (options) {
+			var startYear = options.startYear;
+			var endYear = options.endYear;
+			var polygon_id = options.polygon_id;
+			var area_type = options.area_type;
+			var area_id = options.area_id;
+			var year = options.year;
+			var download = options.download;
+			var action = ''
+			if(download === true){
+				action= 'download-landcover'
+			}else{
+				action= 'get-landcover' 
+			}
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id: polygon_id,
+					startYear: startYear,
+					endYear: endYear,
+					area_type: area_type,
+					area_id: area_id,
+					year: year,
+					download: download
+				},
+				params: {
+					action: action	
 				}
 			};
 

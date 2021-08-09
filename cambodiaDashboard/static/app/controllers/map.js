@@ -288,7 +288,18 @@
 			area_id = 'Cambodia';
 
 
-
+			function download(url, filename) {
+				fetch(url).then(function(t) {
+					return t.blob().then((b)=>{
+						var a = document.createElement("a");
+						a.href = URL.createObjectURL(b);
+						a.setAttribute("download", filename);
+						a.click();
+						$scope.showLoader = false;
+					}
+					);
+				});
+			}
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -724,7 +735,11 @@
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				function createToggleList(parentUL, inputID, label, yid, checked, bgcolor) {
 					$("#"+parentUL).append(
-						'<li class="toggle"><label class="switch_layer"><input name="'+inputID+'" id="'+inputID+'" data-id="'+inputID+'"  data-yid="'+yid+'" data-name="'+label+'" data-color="#'+bgcolor+'" type="checkbox" '+checked+'><span class="slider_toggle round"></span></input></label><label>'+label+'</label></li>'
+						'<li class="toggle">'+
+						'<span class="tooltip" name="download_'+inputID+'" id="download_'+inputID+'" data-id="'+inputID+'"  data-yid="'+yid+'" data-name="'+label+'" style="cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#d4dbd4" class="bi bi-file-arrow-down-fill" viewBox="0 0 16 16">' +
+						'<path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8 5a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5A.5.5 0 0 1 8 5z"/>' +
+					  	'</svg><span class="tooltiptext">Download </span></span>'+
+						'<label class="switch_layer"><input name="'+inputID+'" id="'+inputID+'" data-id="'+inputID+'"  data-yid="'+yid+'" data-name="'+label+'" data-color="#'+bgcolor+'" type="checkbox" '+checked+'><span class="slider_toggle round"></span></input></label><label>'+label+'</label></li>'
 					);
 				}
 
@@ -942,6 +957,27 @@
 						EVILayer = addMapLayer(EVILayer, result.eeMapURL, 'EVILayer');
 						//map.addLayer(EVILayer);
 						createToggleList('toggle-list-evi', 'EVILayer', 'Enhanced vegetation index', '', '', '36461F');
+
+						$("#download_EVILayer").click(function() {
+							//show spiner
+							$scope.showLoader = true;
+							//set ajax parameters
+							MapService.download_evi_map(parameters).then(function (res){
+								var dnlurl = res.downloadURL;
+								if(res.success === 'success'){
+									download(dnlurl, "EVIMAP"+ studyLow + "_" + studyHigh);
+									showSuccessAlert("Download URL: "+dnlurl);
+									$scope.showLoader = false;
+								}else{
+									showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+									$scope.showLoader = false;
+								}
+
+							}, function (error) {
+								$scope.showLoader = false;
+								console.log(error);
+							})
+						});
 
 						$("#EVILayer").change(function() {
 							if(this.checked) {
@@ -1248,8 +1284,6 @@
 									enabled: false
 								},
 							});
-
-
 						});
 					}
 
@@ -1264,6 +1298,7 @@
 							type: 'forestExtend',
 							area_id: area_id,
 							area_type: area_type,
+							download: false
 						};
 
 						MapService.getForestMapID(parameters)
@@ -1290,6 +1325,40 @@
 
 								/*jshint loopfunc: true */
 								createToggleList('toggle-list-forest', 'forest_'+year_string, year_string, year_string, '', data[year_string].color);
+
+								$("#download_forest_"+ year_string).click(function() {
+									//show spiner
+									$scope.showLoader = true;
+									var layerID= $(this).attr('data-yid');
+									//set ajax parameters
+									var download_parameters = {
+										polygon_id: polygon_id,
+										treeCanopyDefinition: 10,
+										treeHeightDefinition: 5,
+										startYear: studyLow,
+										endYear: studyHigh,
+										type: 'forestExtend',
+										area_id: area_id,
+										area_type: area_type,
+										year: layerID,
+										download: true
+									};
+									MapService.getForestMapID(download_parameters).then(function (res){
+										var dnlurl = res.downloadURL;
+
+										if(res.success === 'success'){
+											download(dnlurl, "forest_"+ layerID);
+											showSuccessAlert("Download URL: "+dnlurl);
+											$scope.showLoader = false;
+										}else{
+											showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+											$scope.showLoader = false;
+										}
+									}, function (error) {
+										$scope.showLoader = false;
+										console.log(error);
+									})
+								});
 
 								//toggle each of forest map layer
 								$("#forest_"+year_string).change(function() {
@@ -1350,6 +1419,7 @@
 							endYear: studyHigh,
 							area_id: area_id,
 							area_type: area_type,
+							download: 'False'
 						};
 
 						MapService.getForestGainMapid(parameters)
@@ -1363,6 +1433,37 @@
 
 							/*jshint loopfunc: true */
 							createToggleList('toggle-list-forest', 'ForestGainLayer', 'Forest Gain', '', '', data.color);
+
+							$("#download_ForestGainLayer").click(function() {
+								//show spiner
+								$scope.showLoader = true;
+								//set ajax parameters
+								var download_parameters = {
+									polygon_id: polygon_id,
+									treeCanopyDefinition: 10,
+									treeHeightDefinition: 5,
+									startYear: studyLow,
+									endYear: studyHigh,
+									area_id: area_id,
+									area_type: area_type,
+									download: 'True'
+								};
+								MapService.getForestGainMapid(download_parameters).then(function (res){
+									var dnlurl = res.downloadURL;
+
+									if(res.success === 'success'){
+										download(dnlurl, "ForestGainLayer"+ studyLow + "_" + studyHigh);
+										showSuccessAlert("Download URL: "+dnlurl);
+										$scope.showLoader = false;
+									}else{
+										showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+										$scope.showLoader = false;
+									}
+								}, function (error) {
+									$scope.showLoader = false;
+									console.log(error);
+								})
+							});
 
 							$("#ForestGainLayer").change(function() {
 								var layerID= $(this).attr('data-yid');
@@ -1403,6 +1504,7 @@
 							endYear: studyHigh,
 							area_id: area_id,
 							area_type: area_type,
+							download: 'False'
 						};
 
 						MapService.getForestLossMapid(parameters)
@@ -1416,6 +1518,37 @@
 
 							/*jshint loopfunc: true */
 							createToggleList('toggle-list-forest', 'ForestLossLayer', 'Forest Loss', '', '', data.color);
+
+							$("#download_ForestLossLayer").click(function() {
+								//show spiner
+								$scope.showLoader = true;
+								//set ajax parameters
+								var download_parameters = {
+									polygon_id: polygon_id,
+									treeCanopyDefinition: 10,
+									treeHeightDefinition: 5,
+									startYear: studyLow,
+									endYear: studyHigh,
+									area_id: area_id,
+									area_type: area_type,
+									download: 'True'
+								};
+								MapService.getForestLossMapid(download_parameters).then(function (res){
+									var dnlurl = res.downloadURL
+									
+									if(res.success === 'success'){
+										download(dnlurl, "ForestLossLayer"+ studyLow + "_" + studyHigh);
+										showSuccessAlert("Download URL: "+dnlurl);
+										$scope.showLoader = false;
+									}else{
+										showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+										$scope.showLoader = false;
+									}
+								}, function (error) {
+									$scope.showLoader = false;
+									console.log(error);
+								})
+							});
 
 							$("#ForestLossLayer").change(function() {
 								var layerID= $(this).attr('data-yid');
@@ -1456,6 +1589,7 @@
 							get_image: false,
 							startYear: $scope.forestAlertStartYear,
 							endYear: studyHigh,
+							download: false
 						};
 
 						MapService.getForestAlert(parameters)
@@ -1486,7 +1620,36 @@
 								MapLayerArr[_year].forestAlert.setOpacity(1);
 
 								/*jshint loopfunc: true */
+		
 								createToggleList('toggle-list-forest-alert', 'forestAlert_'+_year, _year, _year, '',_yearData.color);
+								
+								$("#download_forestAlert_"+ _year).click(function() {
+									//show spiner
+									$scope.showLoader = true;
+									var layerID= $(this).attr('data-yid');
+									//set ajax parameters
+									var download_parameters = {
+										polygon_id: polygon_id,
+										year: layerID,
+										area_type: area_type,
+										area_id: area_id,
+										download: true
+									};
+									MapService.getForestAlert(download_parameters).then(function (res){
+										var dnlurl = res.downloadURL;
+										if(res.success === 'success'){
+											download(dnlurl, "forestAlert_"+ layerID);
+											showSuccessAlert("Download URL: "+dnlurl);
+											$scope.showLoader = false;
+										}else{
+											showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+											$scope.showLoader = false;
+										}
+									}, function (error) {
+										$scope.showLoader = false;
+										console.log(error);
+									})
+								});
 
 								//toggle each of forest map layer
 								$("#forestAlert_"+_year).change(function() {
@@ -1543,7 +1706,8 @@
 							startYear: studyLow,
 							endYear: studyHigh,
 							area_type: area_type,
-							area_id: area_id
+							area_id: area_id,
+							download: false
 						};
 
 						MapService.getBurnedArea(parameters)
@@ -1571,6 +1735,35 @@
 
 								/*jshint loopfunc: true */
 								createToggleList('toggle-list-burned-area', 'burnedArea_'+_year, _year, _year, '', _yearData.color);
+
+								$("#download_burnedArea_"+ _year).click(function() {
+									//show spiner
+									$scope.showLoader = true;
+									var layerID= $(this).attr('data-yid');
+									//set ajax parameters
+									var download_parameters = {
+										polygon_id: polygon_id,
+										year: layerID,
+										area_type: area_type,
+										area_id: area_id,
+										download: true
+									};
+									MapService.downloadBurnedArea(download_parameters).then(function (res){
+										var dnlurl = res.downloadURL;
+										if(res.success === 'success'){
+											download(dnlurl, "FirmBurnedArea_"+ layerID);
+											showSuccessAlert("Download URL: "+dnlurl);
+											$scope.showLoader = false;
+										}else{
+											showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+											$scope.showLoader = false;
+										}
+									}, function (error) {
+										$scope.showLoader = false;
+										console.log(error);
+									})
+								});
+
 
 								//toggle each of forest map layer
 								$("#burnedArea_"+_year).change(function() {
@@ -1614,15 +1807,15 @@
 					}
 
 
-
-
 					function getLandcover(){
 						var parameters = {
 							polygon_id: polygon_id,
 							startYear: studyLow,
 							endYear: studyHigh,
 							area_type: area_type,
-							area_id: area_id
+							area_id: area_id,
+							year: '',
+							download: false
 						};
 						var area_data = [];
 						var _yearArr =[];
@@ -1670,6 +1863,34 @@
 
 								/*jshint loopfunc: true */
 								createToggleList('toggle-list-landcover', 'landcover'+_year, _year, _year, '', _yearData.color);
+								
+								$("#download_landcover"+ _year).click(function() {
+									//show spiner
+									$scope.showLoader = true;
+									var layerID= $(this).attr('data-yid');
+									//set ajax parameters
+									var download_parameters = {
+										polygon_id: polygon_id,
+										year: layerID,
+										area_type: area_type,
+										area_id: area_id,
+										download: true
+									};
+									MapService.getLandcover(download_parameters).then(function (res){
+										var dnlurl = res.downloadURL;
+										if(res.success === 'success'){
+											download(dnlurl, "LANDCOVER_"+ layerID);
+											showSuccessAlert("Download URL: "+dnlurl);
+											$scope.showLoader = false;
+										}else{
+											showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+											$scope.showLoader = false;
+										}
+										
+									}, function (error) {
+										$scope.showLoader = false;
+									})
+								});
 
 								//toggle each of forest map layer
 								$("#landcover"+_year).change(function() {
@@ -1678,6 +1899,7 @@
 										var toggleColor = $(this).attr('data-color');
 										$(this).closest("label").find("span").css("background-color", toggleColor);
 										MapLayerArr[layerID].landcover.addTo(map);
+										console.log("show land cover")
 									} else {
 										$(this).closest("label").find("span").css("background-color", '#bbb');
 										if(map.hasLayer(MapLayerArr[layerID].landcover)){
@@ -1689,7 +1911,10 @@
 
 							var series = lcclass;
 							showHightChart('landcover_chart', 'column', _yearArr, series, true, 10, 'LAND COVER IN '+ selected_admin.toUpperCase());
-							$("#landcover"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
+							if($("#biophysical-tab").hasClass("active")) {
+								$("#landcover"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
+							}
+							
 
 							$scope.showLoader = false;
 
@@ -1718,8 +1943,8 @@
 					};
 
 					var showSuccessAlert = function (alertContent) {
-						$(".alert").html('');
-						$scope.alertContent = alertContent;
+						$scope.alertContent = '';
+						$(".alert").html(alertContent);
 						$('.custom-alert').removeClass('display-none').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
 						$timeout(function () {
 							$scope.closeAlert();
@@ -1839,14 +2064,18 @@
 							}
 						}
 
-
-
 					}
 
 					$("#guiding-button").click(function() {
 						hideModel();
 						$("#guiding-modal").removeClass('hide');
 						$("#guiding-modal").addClass('show');
+					});
+
+					$("#watch-video-button").click(function() {
+						hideModel();
+						$("#demo-clip-modal").removeClass('hide');
+						$("#demo-clip-modal").addClass('show');
 					});
 
 					$("#evi-info").click(function() {
@@ -1901,6 +2130,8 @@
 
 					$(".close").click(function() {
 						$(".modal-background").click();
+						var x = document.getElementById("demo-clip");
+            			x.pause();  
 					});
 					// Modal Close Function
 					$(".modal-background").click(function() {
@@ -2245,6 +2476,7 @@
 
 						// clear all toggle layer list
 						$("#toggle-list-forest").html('');
+						$("#toggle-list-landcover").html('');
 						$("#toggle-list-evi").html('');
 						$("#toggle-list-forest-alert").html('');
 						$("#toggle-list-burned-area").html('');

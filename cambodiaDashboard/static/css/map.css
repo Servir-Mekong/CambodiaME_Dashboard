@@ -503,7 +503,7 @@ input:checked + .slider_toggle:before, input:checked + .slider_toggle_jrc:before
 
 .c-menu-panel .panel-body label{
     font-weight: 500;
-    font-size: 12px;
+    font-size: 13px;
 }
 #app-logo {
     background-color: #2a4b2a;
@@ -1395,3 +1395,31 @@ svg image{
 .disclaimer-content table tr:nth-child(even){background-color: #f2f2f2;}
 
 .disclaimer-content table tr:hover {background-color: #ddd;}
+
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 0 dotted black; /* If you want dots under the hoverable text */
+    opacity: 1;
+  }
+  
+  /* Tooltip text */
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 100px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 0;
+   
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+  }
+  
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
