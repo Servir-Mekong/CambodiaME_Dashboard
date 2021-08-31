@@ -26,6 +26,7 @@ class GEEApi():
     BURNED_AREA = ee.ImageCollection(settings.BURNED_AREA)
     FIRMS_BURNED_AREA = ee.ImageCollection(settings.FIRMS_BURNED_AREA)
     LANDCOVER = ee.ImageCollection(settings.LANDCOVER)
+    SAR_ALERT = settings.SAR_ALERT
 
     COLOR = ['A8D9C6','B0DAB2','BFE1C9','AAD7A0','C3DE98','D5E59E','93D2BF','95CF9C','A4D7B8','9BD291','B1D78A','C9E08E','5CC199','77C78C','37B54A','126039','146232','0F8040','279445','449644','59A044','0E361E','236832','335024', '36461F']
     COLORFORESTALERT = ['943126', 'B03A2E', 'CB4335', 'E74C3C', 'F1948A', 'F5B7B1']
@@ -867,10 +868,12 @@ class GEEApi():
 
         binary_image = image.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
 
+        # ee.Image.pixelArea()
         if area_type == "draw" or area_type == "upload":
-            reducer = binary_image.multiply(ee.Image.pixelArea()).reduceRegion(
+            reducer = binary_image.multiply(900).reduceRegion(
               reducer= ee.Reducer.sum(),
               geometry= self.geometry,
+              crs = 'EPSG:32647', # WGS Zone N 47
               scale= 30,
               maxPixels= 1E20
             )
@@ -911,6 +914,46 @@ class GEEApi():
         }
 
     # -------------------------------------------------------------------------
+    def calSARAlert(self, get_image, colorIndex, area_type, area_id, series_start, series_end, year):
+
+        # SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
+        image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
+
+        image = image.select("landclass").clip(self.geometry).toInt16()
+
+        binary_image = image.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
+        
+        #ee.Image.pixelArea()
+        #multiply 900 (30m * 30m)
+        reducer = binary_image.multiply(ee.Image.pixelArea()).reduceRegion(
+            reducer= ee.Reducer.sum(),
+            geometry= self.geometry,
+            crs = 'EPSG:32647', # WGS Zone N 47
+            scale= 30,
+            maxPixels= 1E20
+        )
+        #area in squre meter
+        stats = reducer.getInfo()['binary']
+        #convert to hactare divide by 10000
+        areaHA = stats / 10000
+     
+
+        colorMap = GEEApi.COLORFORESTALERT[colorIndex]
+        map_id = binary_image.getMapId({
+            'min': '0',
+            'max': '1',
+            'palette': colorMap
+        })
+
+        return {
+            'total_area': float('%.2f' % areaHA),
+            'total_number': 0,
+            'eeMapId': str(map_id['mapid']),
+            'eeMapURL': str(map_id['tile_fetcher'].url_format),
+            'color': colorMap
+        }
+
+    # -------------------------------------------------------------------------
     def downloadForestAlert(self, year):
         series_start = str(year) + '-01-01'
         series_end = str(year) + '-12-31'
@@ -932,6 +975,30 @@ class GEEApi():
             return {
                 'success': 'not success'
             }
+    
+    # -------------------------------------------------------------------------
+    def downloadSARAlert(self, year):
+        image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
+
+        image = image.select("landclass").clip(self.geometry).toInt16()
+
+        binary_image = image.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
+
+        try:
+            dnldURL = binary_image.getDownloadURL({
+                    'name': 'ForestAlert'+year,
+                    'scale': 100,
+                    'crs': 'EPSG:4326'
+                })
+            return {
+                'downloadURL': dnldURL,
+                'success': 'success'
+                }
+        except Exception as e:
+            return {
+                'success': 'not success'
+            }
+
 
     # -------------------------------------------------------------------------
     def getForestAlert(self, get_image, start_year, end_year, area_type, area_id):
@@ -943,6 +1010,19 @@ class GEEApi():
             series_end = str(_year) + '-12-31'
             colorIndex += 1
             res[str(_year)] = self.calForestAlert(get_image, colorIndex, area_type, area_id, series_start, series_end, _year)
+        return res
+    
+    # -------------------------------------------------------------------------
+    def getSARAlert(self, get_image, start_year, end_year, area_type, area_id):
+
+        res = {}
+        colorIndex = 0
+        for _year in range(start_year, end_year+1):
+            series_start = str(_year) + '-01-01'
+            series_end = str(_year) + '-12-31'
+            colorIndex += 1
+            print(_year)
+            res[str(_year)] = self.calSARAlert(get_image, colorIndex, area_type, area_id, series_start, series_end, _year)
         return res
 
     # -------------------------------------------------------------------------

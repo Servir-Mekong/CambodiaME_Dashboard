@@ -19,9 +19,9 @@ def api(request):
 
     if action:
         public_methods = ['get-line-evi', 'get-pie-evi', 'get-evi-map', 'get-stats', 'get-forestgainloss', 
-        'get-forest-extent-map', 'get-forest-gain-map', 'get-forest-loss-map', 'get-forest-alert','get-burned-area', 
+        'get-forest-extent-map', 'get-forest-gain-map', 'get-forest-loss-map', 'get-forest-alert', 'get-sar-alert', 'get-burned-area', 
         'get-changeforestgainloss', 'get-landcover', 'check-date', 'download-evi-map', 'download-landcover', 'download-burned-area', 
-        'download-forest-alert', 'download-forest-extent-map']
+        'download-forest-alert', 'download-sar-alert', 'download-forest-extent-map']
         if action in public_methods:
             shape = post('shape', '')
             geom = post('polygon_id', '')
@@ -64,6 +64,8 @@ def api(request):
                 data = core.forest_loss(False, start_year, end_year, tree_canopy_definition, tree_height_definition, download)
             elif action == 'get-forest-alert':
                 data = core.getForestAlert(get_image, start_year, end_year, area_type, area_id)
+            elif action == 'get-sar-alert':
+                data = core.getSARAlert(get_image, start_year, end_year, area_type, area_id)
             elif action == 'get-burned-area':
                 data = core.getBurnedArea(start_year, end_year, area_type, area_id)
             elif action == 'get-changeforestgainloss':
@@ -82,4 +84,7 @@ def api(request):
                 data = core.downloadForestAlert(year)
             elif action == 'download-forest-extent-map':
                 data = core.downloadForestMap(year, end_year)
+            elif action == 'download-sar-alert':
+                data = core.downloadSARAlert(year)
+
             return JsonResponse(data, safe=False)

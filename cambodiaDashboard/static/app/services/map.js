@@ -397,6 +397,49 @@
 			return promise;
 		};
 
+		service.getSarAlert = function (options) {
+			var startYear = options.startYear;
+			var endYear = options.endYear;
+			var polygon_id = options.polygon_id;
+			var get_image = options.get_image;
+			var area_type = options.area_type;
+			var area_id = options.area_id;
+			var download = options.download;
+			var year = options.year;
+			var action = ''
+			if(download === false){
+				action = 'get-sar-alert'
+			}else{
+				action = 'download-sar-alert'
+			}
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id: polygon_id,
+					get_image: get_image,
+					startYear: startYear,
+					endYear: endYear,
+					year: year,
+					area_type: area_type,
+					area_id: area_id
+				},
+				params: {
+					action: action
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
+			})
+			.catch(function (e) {
+				console.log('Error: ', e);
+				throw e.data;
+			});
+			return promise;
+		};
+
 
 		service.getBurnedArea = function (options) {
 			var startYear = options.startYear;

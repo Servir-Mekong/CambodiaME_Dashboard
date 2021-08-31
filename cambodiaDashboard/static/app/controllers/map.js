@@ -47,20 +47,23 @@
 		var overlayLayers = [EVILayer,ForestGainLayer, ForestLossLayer, ForestAlertLayer];
 		var MapLayerArr = {}
 	  for(y = $scope.startYear; y <= $scope.endYear+1; y++) {
-	    eval('$scope.Forest' + y + '=null;');
+	    	eval('$scope.Forest' + y + '=null;');
 			eval('$scope.ForestAlert' + y + '=null;');
 			eval('$scope.BurnedArea' + y + '=null;');
 			eval('$scope.Landcover' + y + '=null;');
-		  overlayLayers.push(eval('$scope.Forest' + y));
+			eval('$scope.sarAlert' + y + '=null;');
+		  	overlayLayers.push(eval('$scope.Forest' + y));
 			overlayLayers.push(eval('$scope.ForestAlert' + y));
 			overlayLayers.push(eval('$scope.BurnedArea' + y));
 			overlayLayers.push(eval('$scope.Landcover' + y));
+			overlayLayers.push(eval('$scope.sarAlert' + y));
 
 			MapLayerArr[y.toString()] = {
 				'forest': eval('$scope.Forest' + y),
 				'forestAlert': eval('$scope.ForestAlert' + y),
 				'burnedArea': eval('$scope.BurnedArea' + y),
-				'landcover': eval('$scope.Landcover' + y)
+				'landcover': eval('$scope.Landcover' + y),
+				'sarAlert': eval('$scope.sarAlert' + y),
 
 				}
 	  	}
@@ -591,6 +594,7 @@
 					$("#toggle-list-forest").html('');
 					$("#toggle-list-evi").html('');
 					$("#toggle-list-forest-alert").html('');
+					$("#toggle-list-sar-alert").html('');
 					$("#toggle-list-burned-area").html('');
 					$("#toggle-list-landcover").html('');
 
@@ -607,6 +611,7 @@
 					getChangeForestGainLossStats();
 					getForestAlert();
 					getBurnedArea();
+					getSarAlert();
 
 				}
 
@@ -1607,6 +1612,7 @@
 
 						MapService.getForestAlert(parameters)
 						.then(function (data) {
+							total_forest_alert_area = 0;
 							var area_data = [];
 							var number_data = [];
 
@@ -1673,7 +1679,7 @@
 									if(this.checked) {
 										$(this).closest("label").find("span").css("background-color", toggleColor);
 										$("#ul-forest-alert-legend").append(
-											'<li id="'+toggleId+'"> <p><span style="width: 500px; height: 100px; background:'+toggleColor+'; border: 1px solid '+toggleColor+'; color:'+toggleColor+'; "> XX</span> '+toggleName+'</p> </li>'
+											'<li id="'+toggleId+'"> <p><span style="width: 500px; height: 100px; background:'+toggleColor+'; border: 1px solid '+toggleColor+'; color:'+toggleColor+'; "> XX</span>GLAD '+toggleName+'</p> </li>'
 										);
 										MapLayerArr[layerID].forestAlert.addTo(map);
 									} else {
@@ -1711,6 +1717,121 @@
 							console.log(error);
 						});
 					}
+
+
+					var total_sar_alert_area = 0;
+					function getSarAlert(){
+						var parameters = {
+							polygon_id: polygon_id,
+							area_id: area_id,
+							area_type: area_type,
+							get_image: false,
+							startYear: $scope.forestAlertStartYear,
+							endYear: studyHigh,
+							download: false
+						};
+
+						MapService.getSarAlert(parameters)
+						.then(function (data) {
+							total_sar_alert_area = 0
+							$scope.showLoader = false;
+							var area_data = [];
+							var number_data = [];
+
+							var _yearArr = [];
+
+							for(var i=$scope.forestAlertStartYear; i<=studyHigh; i++){
+
+								var _yearData = data[i.toString()];
+								var _year = i.toString();
+
+								area_data.push([i, _yearData.total_area]);
+								number_data.push([i, _yearData.total_number]);
+								_yearArr.push(i);
+
+								total_sar_alert_area += _yearData.total_area;
+
+								if(map.hasLayer(MapLayerArr[_year].sarAlert)){
+									map.removeLayer(MapLayerArr[_year].sarAlert);
+								}
+
+								//add map layer
+								MapLayerArr[_year].sarAlert = addMapLayer(MapLayerArr[_year].sarAlert, _yearData.eeMapURL, 'geeMapLayer');
+								//set map style with opacity = 0.5
+								MapLayerArr[_year].sarAlert.setOpacity(1);
+
+								/*jshint loopfunc: true */
+		
+								createToggleList('toggle-list-sar-alert', 'sarAlert_'+_year, _year, _year, '',_yearData.color);
+								
+								$("#download_sarAlert_"+ _year).click(function() {
+									//show spiner
+									$scope.showLoader = true;
+									var layerID= $(this).attr('data-yid');
+									//set ajax parameters
+									var download_parameters = {
+										polygon_id: polygon_id,
+										year: layerID,
+										area_type: area_type,
+										area_id: area_id,
+										download: true
+									};
+									MapService.getSarAlert(download_parameters).then(function (res){
+										var dnlurl = res.downloadURL;
+										if(res.success === 'success'){
+											download(dnlurl, "sarAlert_"+ layerID);
+											showSuccessAlert("Download URL: "+dnlurl);
+											$scope.showLoader = false;
+										}else{
+											showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+											$scope.showLoader = false;
+										}
+									}, function (error) {
+										$scope.showLoader = false;
+										console.log(error);
+									})
+								});
+
+								//toggle each of sar forest map layer
+								$("#sarAlert_"+_year).change(function() {
+									var layerID= $(this).attr('data-yid');
+									var toggleColor = $(this).attr('data-color');
+									var toggleName = $(this).attr('data-name');
+									var toggleId = $(this).attr('data-id');
+									if(this.checked) {
+										$(this).closest("label").find("span").css("background-color", toggleColor);
+										$("#ul-forest-alert-legend").append(
+											'<li id="'+toggleId+'"> <p><span style="width: 500px; height: 100px; background:'+toggleColor+'; border: 1px solid '+toggleColor+'; color:'+toggleColor+'; "> XX</span> SAR '+toggleName+'</p> </li>'
+										);
+										MapLayerArr[layerID].sarAlert.addTo(map);
+									} else {
+										$(this).closest("label").find("span").css("background-color", '#bbb');
+										if(map.hasLayer(MapLayerArr[layerID].sarAlert)){
+											map.removeLayer(MapLayerArr[layerID].sarAlert);
+										}
+										$('li[id="' + toggleId + '"').remove();
+									}
+								});
+
+							}
+							if($("#sar-alert-tab").hasClass("active")) {
+								$("#sarAlert_"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
+							}
+
+							var seriesArea = [{
+								name: 'Area in Hectare',
+								data: area_data,
+								color: '#d95252'
+							}];
+							showHightChart('sar_alert_area', 'column', _yearArr, seriesArea, true, 30, 'TOTAL AREA OF FOREST ALERT IN'+ selected_admin.toUpperCase());
+
+
+						}, function (error) {
+							console.log(error);
+						});
+					}
+
+
 
 					var total_burned_area = 0;
 					function getBurnedArea(){
@@ -2069,6 +2190,9 @@
 							}
 							if(map.hasLayer(MapLayerArr[_year].forestAlert)){
 								map.removeLayer(MapLayerArr[_year].forestAlert);
+							}
+							if(map.hasLayer(MapLayerArr[_year].sarAlert)){
+								map.removeLayer(MapLayerArr[_year].sarAlert);
 							}
 							if(map.hasLayer(MapLayerArr[_year].burnedArea)){
 								map.removeLayer(MapLayerArr[_year].burnedArea);
@@ -2493,6 +2617,7 @@
 						$("#toggle-list-landcover").html('');
 						$("#toggle-list-evi").html('');
 						$("#toggle-list-forest-alert").html('');
+						$("#toggle-list-sar-alert").html('');
 						$("#toggle-list-burned-area").html('');
 					});
 
@@ -2526,6 +2651,12 @@
 						var chart = $('#forest_alert_area').highcharts();
 						chart.exportChart();
 					});
+
+					$("#sar_alert_area_png").click(function() {
+						var chart = $('#sar_alert_area').highcharts();
+						chart.exportChart();
+					});
+
 
 					$("#burned_area_png").click(function() {
 						var chart = $('#burned_area_chart').highcharts();
@@ -2570,6 +2701,10 @@
 					});
 					$("#forest_alert_area_csv").click(function() {
 						var chart = $('#forest_alert_area').highcharts();
+						chart.downloadCSV();
+					});
+					$("#sar_alert_area_csv").click(function() {
+						var chart = $('#sar_alert_area').highcharts();
 						chart.downloadCSV();
 					});
 
@@ -2775,16 +2910,36 @@
 							var title = pdf.splitTextToSize('Total area of forest alert in '+ selected_admin , 500);
 							pdf.text(50, 140, title);
 							pdf.addImage(img, 'JPEG', 50, 150, undefined, undefined);
-							var mapDiv = document.getElementById('map');
-							domtoimage.toPng(mapDiv)
+
+							var sarAlert = document.getElementById('sar_alert_area');
+							domtoimage.toPng(sarAlert)
 							.then(function (dataUrl) {
-								var img = new Image();
-								img.src = dataUrl;
-								pdf.text(50, 370, pdf.splitTextToSize('Map of forest cover change' , 500));
-								pdf.addImage(img, 'JPEG', 50, 390,mapWidth, mapHeight);
-								var newDate = new Date();
-								var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
-								pdf.save(pdffilename);
+								var img2 = new Image();
+								img2.src = dataUrl;
+								pdf.text(50, 370, pdf.splitTextToSize('SAR ALERT' , 500));
+								pdf.text(50,390, pdf.splitTextToSize("Name of Area Admin boundary/ protected area: "+ selected_admin , 500))
+								pdf.text(50,410, pdf.splitTextToSize("Total area of SAR alert : "+total_sar_alert_area.toFixed(2)+ " (ha)", 500))
+								var title2 = pdf.splitTextToSize('Total area of SAR alert in '+ selected_admin , 500);
+								pdf.text(50, 430, title2);
+								pdf.addImage(img2, 'JPEG', 50, 450, undefined, undefined);
+								pdf.addPage();
+
+								var mapDiv2 = document.getElementById('map');
+									domtoimage.toPng(mapDiv2)
+									.then(function (dataUrl) {
+										var img = new Image();
+										img.src = dataUrl;
+										pdf.text(50, 70, pdf.splitTextToSize('Map of forest cover change' , 500));
+										pdf.addImage(img, 'JPEG', 50, 90,mapWidth, mapHeight);
+										var newDate = new Date();
+										var pdffilename = "M&E-REPORT: " + newDate.toLocaleDateString() + " @ " + newDate.toLocaleTimeString()+ ".pdf";
+										pdf.save(pdffilename);
+									})
+									.catch(function (error) {
+										console.error('oops, something went wrong!', error);
+										showErrorAlert('oops, something went wrong! Please try agian');
+									});
+								
 							})
 							.catch(function (error) {
 								console.error('oops, something went wrong!', error);
