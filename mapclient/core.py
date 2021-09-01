@@ -987,7 +987,7 @@ class GEEApi():
         try:
             dnldURL = binary_image.getDownloadURL({
                     'name': 'ForestAlert'+year,
-                    'scale': 100,
+                    'scale': 30,
                     'crs': 'EPSG:4326'
                 })
             return {
