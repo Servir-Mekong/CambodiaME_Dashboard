@@ -29,7 +29,8 @@ class GEEApi():
     SAR_ALERT = settings.SAR_ALERT
 
     COLOR = ['A8D9C6','B0DAB2','BFE1C9','AAD7A0','C3DE98','D5E59E','93D2BF','95CF9C','A4D7B8','9BD291','B1D78A','C9E08E','5CC199','77C78C','37B54A','126039','146232','0F8040','279445','449644','59A044','0E361E','236832','335024', '36461F']
-    COLORFORESTALERT = ['943126', 'B03A2E', 'CB4335', 'E74C3C', 'F1948A', 'F5B7B1']
+    COLORFORESTALERT = ['943126', 'B03A2E', 'CB4335', 'E74C3C', 'F1948A', 'F5B7B1','943126', 'B03A2E', 'CB4335', 'E74C3C', 'F1948A', 'F5B7B1']
+    COLORSARALERT = ['fba004', 'f9bc16', 'ac9d0a', 'fba004', 'f9bc16', 'ac9d0a','fba004', 'f9bc16', 'ac9d0a','fba004', 'f9bc16', 'ac9d0a']
 
     def __init__(self, area_path, area_name, geom, area_type, area_id):
 
@@ -938,7 +939,7 @@ class GEEApi():
         areaHA = stats / 10000
      
 
-        colorMap = GEEApi.COLORFORESTALERT[colorIndex]
+        colorMap = GEEApi.COLORSARALERT[colorIndex]
         map_id = binary_image.getMapId({
             'min': '0',
             'max': '1',
