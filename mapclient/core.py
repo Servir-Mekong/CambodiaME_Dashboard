@@ -917,8 +917,9 @@ class GEEApi():
     # -------------------------------------------------------------------------
     def calSARAlert(self, get_image, colorIndex, area_type, area_id, series_start, series_end, year):
 
-        # SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
-        image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
+        SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
+        # image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
+        image = SARIC.sort('system:time_start', False).first()
 
         image = image.select("landclass").clip(self.geometry).toInt16()
 
@@ -979,7 +980,12 @@ class GEEApi():
     
     # -------------------------------------------------------------------------
     def downloadSARAlert(self, year):
-        image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
+        series_start = str(year) + '-01-01'
+        series_end = str(year) + '-12-31'
+        
+        SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
+        # image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
+        image = SARIC.sort('system:time_start', False).first()
 
         image = image.select("landclass").clip(self.geometry).toInt16()
 
