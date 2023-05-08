@@ -30,6 +30,14 @@
     </div>
   </button>
 </li>
+<li class="c-map-menu-tile datasets-tile" id="crop-monitoring-tab">
+  <button class="item-button" type="button" name="button">
+    <div class="button-wrapper">
+      <img id="crop-monitoring-icon" src="/static/images/icons/menu/forest-monitoring-green.png" alt="Crop Monitoring" width="30px;" style="margin-bottom: 10px">
+      <span>[[ 'CROP MONITORING' ]]</span>
+    </div>
+  </button>
+</li>
 <li class="c-map-menu-tile datasets-tile" id="forest-alert-tab">
   <button class="item-button" type="button" name="button">
     <div class="button-wrapper">
@@ -171,6 +179,27 @@
     <div id="forest_change_gainloss_chart"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
 
 
+  </div>
+</div>
+
+<div class="c-menu-panel map-tour-menu-panel menu-panel" id="panel-crop-monitoring" style="opacity: 0; transform: translateX(-25rem) translateZ(0rem);">
+  <button class="close-menu">
+    <svg class="c-icon icon-close-panel" viewBox="0 0 32 32">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+        <path d="M3.692 0l-3.692 3.692 12.308 12.308-12.308 12.308 3.692 3.692 12.308-12.308 12.308 12.308 3.692-3.692-12.308-12.308 12.308-12.308-3.692-3.692-12.308 12.308z"></path>
+      </svg>
+    </svg>
+  </button>
+  <div class="panel-body">
+    <h4>
+      <span>
+        <svg id="forest-info" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#d4dbd4" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
+          <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+        </svg>
+      </span>
+      CROP MAP LAYERS
+    </h4>
+    <!-- <p>Selected Area: <span class="selected_area_name" style="color: #023b10;">Cambodia</span></p> -->
   </div>
 </div>
 

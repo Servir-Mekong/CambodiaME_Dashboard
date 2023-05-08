@@ -115,8 +115,8 @@
 				grid: false,
 				min: yearInt($scope.startYear),
 				max: yearInt($scope.endYear),
-				from: yearInt(2009),
-				to: yearInt(2020),
+				from: yearInt(2000),
+				to: yearInt(2021),
 				prettify: yearToInt,
 				onChange: function (data) {
 					studyHigh = data.to;
@@ -1015,7 +1015,6 @@
 					});
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 				function getLineEvi(){
 					//set ajax parameters
 					var params= {
@@ -1945,7 +1944,7 @@
 						var parameters = {
 							polygon_id: polygon_id,
 							startYear: studyLow,
-							endYear: studyHigh,
+							endYear: 2020,
 							area_type: area_type,
 							area_id: area_id,
 							year: '',
@@ -2466,6 +2465,8 @@
 
 					$("#biophysical-tab").click(function () {
 						clearMapLayers();
+						$("#mp1").hide();
+						$("#mp2").show();
 						$("#EVILayer").prop( "checked", true ).trigger( "change" );
 						$("#landcover"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
 						$("#evi-legend").css("display", "block");
