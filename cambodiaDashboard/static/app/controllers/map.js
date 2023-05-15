@@ -41,21 +41,25 @@
 		var refHigh, refLow, studyHigh, studyLow;
 
 		var arrayWMSLayers = []
-	  var k = 'value';
-	  var y = 0;
+		var k = 'value';
+		var y = 0;
 		var EVILayer,ForestGainLayer, ForestLossLayer, ForestAlertLayer;
 		var overlayLayers = [EVILayer,ForestGainLayer, ForestLossLayer, ForestAlertLayer];
 		var MapLayerArr = {}
-	  for(y = $scope.startYear; y <= $scope.endYear+1; y++) {
+	  	for(y = $scope.startYear; y <= $scope.endYear+1; y++) {
 	    	eval('$scope.Forest' + y + '=null;');
 			eval('$scope.ForestAlert' + y + '=null;');
 			eval('$scope.BurnedArea' + y + '=null;');
 			eval('$scope.Landcover' + y + '=null;');
+			eval('$scope.LandcoverRice' + y + '=null;');
+			eval('$scope.LandcoverRubber' + y + '=null;');
 			eval('$scope.sarAlert' + y + '=null;');
 		  	overlayLayers.push(eval('$scope.Forest' + y));
 			overlayLayers.push(eval('$scope.ForestAlert' + y));
 			overlayLayers.push(eval('$scope.BurnedArea' + y));
 			overlayLayers.push(eval('$scope.Landcover' + y));
+			overlayLayers.push(eval('$scope.LandcoverRice' + y));
+			overlayLayers.push(eval('$scope.LandcoverRubber' + y));
 			overlayLayers.push(eval('$scope.sarAlert' + y));
 
 			MapLayerArr[y.toString()] = {
@@ -63,9 +67,10 @@
 				'forestAlert': eval('$scope.ForestAlert' + y),
 				'burnedArea': eval('$scope.BurnedArea' + y),
 				'landcover': eval('$scope.Landcover' + y),
+				'landcoverrice': eval('$scope.LandcoverRice' + y),
+				'landcoverrubber': eval('$scope.LandcoverRubber' + y),
 				'sarAlert': eval('$scope.sarAlert' + y),
-
-				}
+			}
 	  	}
 			var selected_admin = 'Cambodia';
 
@@ -121,7 +126,13 @@
 				onChange: function (data) {
 					studyHigh = data.to;
 					studyLow = data.from;
-					$scope.STUDYHIGH = studyHigh;
+					if (studyHigh >= 2022 ){
+						alert("No data available after 2020. Please select data baseline period between 2000 and 2020.")
+						$scope.STUDYHIGH = 2021;
+					} else {
+						$scope.STUDYHIGH = studyHigh;
+					}
+					
 					$scope.STUDYLOW = studyLow;
 					$scope.$apply();
 				},
@@ -148,7 +159,13 @@
 				onChange: function (data) {
 					refHigh = data.to;
 					refLow = data.from;
-					$scope.REFHIGH = refHigh;
+					if (refHigh >= 2021 ){
+						alert("No data available after 2020. Please select data baseline period between 2000 and 2020.")
+						$scope.REFHIGH = 2020;
+					} else {
+						$scope.REFHIGH = refHigh;
+					}
+					
 					$scope.REFLOW = refLow;
 				},
 				// onFinish: function (data) {
@@ -160,6 +177,9 @@
 			refLow = $("#baseline_period").data("ionRangeSlider").result.from;
 			$scope.REFHIGH = refHigh;
 			$scope.REFLOW = refLow;
+			// console.log(refHigh)
+			// console.log(refLow)
+			
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			//init leaflet map
@@ -597,6 +617,8 @@
 					$("#toggle-list-sar-alert").html('');
 					$("#toggle-list-burned-area").html('');
 					$("#toggle-list-landcover").html('');
+					$("#toggle-list-landcover-rice").html('');
+					$("#toggle-list-landcover-rubber").html('');
 
 					//show spiner
 					$scope.showLoader = true;
@@ -604,6 +626,10 @@
 					getLineEvi();
 					getEviMap();
 					getLandcover();
+					getLandcoverRice();
+					getLineLCRice();
+					getLineLCRubber();
+					getLandcoverRubber();
 					getForestMapID();
 					getForestGainMapID();
 					getForestLossMapID();
@@ -612,7 +638,6 @@
 					getForestAlert();
 					getBurnedArea();
 					getSarAlert();
-
 				}
 
 
@@ -762,7 +787,7 @@
 				}
 
 				function isInArray(value, array) {
-				  return array.indexOf(value) > -1;
+				  	return array.indexOf(value) > -1;
 				}
 
 				function checkAvailableData(high, low){
@@ -770,12 +795,16 @@
 					showInfoAlert("Checking available dataset");
 					var noforestalertyear = "";
 					var nolandcoveryear = "";
+					var nolandcoverriceyear = "";
+					var nolandcoverrubberyear = "";
 					var noeviyear = "";
 					var notccyear = "";
 					var notchyear = "";
 					var noburnedyear = "";
 					var forestalertA= [];
 					var lca= [];
+					var lcarice= [];
+					var lcarubber= [];
 					var evia= [];
 					var tcca= [];
 					var tcha= [];
@@ -789,25 +818,37 @@
 					};
 					MapService.checkAvailableData(parameters)
 					.then(function (res) {
-						//hideSpiner();
+						hideSpiner();
 						var eviyear = res.evi;
 						var landcoveryear = res.landcover;
+						var landcoverriceyear = res.landcoverrice;
+						var landcoverrubberyear = res.landcoverrubber;
 						var foresttccyear = res.tcc;
 						var foresttchyear = res.tch;
 						var forestalertyear = res.forestalert;
 						var burnedyear = res.burned;
-
+						// console.log(landcoverriceyear)
 						for(var i=low; i<=high; i++){
 							if(!isInArray(i.toString(), forestalertyear)){
 								noforestalertyear += i.toString()+" ";
 								forestalertA.push(i);
 								//document.getElementById("update-map").disabled = true;
 							}
-							if(!isInArray(i.toString(), landcoveryear)){
-								nolandcoveryear += i.toString()+" ";
-								lca.push(i);
-								//document.getElementById("update-map").disabled = true;
-							}
+							// if(!isInArray(i.toString(), landcoveryear)){
+							// 	nolandcoveryear += i.toString()+" ";
+							// 	lca.push(i);
+							// 	//document.getElementById("update-map").disabled = true;
+							// }
+							// if(!isInArray(i.toString(), landcoverriceyear)){
+							// 	nolandcoverriceyear += i.toString()+" ";
+							// 	lcarice.push(i);
+							// 	//document.getElementById("update-map").disabled = true;
+							// }
+							// if(!isInArray(i.toString(), landcoverrubberyear)){
+							// 	nolandcoverrubberyear += i.toString()+" ";
+							// 	lcarubber.push(i);
+							// 	//document.getElementById("update-map").disabled = true;
+							// }
 							if(!isInArray(i.toString(), eviyear)){
 								noeviyear += i.toString()+" ";
 								evia.push(i);
@@ -829,6 +870,8 @@
 								//document.getElementById("update-map").disabled = true;
 							}
 						}
+
+						console.log(evia)
 
 						if(burneda.length === 0 && tcca.length === 0 && tcha.length === 0){
 							//document.getElementById("update-map").disabled = false;
@@ -876,6 +919,77 @@
 
 						//Showing the pie chart
 						Highcharts.chart('chart', {
+							chart: {
+								type: 'pie',
+								// Explicitly tell the width and height of a chart
+								width: 315,
+								height: 300,
+								style: {
+									fontFamily: "Roboto Condensed"
+								}
+							},
+							tooltip: {
+								formatter: function () {
+									return this.point.name + " (" + this.point.percentage.toFixed(2) + "%)";
+								}
+								// pointFormat: '{series.name}: <br>{point.percentage:.1f} %<br>: {point.total}'
+							},
+
+							credits: {
+								enabled: false
+							},
+							title: false,
+							subtitle: false,
+							plotOptions: {
+								pie: {
+									allowPointSelect: false,
+									cursor: 'pointer',
+									dataLabels: {
+										enabled: false,
+										format: '',
+										style: { fontFamily: 'Roboto Condensed'}
+									},
+									showInLegend: true,
+								}
+
+							},
+							legend: {
+								layout: 'horizontal',
+								align: 'left',
+								verticalAlign: 'bottom',
+								itemMarginTop: 3,
+								itemMarginBottom: 3,
+								itemStyle: {
+									color: '#666666',
+									fontWeight: 'normal',
+									fontSize: '9px'
+								},
+								labelFormatter: function() {
+									return this.name + " (" + this.percentage.toFixed(2) + "%)";
+								}
+							},
+
+							exporting:{
+								chartOptions:{
+									title: {
+										text:''
+									},
+									subtitle: {
+										text: 'PROPORTION OF BIOPHYSICAL HEALTH IN '+ selected_admin.toUpperCase()
+									}
+								},
+								enabled: false
+							},
+
+							series: [{
+								name: 'Area (ha)',
+								data: graphDataEVI,
+								showInLegend: true,
+
+							}]
+						});
+
+						Highcharts.chart('chartPieEVI', {
 							chart: {
 								type: 'pie',
 								// Explicitly tell the width and height of a chart
@@ -1015,6 +1129,186 @@
 					});
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				function getLineLCRice(){
+					var params = {
+						polygon_id: polygon_id,
+						startYear: studyLow,
+						endYear: 2020,
+						area_type: area_type,
+						area_id: area_id
+					};
+					// var params = {}
+					MapService.getLineLCRice(params) 
+					.then(function(data){
+						// console.log(data)
+						$('#chartLineRice').highcharts({
+							chart: {
+								style: {
+									fontFamily: 'Roboto Condensed'
+								},
+								type: 'spline',
+								width: 315,
+								height: 280,
+
+							},
+							title: false,
+							tooltip: {
+								formatter: function () {
+									return 'Estimated Area: ' +  this.point.y.toFixed(2) ;
+								}
+							},
+							xAxis: {
+								categories: Object.keys(data),
+								title: {
+									text: 'Year'
+								}
+							},
+							yAxis: {
+								title: {
+									text: 'Total Area (in Hectare)'
+								}
+							},
+							series: [{
+								name: 'Estimated Total Area of Rice Field',
+								data: Object.values(data)
+							}],
+							plotOptions: {
+								series: {
+									color: "#2b5154"
+								}
+							}
+						});
+						$('#chart_line_rice').highcharts({
+							chart: {
+								style: {
+									fontFamily: 'Roboto Condensed'
+								},
+								type: 'spline',
+								width: 315,
+								height: 280,
+
+							},
+							title: false,
+							tooltip: {
+								formatter: function () {
+									return 'Estimated Area: ' +  this.point.y.toFixed(2) ;
+								}
+							},
+							xAxis: {
+								categories: Object.keys(data),
+								title: {
+									text: 'Year'
+								}
+							},
+							yAxis: {
+								title: {
+									text: 'Total Area (in Hectare)'
+								}
+							},
+							series: [{
+								name: 'Estimated Total Area of Rice Field',
+								data: Object.values(data)
+							}],
+							plotOptions: {
+								series: {
+									color: "#2b5154"
+								}
+							}
+						});
+					})
+
+				}
+
+				function getLineLCRubber(){
+					var params = {
+						polygon_id: polygon_id,
+						startYear: studyLow,
+						endYear: 2020,
+						area_type: area_type,
+						area_id: area_id
+					};
+					// var params = {}
+					MapService.getLineLCRubber(params) 
+					.then(function(data){
+						// console.log(data)
+						$('#chartLineRubber').highcharts({
+							chart: {
+								style: {
+									fontFamily: 'Roboto Condensed'
+								},
+								type: 'spline',
+								width: 315,
+								height: 280,
+
+							},
+							title: false,
+							tooltip: {
+								formatter: function () {
+									return 'Estimated Area: ' +  this.point.y.toFixed(2) ;
+								}
+							},
+							xAxis: {
+								categories: Object.keys(data),
+								title: {
+									text: 'Year'
+								}
+							},
+							yAxis: {
+								title: {
+									text: 'Total Area (in Hectare)'
+								}
+							},
+							series: [{
+								name: 'Estimated Total Area of Rubber Field',
+								data: Object.values(data)
+							}],
+							plotOptions: {
+								series: {
+									color: "#2b5154"
+								}
+							}
+						});
+						$('#chart_line_rubber').highcharts({
+							chart: {
+								style: {
+									fontFamily: 'Roboto Condensed'
+								},
+								type: 'spline',
+								width: 315,
+								height: 280,
+
+							},
+							title: false,
+							tooltip: {
+								formatter: function () {
+									return 'Estimated Area: ' +  this.point.y.toFixed(2) ;
+								}
+							},
+							xAxis: {
+								categories: Object.keys(data),
+								title: {
+									text: 'Year'
+								}
+							},
+							yAxis: {
+								title: {
+									text: 'Total Area (in Hectare)'
+								}
+							},
+							series: [{
+								name: 'Estimated Total Area of Rubber Field',
+								data: Object.values(data)
+							}],
+							plotOptions: {
+								series: {
+									color: "#2b5154"
+								}
+							}
+						});
+					})
+
+				}
+
 				function getLineEvi(){
 					//set ajax parameters
 					var params= {
@@ -1029,6 +1323,7 @@
 
 					MapService.getLineEvi(params)
 					.then(function (data) {
+						// console.log(data)
 						var serieses = [{
 							data: data.timeSeries,
 							name: 'Biophysical Health',
@@ -1040,6 +1335,66 @@
 						}];
 
 						$('#chart_div').highcharts({
+							chart: {
+								style: {
+									fontFamily: 'Roboto Condensed'
+								},
+								type: 'spline',
+								width: 315,
+								height: 280,
+
+							},
+							title: false,
+							tooltip: {
+								formatter: function () {
+									return '<b>' + this.series.name + '</b><br/>' +
+									'Cumulative anomaly EVI: ' +  this.point.y.toFixed(2) ;
+								}
+							},
+							yAxis: {
+								title: {
+									text: 'Cumulative anomaly EVI'
+								}
+							},
+							xAxis: {
+								type: 'datetime',
+								labels: {
+									format: '{value: %Y-%m-%d}'
+								},
+								title: {
+									text: 'Date'
+								}
+							},
+							legend: {
+								align: 'center',
+								verticalAlign: 'bottom',
+								y: -25
+							},
+
+							plotOptions: {
+								series: {
+									color: "#2b5154"
+								}
+							},
+							exporting:{
+								chartOptions:{
+									title: {
+										text:''
+									},
+									subtitle: {
+										text: 'CUMULATIVE ANOMALY EVI IN '+ selected_admin.toUpperCase()
+									}
+								},
+								enabled: false
+							},
+							series: serieses,
+							credits: {
+								enabled: false
+							},
+
+						});
+
+						$('#chartLineEVI').highcharts({
 							chart: {
 								style: {
 									fontFamily: 'Roboto Condensed'
@@ -1124,6 +1479,68 @@
 
 					MapService.getForestGainLoss(params)
 					.then(function (data) {
+						Highcharts.chart('chartForestGainloss',{
+							chart: {
+								type: 'bar',
+								style: {
+									fontFamily: 'Roboto Condensed'
+								},
+								width: 300,
+								height: 200,
+							},
+							title: false,
+							subtitle: false,
+							xAxis :{
+								visible : false
+							},
+							yAxis: {
+								title: {
+									text: null
+								},
+								labels: {
+									formatter: function () {
+										return (this.value / 1000000) + 'Mha';
+									}
+								}
+							},
+							plotOptions: {
+								series: {
+									stacking: 'normal'
+								}
+							},
+							tooltip: {
+								formatter: function () {
+									return '<b>' + this.series.name + '</b><br/>' +
+									'Area in hectare: ' +  Math.abs(this.point.y) ;
+								}
+							},
+							series: [
+								{
+									name: 'Forest Loss',
+									data: [data.forestloss * -1],
+									color: '#73C6B6'
+								},
+								{
+									name: 'Forest Gain',
+									data: [data.forestgain],
+									color: '#0B5345'
+								}
+							],
+							exporting:{
+								chartOptions:{
+									title: {
+										text:''
+									},
+									subtitle: {
+										text: 'THE CHANGE OF FOREST GAIN AND LOSS IN '+ selected_admin.toUpperCase()
+									}
+								},
+								enabled: false
+							},
+							credits: {
+								enabled: false
+							},
+						});
 
 						Highcharts.chart('forest_gainloss_chart', {
 							chart: {
@@ -1173,26 +1590,25 @@
 									name: 'Forest Gain',
 									data: [data.forestgain],
 									color: '#0B5345'
-								}],
-								exporting:{
-									chartOptions:{
-										title: {
-											text:''
-										},
-										subtitle: {
-											text: 'THE CHANGE OF FOREST GAIN AND LOSS IN '+ selected_admin.toUpperCase()
-										}
+								}
+							],
+							exporting:{
+								chartOptions:{
+									title: {
+										text:''
 									},
-									enabled: false
+									subtitle: {
+										text: 'THE CHANGE OF FOREST GAIN AND LOSS IN '+ selected_admin.toUpperCase()
+									}
 								},
-								credits: {
-									enabled: false
-								},
-
-							});
+								enabled: false
+							},
+							credits: {
+								enabled: false
+							},
+						});
 						});
 					}
-
 					var gainArea = 0;
 					var lossArea = 0;
 
@@ -1248,6 +1664,60 @@
 								colors: [ '#A04000','#117A65']
 							});
 							Highcharts.chart('forest_change_gainloss_chart', {
+								chart: {
+									type: 'column',
+									style: {
+										fontFamily: 'Roboto Condensed'
+									},
+									width: 300,
+									height: 200,
+								},
+								title: false,
+								subtitle: false,
+								xAxis: {
+									categories: [
+										'BASELINE PERIOD',
+										'MEASURING PERIOD'
+									],
+									crosshair: true
+								},
+								yAxis: {
+									min: 0,
+									title: {
+										text: null
+									}
+								},
+								tooltip: {
+									formatter: function () {
+										return this.series.name + " (" + (this.point.y).toFixed(2) + ")";
+									}
+								},
+								plotOptions: {
+									column: {
+										pointPadding: 0,
+										pointWidth: 25,
+										borderWidth: 0
+									}
+								},
+								series: [{
+									name: 'LOSS',
+									data: [data.statsRefLoss, data.statsStudyLoss],
+									color: ''
+
+								}, {
+									name: 'GAIN',
+									data: [data.statsRefGain, data.statsStudyGain],
+									color: ''
+
+								}],
+								exporting: {
+									enabled: false
+								},
+								credits: {
+									enabled: false
+								},
+							});
+							Highcharts.chart('chartForestChangeGainloss', {
 								chart: {
 									type: 'column',
 									style: {
@@ -1408,6 +1878,7 @@
 							}];
 
 							showHightChart('forest_cover_chart', 'column', yearArr, series, true, 10, 'AREA OF FOREST COVER IN '+ selected_admin.toUpperCase());
+							showHightChart('chartForestCover', 'column', yearArr, series, true, 10, 'AREA OF FOREST COVER IN '+ selected_admin.toUpperCase());
 
 
 							var seriesNoneForest = [{
@@ -1421,6 +1892,7 @@
 								color: '#919F94'
 							}];
 							showHightChart('forest_noneforest_chart', 'bar', yearArr, seriesNoneForest, true, 10, 'AREA OF FOREST AND NON-FOREST IN '+ selected_admin.toUpperCase());
+							showHightChart('chartForestNonforest', 'bar', yearArr, seriesNoneForest, true, 10, 'AREA OF FOREST AND NON-FOREST IN '+ selected_admin.toUpperCase());
 
 						}, function (error) {
 							console.log(error);
@@ -1710,6 +2182,7 @@
 								color: '#d95252'
 							}];
 							showHightChart('forest_alert_area', 'column', _yearArr, seriesArea, true, 30, 'TOTAL AREA OF FOREST ALERT IN'+ selected_admin.toUpperCase());
+							showHightChart('chartForestAlertArea', 'column', _yearArr, seriesArea, true, 30, 'TOTAL AREA OF FOREST ALERT IN'+ selected_admin.toUpperCase());
 
 
 						}, function (error) {
@@ -1823,6 +2296,7 @@
 								color: '#d95252'
 							}];
 							showHightChart('sar_alert_area', 'column', _yearArr, seriesArea, true, 30, 'TOTAL AREA OF FOREST ALERT IN'+ selected_admin.toUpperCase());
+							showHightChart('chartSarAlertArea', 'column', _yearArr, seriesArea, true, 30, 'TOTAL AREA OF FOREST ALERT IN'+ selected_admin.toUpperCase());
 
 
 						}, function (error) {
@@ -1931,6 +2405,7 @@
 								color: '#d95252'
 							}];
 							showHightChart('burned_area_chart', 'column', _yearArr, series, false, 10, 'NUMBER OF FIRE HOTSPOT '+ selected_admin.toUpperCase());
+							showHightChart('chartBurnedArea', 'column', _yearArr, series, false, 10, 'NUMBER OF FIRE HOTSPOT '+ selected_admin.toUpperCase());
 
 							//$scope.showLoader = false;
 
@@ -1973,15 +2448,23 @@
 						.then(function (data) {
 							for(var i=studyLow; i<=studyHigh; i++){
 
-								var _yearData = data[i.toString()];
+								// console.log(i)
+
+								var _yearData = data[i.toString()]; // data[i];
 								var _year = i.toString();
 
+								// console.log(data[i.toString()])
+								// console.log(_yearData)
+
+								// console.log(data)
+
 								_yearArr.push(i);
-								//total_burned_area = total_burned_area + _yearData.total_area;
-									for(var key in _yearData.total_area) {
-										for(var j=0; j<lcclass.length; j++){
+								for(var key in _yearData.total_area){
+									// console.log(key)
+									for(var j=0; j<lcclass.length; j++){
 										if(lcclass[j].name === key){
 											lcclass[j].data.push(_yearData.total_area[key])
+											// console.log(_yearData.total_area[key])
 										}
 									}
 								}
@@ -2033,7 +2516,7 @@
 										var toggleColor = $(this).attr('data-color');
 										$(this).closest("label").find("span").css("background-color", toggleColor);
 										MapLayerArr[layerID].landcover.addTo(map);
-										console.log("show land cover")
+										// console.log("show land cover")
 									} else {
 										$(this).closest("label").find("span").css("background-color", '#bbb');
 										if(map.hasLayer(MapLayerArr[layerID].landcover)){
@@ -2048,6 +2531,240 @@
 							if($("#biophysical-tab").hasClass("active")) {
 								$("#landcover"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
 							}
+							showHightChart('chartLandcover', 'column', _yearArr, series, true, 10, 'LAND COVER IN '+ selected_admin.toUpperCase());
+
+							$scope.showLoader = false;
+
+						}, function (error) {
+							console.log(error);
+						});
+					}
+
+					function getLandcoverRice(){
+						var parameters = {
+							polygon_id: polygon_id,
+							startYear: studyLow,
+							endYear: 2020,
+							area_type: area_type,
+							area_id: area_id,
+							year: '',
+							download: false
+						};
+						var area_data = [];
+						var _yearArr =[];
+						var lcriceclass = [
+				        //   {name:'evergreen' ,data: [], color: '#267300'},
+				        //   {name:'semi-evergreen' ,data: [], color: '#38A800'},
+				        //   {name:'deciduous' ,data: [], color: '#70A800'},
+				        //   {name:'mangrove' ,data: [], color: '#00A884'},
+				        //   {name:'flooded forest' ,data: [], color: '#B4D79E'},
+				        //   {name:'rubber' ,data: [], color: '#AAFF00'},
+				        //   {name:'other plantations' ,data: [], color: '#F5F57A'},
+				          {name:'rice' ,data: [], color: '#FFFFBE'},
+				        //   {name:'cropland' ,data: [], color: '#FFD37F'},
+				        //   {name:'surface water' ,data: [], color: '#004DA8'},
+				        //   {name:'grassland' ,data: [], color: '#D7C29E'},
+				        //   {name:'woodshrub' ,data: [], color: '#89CD66'},
+				        //   {name:'built-up area' ,data: [], color: '#E600A9'},
+				        //   {name:'village' ,data: [], color: '#A900E6'},
+				        //   {name:'other' ,data: [], color: '#6f6f6f'}
+				        ];
+						MapService.getLandcoverRice(parameters)
+						.then(function (data) {
+							for(var i=studyLow; i<=studyHigh; i++){
+
+								var _yearData = data[i.toString()];
+								var _year = i.toString();
+
+								_yearArr.push(i);
+								//total_burned_area = total_burned_area + _yearData.total_area;
+									for(var key in _yearData.total_area) {
+										for(var j=0; j<lcriceclass.length; j++){
+										if(lcriceclass[j].name === key){
+											lcriceclass[j].data.push(_yearData.total_area[key])
+										}
+									}
+								}
+								if(map.hasLayer(MapLayerArr[_year].landcoverrice)){
+									map.removeLayer(MapLayerArr[_year].landcoverrice);
+								}
+
+								//add map layer
+								MapLayerArr[_year].landcoverrice = addMapLayer(MapLayerArr[_year].landcoverrice, _yearData.eeMapURL, 'geeMapLayer');
+								//set map style with opacity = 0.5
+								MapLayerArr[_year].landcoverrice.setOpacity(1);
+
+								/*jshint loopfunc: true */
+								createToggleList('toggle-list-landcover-rice', 'landcoverrice'+_year, _year, _year, '', _yearData.color);
+								
+								// $("#download_landcover_rice"+ _year).click(function() {
+								// 	//show spiner
+								// 	$scope.showLoader = true;
+								// 	var layerID= $(this).attr('data-yid');
+								// 	//set ajax parameters
+								// 	var download_parameters = {
+								// 		polygon_id: polygon_id,
+								// 		year: layerID,
+								// 		area_type: area_type,
+								// 		area_id: area_id,
+								// 		download: true
+								// 	};
+								// 	MapService.getLandcoverRice(download_parameters).then(function (res){
+								// 		var dnlurl = res.downloadURL;
+								// 		if(res.success === 'success'){
+								// 			download(dnlurl, "LANDCOVERRICE_"+ layerID);
+								// 			showSuccessAlert("Download URL: "+dnlurl);
+								// 			downloadMetadata('/static/data/landcoverrice-metadata.csv', 'landcoverrice-metadata.csv')
+								// 			$scope.showLoader = false;
+								// 		}else{
+								// 			showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+								// 			$scope.showLoader = false;
+								// 		}
+										
+								// 	}, function (error) {
+								// 		$scope.showLoader = false;
+								// 	})
+								// });
+
+								//toggle each of forest map layer
+								$("#landcoverrice"+_year).change(function() {
+									var layerID= $(this).attr('data-yid');
+									if(this.checked) {
+										var toggleColor = $(this).attr('data-color');
+										$(this).closest("label").find("span").css("background-color", toggleColor);
+										MapLayerArr[layerID].landcoverrice.addTo(map);
+										// console.log("show land cover")
+									} else {
+										$(this).closest("label").find("span").css("background-color", '#bbb');
+										if(map.hasLayer(MapLayerArr[layerID].landcoverrice)){
+											map.removeLayer(MapLayerArr[layerID].landcoverrice);
+										}
+									}
+								});
+							}
+
+							// var series = lcclass;
+							// showHightChart('landcover_chart', 'column', _yearArr, series, true, 10, 'LAND COVER IN '+ selected_admin.toUpperCase());
+							// if($("#biophysical-tab").hasClass("active")) {
+							// 	$("#landcover"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
+							// }
+							
+
+							$scope.showLoader = false;
+
+						}, function (error) {
+							console.log(error);
+						});
+					}
+
+					function getLandcoverRubber(){
+						var parameters = {
+							polygon_id: polygon_id,
+							startYear: studyLow,
+							endYear: 2020,
+							area_type: area_type,
+							area_id: area_id,
+							year: '',
+							download: false
+						};
+						var area_data = [];
+						var _yearArr =[];
+						var lcrubberclass = [
+				        //   {name:'evergreen' ,data: [], color: '#267300'},
+				        //   {name:'semi-evergreen' ,data: [], color: '#38A800'},
+				        //   {name:'deciduous' ,data: [], color: '#70A800'},
+				        //   {name:'mangrove' ,data: [], color: '#00A884'},
+				        //   {name:'flooded forest' ,data: [], color: '#B4D79E'},
+				          {name:'rubber' ,data: [], color: '#AAFF00'},
+				        //   {name:'other plantations' ,data: [], color: '#F5F57A'},
+				        //   {name:'rice' ,data: [], color: '#FFFFBE'},
+				        //   {name:'cropland' ,data: [], color: '#FFD37F'},
+				        //   {name:'surface water' ,data: [], color: '#004DA8'},
+				        //   {name:'grassland' ,data: [], color: '#D7C29E'},
+				        //   {name:'woodshrub' ,data: [], color: '#89CD66'},
+				        //   {name:'built-up area' ,data: [], color: '#E600A9'},
+				        //   {name:'village' ,data: [], color: '#A900E6'},
+				        //   {name:'other' ,data: [], color: '#6f6f6f'}
+				        ];
+						MapService.getLandcoverRubber(parameters)
+						.then(function (data) {
+							for(var i=studyLow; i<=studyHigh; i++){
+
+								var _yearData = data[i.toString()];
+								var _year = i.toString();
+
+								_yearArr.push(i);
+								//total_burned_area = total_burned_area + _yearData.total_area;
+									for(var key in _yearData.total_area) {
+										for(var j=0; j<lcrubberclass.length; j++){
+										if(lcrubberclass[j].name === key){
+											lcrubberclass[j].data.push(_yearData.total_area[key])
+										}
+									}
+								}
+								if(map.hasLayer(MapLayerArr[_year].landcoverrubber)){
+									map.removeLayer(MapLayerArr[_year].landcoverrubber);
+								}
+
+								//add map layer
+								MapLayerArr[_year].landcoverrubber = addMapLayer(MapLayerArr[_year].landcoverrubber, _yearData.eeMapURL, 'geeMapLayer');
+								//set map style with opacity = 0.5
+								MapLayerArr[_year].landcoverrubber.setOpacity(1);
+
+								/*jshint loopfunc: true */
+								createToggleList('toggle-list-landcover-rubber', 'landcoverrubber'+_year, _year, _year, '', _yearData.color);
+								
+								// $("#download_landcover_rice"+ _year).click(function() {
+								// 	//show spiner
+								// 	$scope.showLoader = true;
+								// 	var layerID= $(this).attr('data-yid');
+								// 	//set ajax parameters
+								// 	var download_parameters = {
+								// 		polygon_id: polygon_id,
+								// 		year: layerID,
+								// 		area_type: area_type,
+								// 		area_id: area_id,
+								// 		download: true
+								// 	};
+								// 	MapService.getLandcoverRice(download_parameters).then(function (res){
+								// 		var dnlurl = res.downloadURL;
+								// 		if(res.success === 'success'){
+								// 			download(dnlurl, "LANDCOVERRICE_"+ layerID);
+								// 			showSuccessAlert("Download URL: "+dnlurl);
+								// 			downloadMetadata('/static/data/landcoverrice-metadata.csv', 'landcoverrice-metadata.csv')
+								// 			$scope.showLoader = false;
+								// 		}else{
+								// 			showErrorAlert("The cover area is quite large!, please define area of interest again you can define the area by administrative boundaries, protected area or customized your own shape.")
+								// 			$scope.showLoader = false;
+								// 		}
+										
+								// 	}, function (error) {
+								// 		$scope.showLoader = false;
+								// 	})
+								// });
+
+								//toggle each of forest map layer
+								$("#landcoverrubber"+_year).change(function() {
+									var layerID= $(this).attr('data-yid');
+									if(this.checked) {
+										var toggleColor = $(this).attr('data-color');
+										$(this).closest("label").find("span").css("background-color", toggleColor);
+										MapLayerArr[layerID].landcoverrubber.addTo(map);
+										// console.log("show land cover")
+									} else {
+										$(this).closest("label").find("span").css("background-color", '#bbb');
+										if(map.hasLayer(MapLayerArr[layerID].landcoverrubber)){
+											map.removeLayer(MapLayerArr[layerID].landcoverrubber);
+										}
+									}
+								});
+							}
+
+							// var series = lcclass;
+							// showHightChart('landcover_chart', 'column', _yearArr, series, true, 10, 'LAND COVER IN '+ selected_admin.toUpperCase());
+							// if($("#biophysical-tab").hasClass("active")) {
+							// 	$("#landcover"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
+							// }
 							
 
 							$scope.showLoader = false;
@@ -2456,9 +3173,11 @@
 						$("#biophysical-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#forest-monitoring-tab").removeClass("active");
+						$("#crop-monitoring-tab").removeClass("active");
 						$("#forest-alert-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
 						$("#usecase-tab").removeClass("active");
+						$("#reporting-tab").removeClass("active");
 						//$(".legend").css("display", "none");
 
 					});
@@ -2476,10 +3195,12 @@
 						$(".close-menu").click();
 						$(".map-controller").css('left', '420px');
 						$("#forest-monitoring-tab").removeClass("active");
+						$("#crop-monitoring-tab").removeClass("active");
 						$("#forest-alert-tab").removeClass("active");
 						$("#fire-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
+						$("#reporting-tab").removeClass("active");
 
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
@@ -2497,16 +3218,55 @@
 						$(".close-menu").click();
 						$(".map-controller").css('left', '420px');
 						$("#biophysical-tab").removeClass("active");
+						$("#crop-monitoring-tab").removeClass("active");
 						$("#forest-alert-tab").removeClass("active");
 						$("#fire-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
+						$("#reporting-tab").removeClass("active");
 
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-forest-monitoring').css('transform', ' translateX(6.75rem)');
 						$('#panel-forest-monitoring').css('opacity', 1);
 					});
+					$("#crop-monitoring-tab").click(function () {
+						clearMapLayers();
+						$("#evi-legend").css("display", "none");
+						$("#forest-legend").css("display", "none");
+						$("#forest-alert-legend").css("display", "none");
+						$("#fire-legend").css("display", "none");
+						$(".close-menu").click();
+						$(".map-controller").css('left', '420px');
+						$("#biophysical-tab").removeClass("active");
+						$("#forest-monitoring-tab").removeClass("active");
+						$("#forest-alert-tab").removeClass("active");
+						$("#fire-tab").removeClass("active");
+						$("#basemap-tab").removeClass("active");
+						$("#layers-tab").removeClass("active");
+						$("#reporting-tab").removeClass("active");
+						
+						$(this).addClass("active");
+						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
+						$('#panel-crop-monitoring').css('transform', ' translateX(6.75rem)');
+						$('#panel-crop-monitoring').css('opacity', 1);
+					});
+
+					$("#riceTab").click(function () {
+						$("#rubberTabContent").css("display", "none");
+						$("#rubberTab").removeClass("active");
+						$(this).addClass("active");
+						$("#riceTabContent").css("display", "block");
+					});
+
+					$("#rubberTab").click(function () {
+						$("#rubberTabContent").css("display", "block");
+						$("#riceTab").removeClass("active");
+						$(this).addClass("active");
+						$("#riceTabContent").css("display", "none");
+					});
+
+
 					$("#forest-alert-tab").click(function () {
 						clearMapLayers();
 						$("#forestAlert_"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
@@ -2518,9 +3278,11 @@
 						$(".map-controller").css('left', '420px');
 						$("#biophysical-tab").removeClass("active");
 						$("#forest-monitoring-tab").removeClass("active");
+						$("#crop-monitoring-tab").removeClass("active");
 						$("#fire-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
+						$("#reporting-tab").removeClass("active");
 
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
@@ -2540,7 +3302,9 @@
 						$(".map-controller").css('left', '420px');
 						$("#biophysical-tab").removeClass("active");
 						$("#forest-monitoring-tab").removeClass("active");
+						$("#crop-monitoring-tab").removeClass("active");
 						$("#forest-alert-tab").removeClass("active");
+						$("#reporting-tab").removeClass("active");
 
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
@@ -2552,10 +3316,12 @@
 						$(".close-menu").click();
 						$(".map-controller").css('left', '420px');
 						$("#forest-monitoring-tab").removeClass("active");
+						$("#crop-monitoring-tab").removeClass("active");
 						$("#biophysical-tab").removeClass("active");
 						$("#forest-alert-tab").removeClass("active");
 						$("#usecase-tab").removeClass("active");
 						$("#layers-tab").removeClass("active");
+						$("#reporting-tab").removeClass("active");
 
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
@@ -2567,17 +3333,82 @@
 						$(".close-menu").click();
 						$(".map-controller").css('left', '420px');
 						$("#forest-monitoring-tab").removeClass("active");
+						$("#crop-monitoring-tab").removeClass("active");
 						$("#biophysical-tab").removeClass("active");
 						$("#forest-alert-tab").removeClass("active");
 						$("#fire-tab").removeClass("active");
 						$("#usecase-tab").removeClass("active");
 						$("#basemap-tab").removeClass("active");
+						$("#reporting-tab").removeClass("active");
 
 						$(this).addClass("active");
 						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
 						$('#panel-layers').css('transform', ' translateX(6.75rem)');
 						$('#panel-layers').css('opacity', 1);
 
+					});
+
+					$("#reporting-tab").click(function () {
+						clearMapLayers();
+						$("#evi-legend").css("display", "none");
+						$("#forest-legend").css("display", "none");
+						$("#forest-alert-legend").css("display", "none");
+						$("#fire-legend").css("display", "none");
+						$(".close-menu").click();
+						$(".map-controller").css('left', '420px');
+						$("#biophysical-tab").removeClass("active");
+						$("#forest-monitoring-tab").removeClass("active");
+						$("#crop-monitoring-tab").removeClass("active");
+						$("#forest-alert-tab").removeClass("active");
+						$("#fire-tab").removeClass("active");
+						$("#basemap-tab").removeClass("active");
+						$("#layers-tab").removeClass("active");
+						
+						$(this).addClass("active");
+						$('.c-menu-panel').css('transform', ' translateX(-60rem)');
+						$('#panel-reporting').css('transform', ' translateX(6.75rem)');
+						$('#panel-reporting').css('opacity', 1);
+					});
+
+					$("#biophysicalTab").click(function () {
+						$("#cropTabContent").css("display", "none");
+						$("#fireTabContent").css("display", "none");
+						$("#forestTabContent").css("display", "none");
+						$("#cropTab").removeClass("active");
+						$("#fireTab").removeClass("active");
+						$("#forestTab").removeClass("active");
+						$("#biophysicalTabContent").css("display", "block");
+						$(this).addClass("active");
+					});
+					$("#cropTab").click(function () {
+						$("#biophysicalTabContent").css("display", "none");
+						$("#fireTabContent").css("display", "none");
+						$("#forestTabContent").css("display", "none");
+						$("#biophysicalTab").removeClass("active");
+						$("#fireTab").removeClass("active");
+						$("#forestTab").removeClass("active");
+						$("#cropTabContent").css("display", "block");
+						$(this).addClass("active");
+					});
+					$("#fireTab").click(function () {
+						$("#biophysicalTabContent").css("display", "none");
+						$("#cropTabContent").css("display", "none");
+						$("#forestTabContent").css("display", "none");
+						$("#biophysicalTab").removeClass("active");
+						$("#cropTab").removeClass("active");
+						$("#forestTab").removeClass("active");
+						$("#fireTabContent").css("display", "block");
+						$(this).addClass("active");
+					});
+					$("#forestTab").click(function () {
+						$("#biophysicalTabContent").css("display", "none");
+						$("#cropTabContent").css("display", "none");
+						$("#fireTabContent").css("display", "none");
+						$("#biophysicalTab").removeClass("active");
+						$("#cropTab").removeClass("active");
+						$("#fireTab").removeClass("active");
+						$("#forestTabContent").css("display", "block");
+						$(this).addClass("active");
 					});
 
 					$("#update-map").click(function() {
@@ -2616,6 +3447,7 @@
 						// clear all toggle layer list
 						$("#toggle-list-forest").html('');
 						$("#toggle-list-landcover").html('');
+						$("#toggle-list-landcover-rice").html('');
 						$("#toggle-list-evi").html('');
 						$("#toggle-list-forest-alert").html('');
 						$("#toggle-list-sar-alert").html('');

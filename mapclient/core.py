@@ -10,6 +10,8 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from ee.ee_exception import EEException
 import requests
+import json
+import os
 # -----------------------------------------------------------------------------
 class GEEApi():
     """ Google Earth Engine API """
@@ -167,6 +169,7 @@ class GEEApi():
             details['error'] = str(e)
 
         # Send the results to the browser.
+        # print(details)
         return details
 
 
@@ -203,7 +206,7 @@ class GEEApi():
         res = []
         for feature in chart_data['features']:
             res.append(ExtractMean(feature))
-
+        # print(res)
         return res
 
 
@@ -1333,6 +1336,8 @@ class GEEApi():
             'palette': '267300, 38A800, 70A800, 00A884, B4D79E, AAFF00, F5F57A, FFFFBE, FFD37F, 004DA8, D7C29E, 89CD66, E600A9, A900E6, 6f6f6f'
         })
 
+        # print(lcarea)
+
         return {
             'total_area': lcarea,
             'eeMapId': str(map_id['mapid']),
@@ -1366,6 +1371,7 @@ class GEEApi():
             series_start = str(_year) + '-01-01'
             series_end = str(_year) + '-12-31'
             res[str(_year)] = self.calLandcoverArea(series_start, series_end, _year, area_type, area_id)
+        # res = json.dumps(res, indent = 4)
         return res
 
     # -------------------------------------------------------------------------
@@ -1385,6 +1391,7 @@ class GEEApi():
         GLAD_ALERT_dates = ee.List(ee.ImageCollection(GEEApi.GLAD_ALERT).filterDate(series_start, series_end).aggregate_array("system:time_start")).map(imgDate).getInfo()
         BURNED_AREA_dates = ee.List(ee.ImageCollection(GEEApi.BURNED_AREA).filterDate(series_start, series_end).aggregate_array("system:time_start")).map(imgDate).getInfo()
         LANDCOVER_dates = []
+        LANDCOVERRICE_dates = []
 
         for _year in range(start_year, end_year+1):
             try:
@@ -1393,13 +1400,150 @@ class GEEApi():
                 #break
             except ValueError:
                 print("Oops!  That was no valid number.  Try again...")
+        
+        for _year in range(start_year, end_year+1):
+            try:
+                lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(_year)).clip(self.geometry)
+                LANDCOVERRICE_dates.append(str(_year))
+                #break
+            except ValueError:
+                print("Oops!  That was no valid number.  Try again...")
 
 
         res = {}
         res["evi"] = list(dict.fromkeys(EVI_dates))
         res["landcover"] = LANDCOVER_dates
+        res["landcoverrice"] = LANDCOVERRICE_dates
         res["tcc"] = list(dict.fromkeys(TREE_CANOPY_dates))
         res["tch"] = list(dict.fromkeys(TREE_HEIGHT_dates))
         res["forestalert"] = list(dict.fromkeys(GLAD_ALERT_dates))
         res["burned"] = list(dict.fromkeys(BURNED_AREA_dates))
+        # print(res)
         return res
+
+    # -------------------------------------------------------------------------
+    def calLandcoverRiceArea(self, series_start, series_end, year, area_type, area_id):
+        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(7).clip(self.geometry)
+        map_id = lcImage.getMapId({
+            'min': '0',
+            'max': '1',
+            'palette': 'FFFFFF,FFFF00' #FFFFBE
+        })
+
+        return {
+            # 'total_area': lcarea,
+            'eeMapId': str(map_id['mapid']),
+            'eeMapURL': str(map_id['tile_fetcher'].url_format),
+            'color':'267300'
+        }
+
+    def DownloadLandcoverRice(self, year):
+        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).clip(self.geometry).int()
+        try:
+            dnldURL = lcImage.getDownloadURL({
+                    'name': 'LC'+year,
+                    'scale': 100,
+                    'crs': 'EPSG:4326'
+                })
+            return {
+                'downloadURL': dnldURL,
+                'success': 'success'
+            }
+        except Exception as e:
+            return {
+                'success': 'not success'
+            }
+
+    def getLandcoverRiceArea(self, start_year, end_year, area_type, area_id):
+        res = {}
+        for _year in range(start_year, end_year+1):
+            series_start = str(_year) + '-01-01'
+            series_end = str(_year) + '-12-31'
+            res[str(_year)] = self.calLandcoverRiceArea(series_start, series_end, _year, area_type, area_id)
+        return res
+
+    # -------------------------------------------------------------------------
+    def calLandcoverRubberArea(self, series_start, series_end, year, area_type, area_id):
+        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(5).clip(self.geometry)
+        map_id = lcImage.getMapId({
+            'min': '0',
+            'max': '1',
+            'palette': 'FFFFFF,AAFF00'
+        })
+
+        return {
+            # 'total_area': lcarea,
+            'eeMapId': str(map_id['mapid']),
+            'eeMapURL': str(map_id['tile_fetcher'].url_format),
+            'color':'267300'
+        }
+
+    # def DownloadLandcoverRubber(self, year):
+    #     lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).clip(self.geometry).int()
+    #     try:
+    #         dnldURL = lcImage.getDownloadURL({
+    #                 'name': 'LC'+year,
+    #                 'scale': 100,
+    #                 'crs': 'EPSG:4326'
+    #             })
+    #         return {
+    #             'downloadURL': dnldURL,
+    #             'success': 'success'
+    #         }
+    #     except Exception as e:
+    #         return {
+    #             'success': 'not success'
+    #         }
+
+    def getLandcoverRubberArea(self, start_year, end_year, area_type, area_id):
+        res = {}
+        for _year in range(start_year, end_year+1):
+            series_start = str(_year) + '-01-01'
+            series_end = str(_year) + '-12-31'
+            res[str(_year)] = self.calLandcoverRubberArea(series_start, series_end, _year, area_type, area_id)
+        return res
+
+    def calRiceTimeSeries(self, year):
+        self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_COUNTRY_BOUNDARY)
+        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(7).selfMask().clip(self.geometry)
+        total_area = lcImage.reduceRegion(
+            reducer=ee.Reducer.sum(),
+            geometry=self.geometry, 
+            scale=100, 
+            maxPixels=1e15
+        ).get("lc")
+        data = total_area.getInfo()
+        fdata = float('{0:.2f}'.format(data/1000))
+        return fdata
+
+
+    def getLCRiceTimeSeriesLine(self, start_year, end_year, area_type, area_id): 
+        res = {}
+        for year in range(start_year, end_year+1):
+            res[str(year)] = self.calRiceTimeSeries(year)
+        # print(res)
+        return res
+
+    def calRubberTimeSeries(self, year):
+        self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_COUNTRY_BOUNDARY)
+        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(5).selfMask().clip(self.geometry)
+        total_area = lcImage.reduceRegion(
+            reducer=ee.Reducer.sum(),
+            geometry=self.geometry, 
+            scale=100, 
+            maxPixels=1e15
+        ).get("lc")
+        data = total_area.getInfo()
+        fdata = float('{0:.2f}'.format(data/1000))
+        return fdata
+
+
+    def getLCRubberTimeSeriesLine(self, start_year, end_year, area_type, area_id): 
+        res = {}
+        for year in range(start_year, end_year+1):
+            res[str(year)] = self.calRubberTimeSeries(year)
+        # print(res)
+        return res
+
+        
+

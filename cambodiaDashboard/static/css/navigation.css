@@ -137,7 +137,7 @@
     float: right;
     background-size: auto 35px;
     width: 200px !important;
-    padding-top: 10px;
+    padding-top: 2px;
 }
 
 @media (max-width: 1024px) {

@@ -1423,3 +1423,41 @@ svg image{
   .tooltip:hover .tooltiptext {
     visibility: visible;
   }
+
+#panel-crop-monitoring .nav-tabs .active{
+    font-weight: bold;
+    color: rgb(12, 114, 78);
+    border-bottom: 2px solid rgb(12, 114, 78);
+}
+#panel-crop-monitoring .nav-tabs a{
+    cursor: pointer;
+    border: none;
+}
+#panel-crop-monitoring .nav-tabs a:hover{
+    background: none;
+}
+#rubberTabContent{
+    display: none;
+}
+
+#panel-reporting .nav-tabs .active{
+    font-weight: bold;
+    color: rgb(12, 114, 78);
+    border-bottom: 2px solid rgb(12, 114, 78);
+}
+#panel-reporting .nav-tabs a{
+    cursor: pointer;
+    border: none;
+}
+#panel-reporting .nav-tabs a:hover{
+    background: none;
+}
+#cropTabContent{
+    display: none;
+}
+#fireTabContent{
+    display: none;
+}
+#forestTabContent{
+    display: none;
+}

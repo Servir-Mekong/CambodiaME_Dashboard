@@ -33,7 +33,7 @@
 <li class="c-map-menu-tile datasets-tile" id="crop-monitoring-tab">
   <button class="item-button" type="button" name="button">
     <div class="button-wrapper">
-      <img id="crop-monitoring-icon" src="/static/images/icons/menu/forest-monitoring-green.png" alt="Crop Monitoring" width="30px;" style="margin-bottom: 10px">
+      <img id="crop-monitoring-icon" src="/static/images/icons/menu/crop.png" alt="Crop Monitoring" width="30px;" style="margin-bottom: 10px">
       <span>[[ 'CROP MONITORING' ]]</span>
     </div>
   </button>
@@ -59,6 +59,14 @@
     <div class="button-wrapper">
       <img id="layers-icon" src="/static/images/icons/menu/map-layers-green.png" alt="Map Layers" width="30px;" style="margin-bottom: 10px">
       <span>[[ 'MAP LAYERS' | translate]]</span>
+    </div>
+  </button>
+</li>
+<li class="c-map-menu-tile datasets-tile" id="reporting-tab">
+  <button class="item-button" type="button" name="button">
+    <div class="button-wrapper">
+      <img id="forest-monitoring-icon" src="/static/images/icons/menu/report.png" alt="foresty Monitoring" width="30px;" style="margin-bottom: 10px">
+      <span>[[ 'REPORTING' | translate]]</span>
     </div>
   </button>
 </li>
@@ -190,16 +198,21 @@
       </svg>
     </svg>
   </button>
-  <div class="panel-body">
-    <h4>
-      <span>
-        <svg id="forest-info" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#d4dbd4" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
-          <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-        </svg>
-      </span>
-      CROP MAP LAYERS
-    </h4>
-    <!-- <p>Selected Area: <span class="selected_area_name" style="color: #023b10;">Cambodia</span></p> -->
+  <div class="panel-body crop-monitoring-content">
+    <ul class="nav nav-tabs">
+      <li role="presentation"><a id="riceTab" class="active">Rice</a></li>
+      <li role="presentation"><a id="rubberTab">Rubber</a></li>
+    </ul>
+    <div id="riceTabContent">
+      <p style="padding-top: 15px;">Rice Land Cover</p>
+      <ul class="toggles-list ul-columns" id="toggle-list-landcover-rice"></ul>
+      <div id="chart_line_rice"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+    </div>
+    <div id="rubberTabContent">
+      <p style="padding-top: 15px;">Rubber Land Cover</p>
+      <ul class="toggles-list ul-columns" id="toggle-list-landcover-rubber"></ul>
+      <div id="chart_line_rubber"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+    </div>
   </div>
 </div>
 
@@ -306,6 +319,71 @@
   </div>
 </div>
 
+<div class="c-menu-panel map-tour-menu-panel menu-panel" id="panel-reporting" style="opacity: 0; transform: translateX(-25rem) translateZ(0rem);">
+  <button class="close-menu">
+    <svg class="c-icon icon-close-panel" viewBox="0 0 32 32">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+        <path d="M3.692 0l-3.692 3.692 12.308 12.308-12.308 12.308 3.692 3.692 12.308-12.308 12.308 12.308 3.692-3.692-12.308-12.308 12.308-12.308-3.692-3.692-12.308 12.308z"></path>
+      </svg>
+    </svg>
+  </button>
+  <div class="panel-body reporting-content">
+    <ul class="nav nav-tabs">
+      <li role="presentation"><a id="biophysicalTab" class="active">Biophysical</a></li>
+      <li role="presentation"><a id="cropTab">Crop</a></li>
+      <li role="presentation"><a id="fireTab">Fire</a></li>
+      <li role="presentation"><a id="forestTab">Forest</a></li>
+    </ul>
+    <div id="biophysicalTabContent">
+      <p style="padding-top: 15px;">BIOPHYSICAL HEALTH</p>
+      <div id="chartPieEVI"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <div id="chartLineEVI"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <div id="chartLandcover"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+    </div>
+    <div id="cropTabContent">
+      <!-- <p style="padding-top: 15px;">Estimated Rice Field</p> -->
+      <div id="chartLineRice"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <!-- <p style="padding-top: 15px;">Estimated Total Rubber Field Area</p> -->
+      <div id="chartLineRubber"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+    </div>
+    <div id="fireTabContent">
+      <p style="padding-top: 15px;">NUMBER OF FIRE HOTSPOT</p>
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <div id="chartBurnedArea"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+    </div>
+    <div id="forestTabContent">
+      <p style="padding-top: 15px;">AREA OF FOREST COVER</p>
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <div id="chartForestCover"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <br>
+      <h4>AREA OF FOREST AND NON-FOREST</h4>
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <div id="chartForestNonforest"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <br>
+      <h4>FOREST GAIN AND LOSS</h4>
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <div id="chartForestGainloss"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <h4>THE CHANGE OF FOREST GAIN AND LOSS </h4>
+      <p>Compare the area of forest change between the baseline period ([[REFLOW]] -[[REFHIGH]]) and the measuring period ([[STUDYLOW]] - [[STUDYHIGH]]) </p>
+      <p>Gain compared to the baseline <span id="gain_compared"> </span></p>
+      <p>Loss compared to the baseline <span id="loss_compared"> </span></p>
+      <br>
+      <div id="chartForestChangeGainloss"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <h4>TOTAL AREA OF GLAD ALERT SYSTEM</h4>
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <div id="chartForestAlertArea"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <br>
+
+      <h4>
+        TOTAL AREA OF SAR ALERT SYSTEM
+      </h4>
+      
+      <p>From [[STUDYLOW]] to  [[STUDYHIGH]] </p>
+      <div id="chartSarAlertArea"  width="1000" height="1000" style="border: 0px solid #eee;margin-bottom:15px;margin-top:5px;"></div>
+      <br>
+    </div>
+  </div>
+</div>
 
 <div class="c-menu-panel map-tour-menu-panel menu-panel" id="panel-layers" style="opacity: 0; transform: translateX(-25rem) translateZ(0rem);">
   <button class="close-menu">

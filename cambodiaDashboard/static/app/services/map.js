@@ -557,11 +557,150 @@
 
 			var promise = $http(req)
 			.then(function (response) {
+				// console.log(response)
 				return response.data;
 			})
 			.catch(function (e) {
 				console.log('Error: ', e);
 				throw e.data;
+			});
+			return promise;
+		};
+
+		service.getLandcoverRice = function (options) {
+			var startYear = options.startYear;
+			var endYear = options.endYear;
+			var polygon_id = options.polygon_id;
+			var area_type = options.area_type;
+			var area_id = options.area_id;
+			var year = options.year;
+			var download = options.download;
+			var action = ''
+			if(download === true){
+				action= 'download-landcover-rice'
+			}else{
+				action= 'get-landcover-rice' 
+			}
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id: polygon_id,
+					startYear: startYear,
+					endYear: endYear,
+					area_type: area_type,
+					area_id: area_id,
+					year: year,
+					download: download
+				},
+				params: {
+					action: action	
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
+			})
+			.catch(function (e) {
+				console.log('Error: ', e);
+				throw e.data;
+			});
+			return promise;
+		};
+
+		service.getLineLCRice = function (options) {var startYear = options.startYear;
+			var endYear = options.endYear;
+			var polygon_id = options.polygon_id;
+			var area_type = options.area_type;
+			var area_id = options.area_id;
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id: polygon_id,
+					startYear: startYear,
+					endYear: endYear,
+					area_type: area_type,
+					area_id: area_id
+				},
+				params: {
+					action: 'get-line-lc-rice'
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
+			});
+			return promise;
+		};
+
+		service.getLandcoverRubber = function (options) {
+			var startYear = options.startYear;
+			var endYear = options.endYear;
+			var polygon_id = options.polygon_id;
+			var area_type = options.area_type;
+			var area_id = options.area_id;
+			var year = options.year;
+			var download = options.download;
+			var action = ''
+			if(download === true){
+				action= 'download-landcover-rubber'
+			}else{
+				action= 'get-landcover-rubber' 
+			}
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id: polygon_id,
+					startYear: startYear,
+					endYear: endYear,
+					area_type: area_type,
+					area_id: area_id,
+					year: year,
+					download: download
+				},
+				params: {
+					action: action	
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
+			})
+			.catch(function (e) {
+				console.log('Error: ', e);
+				throw e.data;
+			});
+			return promise;
+		};
+
+		service.getLineLCRubber = function (options) {var startYear = options.startYear;
+			var endYear = options.endYear;
+			var polygon_id = options.polygon_id;
+			var area_type = options.area_type;
+			var area_id = options.area_id;
+			var req = {
+				method: 'POST',
+				url: '/api/mapclient/',
+				data: {
+					polygon_id: polygon_id,
+					startYear: startYear,
+					endYear: endYear,
+					area_type: area_type,
+					area_id: area_id
+				},
+				params: {
+					action: 'get-line-lc-rubber'
+				}
+			};
+
+			var promise = $http(req)
+			.then(function (response) {
+				return response.data;
 			});
 			return promise;
 		};

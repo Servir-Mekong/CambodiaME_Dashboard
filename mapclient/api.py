@@ -18,9 +18,9 @@ def api(request):
     action = get('action', '')
 
     if action:
-        public_methods = ['get-line-evi', 'get-pie-evi', 'get-evi-map', 'get-stats', 'get-forestgainloss', 
+        public_methods = ['get-line-lc-rice', 'get-line-lc-rubber', 'get-line-evi', 'get-pie-evi', 'get-evi-map', 'get-stats', 'get-forestgainloss', 
         'get-forest-extent-map', 'get-forest-gain-map', 'get-forest-loss-map', 'get-forest-alert', 'get-sar-alert', 'get-burned-area', 
-        'get-changeforestgainloss', 'get-landcover', 'check-date', 'download-evi-map', 'download-landcover', 'download-burned-area', 
+        'get-changeforestgainloss', 'get-landcover', 'get-landcover-rice', 'get-landcover-rubber', 'check-date', 'download-evi-map', 'download-landcover', 'download-landcover-rice', 'download-burned-area', 
         'download-forest-alert', 'download-sar-alert', 'download-forest-extent-map']
         if action in public_methods:
             shape = post('shape', '')
@@ -72,12 +72,22 @@ def api(request):
                 data = core.get_changeForestGainLoss(type, studyLow, studyHigh, refLow, refHigh, tree_canopy_definition, tree_height_definition)
             elif action == 'get-landcover':
                 data = core.getLandcoverArea(start_year, end_year, area_type, area_id)
+            elif action == 'get-landcover-rice':
+                data = core.getLandcoverRiceArea(start_year, end_year, area_type, area_id)
+            elif action == 'get-line-lc-rice':
+                data = core.getLCRiceTimeSeriesLine(start_year, end_year, area_type, area_id)
+            elif action == 'get-line-lc-rubber':
+                data = core.getLCRubberTimeSeriesLine(start_year, end_year, area_type, area_id)
+            elif action == 'get-landcover-rubber':
+                data = core.getLandcoverRubberArea(start_year, end_year, area_type, area_id)
             elif action == 'check-date':
                 data = core.checkAvailableData(start_year, end_year)
             elif action == 'get-evi-map':
                 data = core.getEVIMap(refLow, refHigh, studyLow, studyHigh)
             elif action == 'download-landcover':
                 data = core.DownloadLandcover(year)
+            elif action == 'download-landcover-rice':
+                data = core.DownloadLandcoverRice(year)
             elif action == 'download-burned-area':
                 data = core.dowmloadFirmBurnedArea(year)
             elif action == 'download-forest-alert':
