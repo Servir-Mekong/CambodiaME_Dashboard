@@ -2916,6 +2916,12 @@
 							if(map.hasLayer(MapLayerArr[_year].landcover)){
 								map.removeLayer(MapLayerArr[_year].landcover);
 							}
+							if(map.hasLayer(MapLayerArr[_year].landcoverrice)){
+								map.removeLayer(MapLayerArr[_year].landcoverrice);
+							}
+							if(map.hasLayer(MapLayerArr[_year].landcoverrubber)){
+								map.removeLayer(MapLayerArr[_year].landcoverrubber);
+							}
 						}
 
 					}
@@ -3232,6 +3238,12 @@
 					});
 					$("#crop-monitoring-tab").click(function () {
 						clearMapLayers();
+						if (studyHigh==2021){
+							studyHigh=2020
+						}else {
+							studyHigh = studyHigh
+						}
+						$("#landcoverrice"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
 						$("#evi-legend").css("display", "none");
 						$("#forest-legend").css("display", "none");
 						$("#forest-alert-legend").css("display", "none");
@@ -3253,6 +3265,13 @@
 					});
 
 					$("#riceTab").click(function () {
+						clearMapLayers();
+						if (studyHigh==2021){
+							studyHigh=2020
+						}else {
+							studyHigh = studyHigh
+						}
+						$("#landcoverrice"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
 						$("#rubberTabContent").css("display", "none");
 						$("#rubberTab").removeClass("active");
 						$(this).addClass("active");
@@ -3260,6 +3279,13 @@
 					});
 
 					$("#rubberTab").click(function () {
+						clearMapLayers();
+						if (studyHigh==2021){
+							studyHigh=2020
+						}else {
+							studyHigh = studyHigh
+						}
+						$("#landcoverrubber"+studyHigh.toString()).prop( "checked", true ).trigger( "change" );
 						$("#rubberTabContent").css("display", "block");
 						$("#riceTab").removeClass("active");
 						$(this).addClass("active");
