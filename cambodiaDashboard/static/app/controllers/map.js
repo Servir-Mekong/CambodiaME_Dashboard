@@ -1133,7 +1133,7 @@
 					var params = {
 						polygon_id: polygon_id,
 						startYear: studyLow,
-						endYear: 2020,
+						endYear: studyHigh,
 						area_type: area_type,
 						area_id: area_id
 					};
@@ -1223,7 +1223,7 @@
 					var params = {
 						polygon_id: polygon_id,
 						startYear: studyLow,
-						endYear: 2020,
+						endYear: studyHigh,
 						area_type: area_type,
 						area_id: area_id
 					};
@@ -3413,6 +3413,7 @@
 
 					$("#update-map").click(function() {
 						// cal();
+
 						var min = 0
 						var max = 0
 						if(studyHigh >= refHigh){
@@ -3427,8 +3428,8 @@
 							min = refLow;
 						}
 						checkAvailableData(max, min);
-						getLineLCRice();
-						getLineLCRubber();
+						// getLineLCRice();
+						// getLineLCRubber();
 					});
 
 					$("#clear-map").click(function() {

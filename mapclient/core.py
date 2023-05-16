@@ -920,7 +920,7 @@ class GEEApi():
     # -------------------------------------------------------------------------
     def calSARAlert(self, get_image, colorIndex, area_type, area_id, series_start, series_end, year):
 
-        SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry)#.filterDate(series_start, series_end)
+        SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
         # image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
         image = SARIC.sort('system:time_start', False).first()
 
@@ -1027,6 +1027,10 @@ class GEEApi():
 
         res = {}
         colorIndex = 0
+        if end_year >= 2021:
+            end_year = 2020
+        else:
+            end_year = end_year
         for _year in range(start_year, end_year+1):
             series_start = str(_year) + '-01-01'
             series_end = str(_year) + '-12-31'
@@ -1630,17 +1634,24 @@ class GEEApi():
 
     def getLCRiceTimeSeriesLine(self, start_year, end_year, area_type, area_id): 
         res = {}
+        # print(end_year)
+        if end_year >=2021:
+            end_year = 2020
+        else:
+            end_year = end_year
+
         for year in range(start_year, end_year+1):
             series_start = str(year) + '-01-01'
             series_end = str(year) + '-12-31'
             res[str(year)] = self.calRiceTimeSeries(series_start, series_end, year, area_type, area_id)
-        print(res)
+        # print(res)
         return res
 
     def calRubberTimeSeries(self, series_start, series_end, year, area_type, area_id):
         t_area = self.calLandcoverArea3(series_start, series_end, year, area_type, area_id)
         rubber_area = t_area["rubber"]
         return rubber_area
+        
         # self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_COUNTRY_BOUNDARY)
         # lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(5).selfMask().clip(self.geometry)
         # total_area = lcImage.reduceRegion(
@@ -1656,11 +1667,16 @@ class GEEApi():
 
     def getLCRubberTimeSeriesLine(self, start_year, end_year, area_type, area_id): 
         res = {}
+        if end_year >=2021:
+            end_year = 2020
+        else:
+            end_year = end_year
+
         for year in range(start_year, end_year+1):
             series_start = str(year) + '-01-01'
             series_end = str(year) + '-12-31'
             res[str(year)] = self.calRubberTimeSeries(series_start, series_end, year, area_type, area_id)
-        print(res)
+        # print(res)
         return res
 
         
