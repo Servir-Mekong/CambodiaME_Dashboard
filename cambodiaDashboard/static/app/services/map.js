@@ -609,7 +609,8 @@
 			return promise;
 		};
 
-		service.getLineLCRice = function (options) {var startYear = options.startYear;
+		service.getLineLCRice = function (options) {
+			var startYear = options.startYear;
 			var endYear = options.endYear;
 			var polygon_id = options.polygon_id;
 			var area_type = options.area_type;

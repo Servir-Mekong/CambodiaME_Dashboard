@@ -3412,7 +3412,7 @@
 					});
 
 					$("#update-map").click(function() {
-						//cal();
+						// cal();
 						var min = 0
 						var max = 0
 						if(studyHigh >= refHigh){
@@ -3427,6 +3427,8 @@
 							min = refLow;
 						}
 						checkAvailableData(max, min);
+						getLineLCRice();
+						getLineLCRubber();
 					});
 
 					$("#clear-map").click(function() {

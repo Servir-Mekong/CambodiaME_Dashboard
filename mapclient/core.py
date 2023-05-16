@@ -920,7 +920,7 @@ class GEEApi():
     # -------------------------------------------------------------------------
     def calSARAlert(self, get_image, colorIndex, area_type, area_id, series_start, series_end, year):
 
-        SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
+        SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry)#.filterDate(series_start, series_end)
         # image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
         image = SARIC.sort('system:time_start', False).first()
 
@@ -1031,7 +1031,7 @@ class GEEApi():
             series_start = str(_year) + '-01-01'
             series_end = str(_year) + '-12-31'
             colorIndex += 1
-            print(_year)
+            # print(_year)
             res[str(_year)] = self.calSARAlert(get_image, colorIndex, area_type, area_id, series_start, series_end, _year)
         return res
 
@@ -1424,6 +1424,8 @@ class GEEApi():
     # -------------------------------------------------------------------------
     def calLandcoverRiceArea(self, series_start, series_end, year, area_type, area_id):
         lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(7).clip(self.geometry)
+        #= GEEApi.LANDCOVER.filterBounds(self.geometry).sort('system:time_start', False).filterDate(series_start, series_end)
+        
         map_id = lcImage.getMapId({
             'min': '0',
             'max': '1',
@@ -1503,46 +1505,162 @@ class GEEApi():
             res[str(_year)] = self.calLandcoverRubberArea(series_start, series_end, _year, area_type, area_id)
         return res
 
-    def calRiceTimeSeries(self, year):
-        self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_COUNTRY_BOUNDARY)
-        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(7).selfMask().clip(self.geometry)
-        total_area = lcImage.reduceRegion(
-            reducer=ee.Reducer.sum(),
-            geometry=self.geometry, 
-            scale=100, 
-            maxPixels=1e15
-        ).get("lc")
-        data = total_area.getInfo()
-        fdata = float('{0:.2f}'.format(data/1000))
-        return fdata
+    def calLandcoverArea2(self, series_start, series_end, year, area_type, area_id):
+        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).clip(self.geometry)
+        IC= GEEApi.LANDCOVER.filterBounds(self.geometry).sort('system:time_start', False).filterDate(series_start, series_end)
+        LANDCOVERCLASSES = [
+          {'name':'evergreen' ,'number': 0, 'color': '267300'},
+          {'name':'semi-evergreen' ,'number': 1, 'color': '38A800'},
+          {'name':'deciduous' ,'number': 2, 'color': '70A800'},
+          {'name':'mangrove' ,'number': 3, 'color': '00A884'},
+          {'name':'flooded forest' ,'number': 4, 'color': 'B4D79E'},
+          {'name':'rubber' ,'number': 5, 'color': 'AAFF00'},
+          {'name':'other plantations' ,'number': 6, 'color': 'F5F57A'},
+          {'name':'rice' ,'number': 7, 'color': 'FFFFBE'},
+          {'name':'cropland' ,'number': 8, 'color': 'FFD37F'},
+          {'name':'surface water' ,'number': 9, 'color': '004DA8'},
+          {'name':'grassland' ,'number': 10, 'color': 'D7C29E'},
+          {'name':'woodshrub' ,'number': 11, 'color': '89CD66'},
+          {'name':'built-up area' ,'number': 12, 'color': 'E600A9'},
+          {'name':'village' ,'number': 13, 'color': 'A900E6'},
+          {'name':'other' ,'number': 14, 'color': '6f6f6f'}
+        ]
+
+        INDEX_CLASS = {}
+        for _class in LANDCOVERCLASSES:
+            INDEX_CLASS[int(_class['number'])] = _class['name']
+
+        classNames = ['evergreen', 'semi-evergreen', 'deciduous', 'mangrove', 'flooded forest','rubber', 'other plantations', 'rice', 'cropland', 'surface water', 'grassland', 'woodshrub', 'built-up area', 'village', 'other'];
+        classNumbers = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+        PALETTE_list = ['267300', '38A800', '70A800', '00A884', 'B4D79E','AAFF00', 'F5F57A', 'FFFFBE', 'FFD37F', '004DA8', 'D7C29E', '89CD66', 'E600A9', 'A900E6', '6f6f6f'];
+        AreaClass= {}
+        class_areas = ee.Image.pixelArea().addBands(lcImage).reduceRegion(
+            reducer= ee.Reducer.sum().group(
+              groupField= 1,
+              groupName= 'code',
+            ),
+            geometry= self.geometry,
+            scale= 100,  # sample the geometry at 1m intervals
+            maxPixels= 1e15
+          )
+
+        data = class_areas.getInfo()['groups']
+        for item in data:
+            #area hetare
+            AreaClass[INDEX_CLASS[int(item['code'])]] = float('{0:.2f}'.format(item['sum']/10000))
+
+        lcarea = AreaClass
+
+        # print(lcarea)
+
+        return lcarea
+
+    def calLandcoverArea3(self, series_start, series_end, year, area_type, area_id):
+        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).clip(self.geometry)
+        IC= GEEApi.LANDCOVER.filterBounds(self.geometry).sort('system:time_start', False).filterDate(series_start, series_end)
+        LANDCOVERCLASSES = [
+          {'name':'evergreen' ,'number': 0, 'color': '267300'},
+          {'name':'semi-evergreen' ,'number': 1, 'color': '38A800'},
+          {'name':'deciduous' ,'number': 2, 'color': '70A800'},
+          {'name':'mangrove' ,'number': 3, 'color': '00A884'},
+          {'name':'flooded forest' ,'number': 4, 'color': 'B4D79E'},
+          {'name':'rubber' ,'number': 5, 'color': 'AAFF00'},
+          {'name':'other plantations' ,'number': 6, 'color': 'F5F57A'},
+          {'name':'rice' ,'number': 7, 'color': 'FFFFBE'},
+          {'name':'cropland' ,'number': 8, 'color': 'FFD37F'},
+          {'name':'surface water' ,'number': 9, 'color': '004DA8'},
+          {'name':'grassland' ,'number': 10, 'color': 'D7C29E'},
+          {'name':'woodshrub' ,'number': 11, 'color': '89CD66'},
+          {'name':'built-up area' ,'number': 12, 'color': 'E600A9'},
+          {'name':'village' ,'number': 13, 'color': 'A900E6'},
+          {'name':'other' ,'number': 14, 'color': '6f6f6f'}
+        ]
+
+        INDEX_CLASS = {}
+        for _class in LANDCOVERCLASSES:
+            INDEX_CLASS[int(_class['number'])] = _class['name']
+
+        classNames = ['evergreen', 'semi-evergreen', 'deciduous', 'mangrove', 'flooded forest','rubber', 'other plantations', 'rice', 'cropland', 'surface water', 'grassland', 'woodshrub', 'built-up area', 'village', 'other'];
+        classNumbers = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+        PALETTE_list = ['267300', '38A800', '70A800', '00A884', 'B4D79E','AAFF00', 'F5F57A', 'FFFFBE', 'FFD37F', '004DA8', 'D7C29E', '89CD66', 'E600A9', 'A900E6', '6f6f6f'];
+        AreaClass= {}
+        class_areas = ee.Image.pixelArea().addBands(lcImage).reduceRegion(
+            reducer= ee.Reducer.sum().group(
+              groupField= 1,
+              groupName= 'code',
+            ),
+            geometry= self.geometry,
+            scale= 100,  # sample the geometry at 1m intervals
+            maxPixels= 1e15
+          )
+
+        data = class_areas.getInfo()['groups']
+        for item in data:
+            #area hetare
+            AreaClass[INDEX_CLASS[int(item['code'])]] = float('{0:.2f}'.format(item['sum']/10000))
+
+        lcarea = AreaClass
+
+        # print(lcarea)
+
+        return lcarea
+
+
+
+    def calRiceTimeSeries(self, series_start, series_end, year, area_type, area_id):
+        t_area = self.calLandcoverArea2(series_start, series_end, year, area_type, area_id)
+        rice_area = t_area["rice"]
+        return rice_area
+
+        # # self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_COUNTRY_BOUNDARY)
+        # lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(7).selfMask().clip(self.geometry)
+        # IC= GEEApi.LANDCOVER.filterBounds(self.geometry).sort('system:time_start', False).filterDate(series_start, series_end)
+        # # pixel = ee.Image.pixelArea(lcImage)
+        # total_area = lcImage.reduceRegion(
+        #     reducer=ee.Reducer.sum(),
+        #     geometry=self.geometry, 
+        #     scale=100, 
+        #     maxPixels=1e15
+        # ).get("lc")
+        # data = total_area.getInfo()
+        # fdata = float('{0:.2f}'.format(data))
+        # # print(fdata)
+        # return fdata
 
 
     def getLCRiceTimeSeriesLine(self, start_year, end_year, area_type, area_id): 
         res = {}
         for year in range(start_year, end_year+1):
-            res[str(year)] = self.calRiceTimeSeries(year)
-        # print(res)
+            series_start = str(year) + '-01-01'
+            series_end = str(year) + '-12-31'
+            res[str(year)] = self.calRiceTimeSeries(series_start, series_end, year, area_type, area_id)
+        print(res)
         return res
 
-    def calRubberTimeSeries(self, year):
-        self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_COUNTRY_BOUNDARY)
-        lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(5).selfMask().clip(self.geometry)
-        total_area = lcImage.reduceRegion(
-            reducer=ee.Reducer.sum(),
-            geometry=self.geometry, 
-            scale=100, 
-            maxPixels=1e15
-        ).get("lc")
-        data = total_area.getInfo()
-        fdata = float('{0:.2f}'.format(data/1000))
-        return fdata
+    def calRubberTimeSeries(self, series_start, series_end, year, area_type, area_id):
+        t_area = self.calLandcoverArea3(series_start, series_end, year, area_type, area_id)
+        rubber_area = t_area["rubber"]
+        return rubber_area
+        # self.geometry = ee.FeatureCollection(GEEApi.CAMBODIA_COUNTRY_BOUNDARY)
+        # lcImage = ee.Image("projects/cemis-camp/assets/landcover/lcv3/"+str(year)).eq(5).selfMask().clip(self.geometry)
+        # total_area = lcImage.reduceRegion(
+        #     reducer=ee.Reducer.sum(),
+        #     geometry=self.geometry, 
+        #     scale=100, 
+        #     maxPixels=1e15
+        # ).get("lc")
+        # data = total_area.getInfo()
+        # fdata = float('{0:.2f}'.format(data/1000))
+        # return fdata
 
 
     def getLCRubberTimeSeriesLine(self, start_year, end_year, area_type, area_id): 
         res = {}
         for year in range(start_year, end_year+1):
-            res[str(year)] = self.calRubberTimeSeries(year)
-        # print(res)
+            series_start = str(year) + '-01-01'
+            series_end = str(year) + '-12-31'
+            res[str(year)] = self.calRubberTimeSeries(series_start, series_end, year, area_type, area_id)
+        print(res)
         return res
 
         
