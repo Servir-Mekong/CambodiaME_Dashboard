@@ -133,14 +133,25 @@
         {% include "panels/map-menu.html" %}
       </div>
       {% include "panels/legendbox.html" %}
+	  <div id="alertBox" role="alert">
+		<button type="button" id="close" class="close" aria-label="Close"><span style="padding-right: 10px; padding-top: 10px;" aria-hidden="true">&times;</span></button>
+		<h5 id="alertText" style="font-weight: bold; padding-left: 10px; padding-right: 5px;">Data available between 2000 - 2020. Please change time period for both baseline EVI and measure</h5>
+	  </div>
     </div>
     <div class="highlight_area_textbox"></div>
+	<!-- <div class="alert" id="alertBox" role="alert">
+		<button type="button" id="close" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h5 id="alertText" style="font-weight: bold;">Data available between 2000 - 2020. Please change time period for both baseline EVI and measure</h5>
+	</div> -->
 
     {% include "panels/guiding-panel.html" %}
 	{% include "panels/demo-clip.html" %}
     {% include "panels/draw-tool-panel.html" %}
     {% include "panels/disclaimer.html" %}
     {% include "panels/layers-info.html" %}
+
+	
+	
 
   </div>
 </div>

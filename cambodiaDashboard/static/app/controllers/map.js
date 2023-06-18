@@ -5,6 +5,7 @@
 
 		$(".menu-container").css("background-color", "#000");
 
+		$("#alertBox").css("display", "none");
 		/* global variables to be tossed around like hot potatoes */
 		$scope.showAlert = false;
 		$scope.showLoader = false;
@@ -72,6 +73,9 @@
 				'sarAlert': eval('$scope.sarAlert' + y),
 			}
 	  	}
+
+		  
+
 			var selected_admin = 'Cambodia';
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,12 +130,18 @@
 				onChange: function (data) {
 					studyHigh = data.to;
 					studyLow = data.from;
-					if (studyHigh >= 2022 ){
-						alert("No data available after 2020. Please select data baseline period between 2000 and 2020.")
-						$scope.STUDYHIGH = 2021;
-					} else {
+					if (studyHigh > 2021 ){
+						$("#measure_period").data("ionRangeSlider").update({ to: 2021 });
+						// alert("<h6>Data available between 2000 - 2020. Please change time period for the baseline EVI</h6>")
+						var abox = document.getElementById('alertBox');
+						abox.style.display = "block";
+						// document.getElementById('alertText').innerHTML = 'Data available between 2000 - 2020. Please change time period for measure'
+						// alert("No data available after 2020. Please select data baseline period between 2000 and 2020.")
 						$scope.STUDYHIGH = studyHigh;
-					}
+						$( "#close").click(function() {
+							abox.style.display = "none";
+						});
+					} 
 					
 					$scope.STUDYLOW = studyLow;
 					$scope.$apply();
@@ -159,13 +169,19 @@
 				onChange: function (data) {
 					refHigh = data.to;
 					refLow = data.from;
-					if (refHigh >= 2021 ){
-						alert("No data available after 2020. Please select data baseline period between 2000 and 2020.")
-						$scope.REFHIGH = 2020;
-					} else {
+					if (refHigh > 2020 ){
+						
+						$("#baseline_period").data("ionRangeSlider").update({ to: 2020 });
+						// alert("<h6>Data available between 2000 - 2020. Please change time period for the baseline EVI</h6>")
+						var abox = document.getElementById('alertBox');
+						abox.style.display = "block";
+						// document.getElementById('alertText').innerHTML = 'Data available between 2000 - 2020. Please change time period for the baseline EVI'
 						$scope.REFHIGH = refHigh;
-					}
-					
+						
+						$( "#close").click(function() {
+							abox.style.display = "none";
+						});
+					} 
 					$scope.REFLOW = refLow;
 				},
 				// onFinish: function (data) {
@@ -816,6 +832,7 @@
 						startYear: low,
 						endYear: high,
 					};
+
 					MapService.checkAvailableData(parameters)
 					.then(function (res) {
 						hideSpiner();
@@ -871,7 +888,7 @@
 							}
 						}
 
-						console.log(evia)
+						// console.log(evia)
 
 						if(burneda.length === 0 && tcca.length === 0 && tcha.length === 0){
 							//document.getElementById("update-map").disabled = false;
@@ -3481,6 +3498,8 @@
 						$("#toggle-list-forest-alert").html('');
 						$("#toggle-list-sar-alert").html('');
 						$("#toggle-list-burned-area").html('');
+						var abox = document.getElementById('alertBox');
+						abox.style.display = "none";
 					});
 
 					$("#evi_pie_png").click(function() {

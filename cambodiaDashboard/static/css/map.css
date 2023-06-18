@@ -1461,3 +1461,14 @@ svg image{
 #forestTabContent{
     display: none;
 }
+
+#alertBox {
+    /* display: block; */
+    /* display: none; */
+    position: absolute;
+    right: 20%;
+    top: 110px;
+    width: 350px;
+    z-index: 1009;
+    background-color: #fff8e1;
+}
