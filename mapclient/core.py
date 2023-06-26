@@ -391,8 +391,6 @@ class GEEApi():
         image = ee.Image(img_coll.filterDate('%s-01-01' % year,
                                              '%s-12-31' % year).first())
 
-        # image = ee.Image("projects/servir-mekong/UMD/TCC_C02/"+str(year))
-
         if get_image:
             if for_download:
                 return image.updateMask(image).clip(self.geometry)
@@ -437,8 +435,6 @@ class GEEApi():
         image = ee.Image(img_coll.filterDate('%s-01-01' % year,
                                              '%s-12-31' % year).mean())
 
-        # image = ee.Image("projects/servir-mekong/UMD/TCH_C02/"+str(year))
-
         if get_image:
             if for_download:
                 return image.updateMask(image).clip(self.geometry)
@@ -469,15 +465,11 @@ class GEEApi():
         def addBands(_year):
             tcc = GEEApi.TREE_CANOPY.filterDate(date_ymd(_year, 1, 1),
                                                        date_ymd(_year, 12, 31)).first()
-            # tcc = GEEApi.TREE_CANOPY + "/" + _year
-            # print(tcc)
-            # tcc = "projects/servir-mekong/UMD/TCC_C02/"+str(_year)
+            
             tcc = ee.Image(tcc).rename(['tcc'])
             tch = GEEApi.TREE_HEIGHT.filterDate(date_ymd(_year, 1, 1),
                                                        date_ymd(_year, 12, 31)).first()
 
-            # tch = GEEApi.TREE_HEIGHT + "/" + _year
-            # tch =  "projects/servir-mekong/UMD/TCH_C02/"+str(_year)
             tch = ee.Image(tch).rename(['tch'])
 
             return ee.Image(tcc).addBands(tch)
@@ -1076,7 +1068,7 @@ class GEEApi():
         imgScale =500
         image = yearlyBurned.unitScale(-2000, 10000).reproject(crs='EPSG:4326', scale=imgScale)
 
-        #burned Area Feature collection
+        # burned Area Feature collection
         ic = "projects/servir-mekong/Cambodia-Dashboard-tool/BurnArea/"+ area_type +"_"+ str(year) +"Metadata"
         burnedArea_fc = ee.FeatureCollection(ic)
 
@@ -1224,7 +1216,12 @@ class GEEApi():
 
     # -------------------------------------------------------------------------
     def getBurnedArea(self, start_year, end_year, area_type, area_id):
+        # print(area_id)
         res = {}
+        # if end_year >= 2022:
+        #     end_year = 2021
+        # else:
+        #     end_year = end_year
         for _year in range(start_year, end_year+1):
             series_start = str(_year) + '-01-01'
             series_end = str(_year) + '-12-31'
