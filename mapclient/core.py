@@ -367,8 +367,8 @@ class GEEApi():
 
 
     # -------------------------------------------------------------------------
-    def tree_canopy(self,
-                    img_coll = None,
+    def tree_canopy(self, 
+                    img_coll = None, 
                     get_image = False,
                     for_download = False,
                     year = None,
@@ -391,6 +391,8 @@ class GEEApi():
         image = ee.Image(img_coll.filterDate('%s-01-01' % year,
                                              '%s-12-31' % year).first())
 
+        # image = ee.Image("projects/servir-mekong/UMD/TCC_C02/"+str(year))
+
         if get_image:
             if for_download:
                 return image.updateMask(image).clip(self.geometry)
@@ -411,7 +413,7 @@ class GEEApi():
         }
 
     # -------------------------------------------------------------------------
-    def tree_height(self,
+    def tree_height(self, 
                     img_coll = None,
                     get_image = False,
                     for_download = False,
@@ -434,6 +436,8 @@ class GEEApi():
 
         image = ee.Image(img_coll.filterDate('%s-01-01' % year,
                                              '%s-12-31' % year).mean())
+
+        # image = ee.Image("projects/servir-mekong/UMD/TCH_C02/"+str(year))
 
         if get_image:
             if for_download:
@@ -465,9 +469,15 @@ class GEEApi():
         def addBands(_year):
             tcc = GEEApi.TREE_CANOPY.filterDate(date_ymd(_year, 1, 1),
                                                        date_ymd(_year, 12, 31)).first()
+            # tcc = GEEApi.TREE_CANOPY + "/" + _year
+            # print(tcc)
+            # tcc = "projects/servir-mekong/UMD/TCC_C02/"+str(_year)
             tcc = ee.Image(tcc).rename(['tcc'])
             tch = GEEApi.TREE_HEIGHT.filterDate(date_ymd(_year, 1, 1),
                                                        date_ymd(_year, 12, 31)).first()
+
+            # tch = GEEApi.TREE_HEIGHT + "/" + _year
+            # tch =  "projects/servir-mekong/UMD/TCH_C02/"+str(_year)
             tch = ee.Image(tch).rename(['tch'])
 
             return ee.Image(tcc).addBands(tch)
@@ -484,8 +494,8 @@ class GEEApi():
         # 0 - tcc
         # 1 - tch
         return img_coll.map(lambda img: img.select('tcc').gt(tree_canopy_definition).\
-                            And(img.select('tch').gt(tree_height_definition)).
-                            rename(['forest_cover']).copyProperties(img, img.propertyNames()))
+                            And(img.select('tch').gt(tree_height_definition))
+                            .rename(['forest_cover']).copyProperties(img, img.propertyNames()))
 
     # -------------------------------------------------------------------------
     def forest_gain(self,
@@ -659,7 +669,7 @@ class GEEApi():
         })
 
         if area_type == "country":
-            ic = "projects/servir-mekong/Cambodia-Dashboard-tool/ForestArea/camMetadata"
+            ic = "projects/servir-mekong/Cambodia-Dashboard-tool/ForestArea/cam_Metadata"
             forestArea_fc = ee.FeatureCollection(ic)
             forestArea = forestArea_fc.filter(ee.Filter.eq('NAME_ENGLI', area_id)).filter(ee.Filter.eq('year', year))
             areaHA = forestArea.aggregate_array("areaHect").get(0).getInfo()
@@ -865,12 +875,18 @@ class GEEApi():
 
     # -------------------------------------------------------------------------
     def calForestAlert(self, get_image, colorIndex, area_type, area_id, series_start, series_end, year):
+        if year == 2022:
+            glad =  ee.ImageCollection('projects/glad/alert/UpdResult').select(['alertDate22']) 
+            GLADIC = glad.filterBounds(self.geometry)#.filterDate(series_start, series_end)
+            image = GLADIC.sort('system:time_start', False).first().clip(self.geometry).toInt16()
+            binary_image = image.rename(['binary']).selfMask()
+        else:
 
-        GLADIC = ee.ImageCollection(GEEApi.GLAD_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
+            GLADIC = ee.ImageCollection(GEEApi.GLAD_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
 
-        image = GLADIC.sort('system:time_start', False).first().select("alert").clip(self.geometry).toInt16()
+            image = GLADIC.sort('system:time_start', False).first().select("alert").clip(self.geometry).toInt16()
 
-        binary_image = image.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
+            binary_image = image.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
 
         # ee.Image.pixelArea()
         if area_type == "draw" or area_type == "upload":
@@ -920,13 +936,23 @@ class GEEApi():
     # -------------------------------------------------------------------------
     def calSARAlert(self, get_image, colorIndex, area_type, area_id, series_start, series_end, year):
 
-        SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
-        # image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
-        image = SARIC.sort('system:time_start', False).first()
+        if year == 2021:
+            image = ee.Image('projects/cemis-camp/assets/sarAlert/alert_2021V4')
+            image = image.select("landclass").clip(self.geometry).toInt16()
+            binary_image = image.rename(['binary']).selfMask()
 
-        image = image.select("landclass").clip(self.geometry).toInt16()
+        elif year == 2022:
+            image = ee.Image('projects/cemis-camp/assets/sarAlert/alert_2022V4')
+            image = image.select("landclass").clip(self.geometry).toInt16()
+            binary_image = image.rename(['binary']).selfMask()
+        else: 
+            SARIC = ee.ImageCollection(GEEApi.SAR_ALERT).filterBounds(self.geometry).filterDate(series_start, series_end)
+            # image = ee.Image(GEEApi.SAR_ALERT+"/"+"alert_"+str(year))
+            image = SARIC.sort('system:time_start', False).first()
 
-        binary_image = image.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
+            image = image.select("landclass").clip(self.geometry).toInt16()
+
+            binary_image = image.neq(0).rename(['binary']).multiply(1).toInt16().selfMask()
         
         #ee.Image.pixelArea()
         #multiply 900 (30m * 30m)
@@ -1020,6 +1046,7 @@ class GEEApi():
             series_end = str(_year) + '-12-31'
             colorIndex += 1
             res[str(_year)] = self.calForestAlert(get_image, colorIndex, area_type, area_id, series_start, series_end, _year)
+        # print(res)
         return res
     
     # -------------------------------------------------------------------------
@@ -1027,16 +1054,17 @@ class GEEApi():
 
         res = {}
         colorIndex = 0
-        if end_year >= 2021:
-            end_year = 2020
-        else:
-            end_year = end_year
+        # if end_year == 2021:
+        #     end_year = 2020
+        # else:
+        #     end_year = end_year
         for _year in range(start_year, end_year+1):
             series_start = str(_year) + '-01-01'
             series_end = str(_year) + '-12-31'
             colorIndex += 1
             # print(_year)
             res[str(_year)] = self.calSARAlert(get_image, colorIndex, area_type, area_id, series_start, series_end, _year)
+        # print(res)
         return res
 
     # -------------------------------------------------------------------------

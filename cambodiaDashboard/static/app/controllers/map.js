@@ -125,13 +125,13 @@
 				min: yearInt($scope.startYear),
 				max: yearInt($scope.endYear),
 				from: yearInt(2000),
-				to: yearInt(2021),
+				to: yearInt(2022),
 				prettify: yearToInt,
 				onChange: function (data) {
 					studyHigh = data.to;
 					studyLow = data.from;
-					if (studyHigh > 2021 ){
-						$("#measure_period").data("ionRangeSlider").update({ to: 2021 });
+					if (studyHigh > 2022 ){
+						$("#measure_period").data("ionRangeSlider").update({ to: 2022 });
 						// alert("<h6>Data available between 2000 - 2020. Please change time period for the baseline EVI</h6>")
 						var abox = document.getElementById('alertBox');
 						abox.style.display = "block";
@@ -1798,7 +1798,7 @@
 							treeCanopyDefinition: 10,
 							treeHeightDefinition: 5,
 							startYear: studyLow,
-							endYear: studyHigh,
+							endYear: studyHigh, // 2022
 							type: 'forestExtend',
 							area_id: area_id,
 							area_type: area_type,
@@ -2094,7 +2094,7 @@
 							area_type: area_type,
 							get_image: false,
 							startYear: $scope.forestAlertStartYear,
-							endYear: studyHigh,
+							endYear: 2022, //studyHigh,
 							download: false
 						};
 
@@ -2106,7 +2106,9 @@
 
 							var _yearArr = [];
 
-							for(var i=$scope.forestAlertStartYear; i<=studyHigh; i++){
+							console.log(_yearArr)
+
+							for(var i=$scope.forestAlertStartYear; i<=2022; i++){
 
 								var _yearData = data[i.toString()];
 								var _year = i.toString();
@@ -2216,7 +2218,7 @@
 							area_type: area_type,
 							get_image: false,
 							startYear: $scope.forestAlertStartYear,
-							endYear: studyHigh,
+							endYear: 2022, //studyHigh,
 							download: false
 						};
 
@@ -2229,7 +2231,7 @@
 
 							var _yearArr = [];
 
-							for(var i=$scope.forestAlertStartYear; i<=studyHigh; i++){
+							for(var i=$scope.forestAlertStartYear; i<=2022; i++){
 
 								var _yearData = data[i.toString()];
 								var _year = i.toString();
